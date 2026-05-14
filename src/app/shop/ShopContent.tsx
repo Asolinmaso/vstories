@@ -9,9 +9,8 @@ import { Product } from "@/lib/services/product.service";
 
 type SortOption = "featured" | "price-asc" | "price-desc" | "name";
 
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-
-// ... imports
 
 export default function ShopContent({ initialProducts }: { initialProducts: Product[] }) {
     const searchParams = useSearchParams();
@@ -59,53 +58,113 @@ export default function ShopContent({ initialProducts }: { initialProducts: Prod
 
     return (
         <div className="bg-[var(--background)] min-h-screen">
+            {/* Page Header */}
+            <header className="py-12 md:py-20 bg-white border-b border-gray-100">
+                <div className="container-premium text-center">
+                    <h1 className="text-4xl md:text-6xl font-bold text-[var(--primary)] mb-4" style={{ fontFamily: "var(--font-peachi)" }}>
+                        {selectedCategory ? (selectedCategory === "bestseller" ? "Bestsellers" : categories.find(c => c.slug === selectedCategory)?.name) : "Our Collection"}
+                    </h1>
+                    <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
+                        Discover our premium range of 100% natural, chemical-free herbal solutions for your daily care.
+                    </p>
+                </div>
+            </header>
+
             <section className="py-12 md:py-16">
                 <div className="container-premium">
-                    <div className="">
+                    <div className="flex flex-col lg:flex-row gap-12">
+                        
+                        {/* Desktop Sidebar Filters */}
+                        <aside className="hidden lg:block w-64 flex-shrink-0 space-y-10">
+                            <div>
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--primary)] mb-6">Categories</h3>
+                                <ul className="space-y-4">
+                                    <li>
+                                        <button
+                                            onClick={() => setSelectedCategory(null)}
+                                            className={`text-sm transition-all hover:translate-x-1 flex items-center gap-2 ${!selectedCategory ? "text-[var(--highlight)] font-bold" : "text-gray-500"}`}
+                                        >
+                                            {!selectedCategory && <div className="w-1.5 h-1.5 rounded-full bg-[var(--highlight)]" />}
+                                            All Products
+                                        </button>
+                                    </li>
+                                    {categories.map((category) => (
+                                        <li key={category.id}>
+                                            <button
+                                                onClick={() => setSelectedCategory(category.slug)}
+                                                className={`text-sm transition-all hover:translate-x-1 flex items-center gap-2 ${selectedCategory === category.slug ? "text-[var(--highlight)] font-bold" : "text-gray-500"}`}
+                                            >
+                                                {selectedCategory === category.slug && <div className="w-1.5 h-1.5 rounded-full bg-[var(--highlight)]" />}
+                                                {category.name}
+                                            </button>
+                                        </li>
+                                    ))}
+                                    <li>
+                                        <button
+                                            onClick={() => setSelectedCategory("bestseller")}
+                                            className={`text-sm transition-all hover:translate-x-1 flex items-center gap-2 ${selectedCategory === "bestseller" ? "text-[var(--highlight)] font-bold" : "text-gray-500"}`}
+                                        >
+                                            {selectedCategory === "bestseller" && <div className="w-1.5 h-1.5 rounded-full bg-[var(--highlight)]" />}
+                                            Bestsellers
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div className="pt-8 border-t border-gray-100">
+                                <div className="bg-[var(--primary)] p-6 rounded-3xl text-white">
+                                    <h4 className="font-heading text-xl mb-2">Need Help?</h4>
+                                    <p className="text-xs text-white/70 mb-4">Our herbal experts are here to guide you.</p>
+                                    <Link href="/contact" className="text-xs font-bold text-[var(--highlight)] hover:underline">Chat with us →</Link>
+                                </div>
+                            </div>
+                        </aside>
+
                         {/* Main Content */}
-                        <div>
+                        <div className="flex-1">
                             {/* Toolbar */}
-                            <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
-                                {/* Filter Button */}
+                            <div className="flex items-center justify-between gap-4 mb-10 pb-6 border-b border-gray-100">
+                                {/* Mobile Filter Toggle */}
                                 <button
                                     onClick={() => setIsMobileFilterOpen(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-[var(--primary)] hover:border-[var(--primary)] transition-colors"
+                                    className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl text-sm font-bold text-[var(--primary)]"
                                 >
                                     <Filter className="w-4 h-4" />
                                     Filter
                                 </button>
 
-                                {/* Results Count */}
-                                <p className="text-sm text-[var(--text-secondary)] font-medium hidden sm:block">
-                                    Showing {filteredProducts.length} products
+                                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                                    {filteredProducts.length} Results found
                                 </p>
 
-                                {/* Sort Dropdown */}
-                                <div className="relative">
-                                    <select
-                                        value={sortBy}
-                                        onChange={(e) => setSortBy(e.target.value as SortOption)}
-                                        className="appearance-none pl-4 pr-10 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-[var(--primary)] cursor-pointer focus:outline-none focus:border-[var(--primary)] transition-colors min-w-[180px]"
-                                    >
-                                        {sortOptions.map((option) => (
-                                            <option key={option.value} value={option.value}>
-                                                {option.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)] pointer-events-none" />
+                                <div className="flex items-center gap-4">
+                                    <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest text-gray-400">Sort by</span>
+                                    <div className="relative">
+                                        <select
+                                            value={sortBy}
+                                            onChange={(e) => setSortBy(e.target.value as SortOption)}
+                                            className="appearance-none pl-4 pr-10 py-2 bg-white border-0 rounded-xl text-sm font-bold text-[var(--primary)] cursor-pointer focus:ring-2 focus:ring-[var(--primary)]/10 outline-none min-w-[160px]"
+                                        >
+                                            {sortOptions.map((option) => (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)] pointer-events-none" />
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Products Grid */}
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-6 md:gap-y-10">
+                            <div className="grid grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-8 md:gap-x-8 md:gap-y-12">
                                 {filteredProducts.map((product, index) => (
                                     <motion.div
                                         key={product.id}
                                         initial={{ opacity: 0, y: 20 }}
                                         whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true, margin: "-20px" }}
-                                        transition={{ duration: 0.4 }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.4, delay: (index % 3) * 0.1 }}
                                         className="h-full"
                                     >
                                         <ProductCard product={product} />
@@ -115,13 +174,15 @@ export default function ShopContent({ initialProducts }: { initialProducts: Prod
 
                             {/* Empty State */}
                             {filteredProducts.length === 0 && (
-                                <div className="text-center py-24 bg-white rounded-2xl border border-dashed border-gray-200">
-                                    <p className="text-lg text-[var(--text-secondary)] mb-2">
-                                        No products found in this category.
-                                    </p>
+                                <div className="text-center py-32 bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
+                                    <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <Filter className="w-10 h-10 text-gray-300" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-2">No products found</h3>
+                                    <p className="text-gray-500 mb-8">Try adjusting your filters to find what you're looking for.</p>
                                     <button
                                         onClick={() => setSelectedCategory(null)}
-                                        className="text-[var(--primary)] underline font-medium hover:text-[var(--highlight)]"
+                                        className="btn-primary px-8 py-3"
                                     >
                                         Clear all filters
                                     </button>

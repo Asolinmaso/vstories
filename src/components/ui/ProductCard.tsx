@@ -135,8 +135,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                         <div className="absolute top-0 left-5 right-5 h-px bg-gradient-to-r from-transparent via-[var(--secondary-light)]/30 to-transparent" />
 
                         <span
-                            className="font-semibold text-[var(--primary)] text-base md:text-xl mb-1 md:mb-2 line-clamp-2 md:h-12 group-hover:text-[var(--highlight)] transition-colors duration-300"
-                            style={{ fontFamily: "var(--font-fira-sans)" }}
+                            className="font-medium text-[var(--primary)] text-base md:text-xl mb-1 md:mb-2 line-clamp-2 md:h-12 group-hover:text-[var(--highlight)] transition-colors duration-300"
+                            style={{ fontFamily: "var(--font-peachi)" }}
                         >
                             {product.name}
                         </span>
@@ -171,11 +171,6 @@ export default function ProductCard({ product }: ProductCardProps) {
                         <button
                             onClick={handleAddToCart}
                             className="md:hidden w-full mt-3 py-2 bg-[var(--primary)] text-white text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm"
-                            style={{
-                                backgroundColor: 'var(--primary)',
-                                color: '#ffffff',
-                                opacity: 1
-                            }}
                         >
                             Add to Cart
                         </button>

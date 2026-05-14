@@ -270,10 +270,25 @@ export default function ProductDetailClient({ product, includedProducts = [] }: 
                                     )}
                                 </div>
                                 {product.sizes && product.sizes.length > 0 && (
-                                    <div className="mb-6 -mt-4">
-                                        <span className="text-sm font-medium text-[var(--text-secondary)] bg-[var(--secondary)]/10 px-3 py-1.5 rounded-lg border border-[var(--secondary)]/20 inline-block">
-                                            Net Volume: {product.sizes[selectedSize]?.label}
-                                        </span>
+                                    <div className="mb-8">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="text-sm font-semibold uppercase tracking-wider text-[var(--primary)]">Select Size</span>
+                                            <span className="text-xs text-[var(--text-muted)] italic">Net Volume: {product.sizes[selectedSize]?.label}</span>
+                                        </div>
+                                        <div className="flex flex-wrap gap-3">
+                                            {product.sizes.map((size, index) => (
+                                                <button
+                                                    key={index}
+                                                    onClick={() => setSelectedSize(index)}
+                                                    className={`px-6 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${selectedSize === index
+                                                        ? "border-[var(--primary)] bg-[var(--primary)] text-white shadow-md"
+                                                        : "border-[var(--primary)]/10 text-[var(--primary)] hover:border-[var(--primary)] bg-white"
+                                                        }`}
+                                                >
+                                                    {size.label}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
 

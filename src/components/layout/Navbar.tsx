@@ -172,10 +172,7 @@ export default function Navbar({ announcement }: NavbarProps) {
                                 ) : (
                                     <button
                                         onClick={openLoginModal}
-                                        className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all shadow-md hover:shadow-lg whitespace-nowrap"
-                                        style={{ backgroundColor: "#1D3515", color: "#ffffff" }}
-                                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#2a4a1f")}
-                                        onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#1D3515")}
+                                        className="flex items-center gap-2 px-6 py-2 rounded-full text-sm font-bold transition-all shadow-md hover:shadow-lg whitespace-nowrap bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)]"
                                         aria-label="Login"
                                     >
                                         <User className="w-4 h-4" />
@@ -220,10 +217,7 @@ export default function Navbar({ announcement }: NavbarProps) {
                             ) : (
                                 <button
                                     onClick={openLoginModal}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
-                                    style={{ backgroundColor: "#1D3515", color: "#ffffff" }}
-                                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#2a4a1f")}
-                                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#1D3515")}
+                                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-[var(--primary)] text-white"
                                     aria-label="Login"
                                 >
                                     <User className="w-3.5 h-3.5" />
