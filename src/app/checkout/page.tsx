@@ -128,7 +128,7 @@ export default function CheckoutPage() {
                 },
                 prefill: {
                     name: selectedAddress.name,
-                    email: user.email,
+                    email: user?.email || "",
                     contact: selectedAddress.phone,
                 },
                 theme: {
@@ -246,7 +246,7 @@ export default function CheckoutPage() {
                                 {items.map((item) => (
                                     <div key={item.cartItemId || item.id} className="flex gap-4">
                                         <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-50 flex-shrink-0 relative border border-gray-100">
-                                            <Image src={item.image} alt={item.name} fill className="object-cover" />
+                                            <Image src={item.image || "/images/placeholder.png"} alt={item.name} fill className="object-cover" />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm font-bold text-gray-900 truncate">{item.name}</p>
