@@ -8,7 +8,7 @@ export const getWebsiteConfig = cache(async () => {
         testimonialsHeader: { title: "", subtitle: "" },
         testimonialsList: [] as any[],
         announcement: {
-            text: "Product Of The Month : Milk Drops Brightening Serum | Use code HURRY20 & Get FLAT 20% OFF",
+            text: "Flat 20% OFF on Hair Care | Use code: HAIR20",
             enabled: true,
         } as { text: string; enabled: boolean },
     };

@@ -42,7 +42,7 @@ export default function Hero() {
           >
             <Link 
               href="/shop" 
-              className="inline-flex items-center justify-center px-10 py-4 bg-[var(--primary)] text-white rounded-lg text-lg font-bold hover:bg-[var(--primary-dark)] transition-all shadow-lg hover:shadow-xl uppercase tracking-wider"
+              className="inline-flex items-center justify-center px-10 py-4 bg-[var(--primary)] !text-white rounded-lg text-lg font-bold hover:bg-[var(--primary-dark)] transition-all shadow-lg hover:shadow-xl uppercase tracking-wider"
             >
               Explore Products
             </Link>
