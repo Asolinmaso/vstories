@@ -49,13 +49,10 @@ export default function ProductCard({ product }: ProductCardProps) {
         <FadeIn className="h-full">
             <Link href={`/product/${product.slug}`}>
                 <motion.article
-                    whileHover={{ y: -10 }}
-                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    className="group relative bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 h-full flex flex-col"
+                    className="group relative bg-[var(--background)] rounded-xl border border-[#D9D9D9] overflow-hidden hover:shadow-2xl transition-all duration-500 h-full flex flex-col"
                 >
                     {/* Hover Glow Effect */}
-                    <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                        style={{ boxShadow: "0 20px 60px -15px rgba(194, 126, 15, 0.25)" }}
+                    <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none shadow-[0px_20px_20px_rgba(0,0,0,0.1)]"
                     />
 
                     {/* Image Container */}
@@ -134,46 +131,56 @@ export default function ProductCard({ product }: ProductCardProps) {
                         {/* Decorative Line */}
                         <div className="absolute top-0 left-5 right-5 h-px bg-gradient-to-r from-transparent via-[var(--secondary-light)]/30 to-transparent" />
 
-                        <span
-                            className="font-medium text-[var(--primary)] text-base md:text-xl mb-1 md:mb-2 line-clamp-2 md:h-12 group-hover:text-[var(--highlight)] transition-colors duration-300"
-                            style={{ fontFamily: "var(--font-peachi)" }}
+                        <h3
+                            className="font-semibold text-[var(--text-primary)] text-xl md:text-2xl mb-2 line-clamp-1 font-inter"
                         >
                             {product.name}
-                        </span>
+                        </h3>
 
-                        <div className="mb-2 md:mb-3 flex-shrink-0">
-                            <p className="text-[10px] md:text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed h-8 md:h-10">
+                        <div className="mb-4 flex-shrink-0">
+                            <p className="text-sm md:text-base text-[var(--text-primary)] line-clamp-2 leading-relaxed h-10 md:h-12 font-inter">
                                 {product.short_description}
                             </p>
-                            <span className="text-[10px] md:text-xs text-[var(--highlight)] hover:text-[var(--gold)] cursor-pointer font-medium transition-colors hidden md:inline-block">
-                                See more →
-                            </span>
                         </div>
 
                         {/* Price - pushed to bottom */}
-                        <div className="flex items-baseline gap-2 mt-auto">
-                            <span className="text-base md:text-xl font-bold text-[var(--primary)]">
-                                ₹{product.price}
-                            </span>
-                            {product.original_price && (
-                                <span className="text-[10px] md:text-sm text-[var(--text-muted)] line-through">
-                                    ₹{product.original_price}
-                                </span>
-                            )}
-                            {discount && (
-                                <span className="text-[10px] md:text-xs text-[var(--highlight)] font-semibold ml-auto">
-                                    Save ₹{product.original_price! - product.price}
-                                </span>
-                            )}
-                        </div>
+                        {/* Price & Rating */}
+                        <div className="flex flex-col gap-4 mt-auto">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] font-inter">
+                                        ₹{product.price}
+                                    </span>
+                                    {product.original_price && (
+                                        <span className="text-sm md:text-base text-[var(--text-primary)] line-through opacity-60 font-inter">
+                                            (₹{product.original_price})
+                                        </span>
+                                    )}
+                                </div>
+                                
+                                <div className="flex items-center gap-1 bg-[#F4EEE2] px-2 py-0.5 rounded-md">
+                                    <span className="text-[#E8BF72]">★</span>
+                                    <span className="text-sm font-semibold text-[var(--text-primary)]">{product.rating || "4.8"}</span>
+                                    <span className="text-xs text-[var(--text-primary)] opacity-60">({product.reviews_count || "120"})</span>
+                                </div>
+                            </div>
 
-                        {/* Mobile Add to Cart (Visible only on mobile since Quick Actions are hidden) */}
-                        <button
-                            onClick={handleAddToCart}
-                            className="md:hidden w-full mt-3 py-2 bg-[var(--primary)] text-white text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm"
-                        >
-                            Add to Cart
-                        </button>
+                            {/* Buttons */}
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={handleAddToCart}
+                                    className="py-2.5 border border-[var(--primary)] text-[var(--primary)] text-sm font-medium rounded-lg hover:bg-[var(--primary)]/5 transition-all"
+                                >
+                                    Add to cart
+                                </button>
+                                <button
+                                    onClick={() => {/* handle buy now */}}
+                                    className="py-2.5 bg-[var(--primary)] text-[var(--secondary-light)] text-sm font-medium rounded-lg hover:bg-[var(--primary-dark)] transition-all"
+                                >
+                                    Buy Now
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Corner Accent */}

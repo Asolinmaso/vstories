@@ -125,13 +125,12 @@ export default function RealResults() {
                 >
 
                     <h2
-                        className="text-3xl md:text-5xl font-semibold text-[var(--primary)] mb-4"
-                        style={{ fontFamily: "var(--font-peachi)" }}
+                        className="text-4xl md:text-5xl font-bold text-[var(--primary)] mb-6 font-playfair"
                     >
-                        Real Results
+                        Visible Results, Naturally
                     </h2>
-                    <p className="text-[var(--text-secondary)] max-w-md mx-auto">
-                        See the transformations our customers have experienced
+                    <p className="text-xl md:text-2xl text-[var(--text-primary)] max-w-2xl mx-auto font-inter">
+                        Inspired by real experiences, our journey blends tradition with modern science for visible, natural transformations.
                     </p>
                 </motion.div>
 

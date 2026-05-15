@@ -13,9 +13,9 @@ export default function Marquee({
     variant = "light",
     speed = "normal",
 }: MarqueeProps) {
-    const bgColor = variant === "dark" ? "bg-[var(--primary)]" : "bg-[var(--background)]";
-    const textColor = "text-black";
-    const accentColor = "text-black";
+    const bgColor = variant === "dark" ? "bg-[var(--primary)]" : "bg-[var(--primary)]";
+    const textColor = "text-[var(--secondary-light)]";
+    const accentColor = "text-[var(--secondary-light)]";
 
     const animationDuration =
         speed === "slow" ? "40s" : speed === "fast" ? "15s" : "25s";
@@ -33,11 +33,11 @@ export default function Marquee({
                         {items.map((item, index) => (
                             <div key={`${i}-${index}`} className="flex items-center">
                                 <span
-                                    style={{ fontFamily: "var(--font-peachi)" }}
+                                    className="text-lg md:text-2xl font-medium font-inter"
                                 >
                                     {item}
                                 </span>
-                                <span className={`mx-8 text-[8px] opacity-40 ${textColor}`}>●</span>
+                                <div className="mx-8 w-3 h-3 rounded-full bg-[var(--secondary-light)]" />
                             </div>
                         ))}
                     </div>

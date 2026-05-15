@@ -70,19 +70,18 @@ export default function CustomerLove({ testimonials = [], title, subtitle }: Cus
     };
 
     return (
-        <section className="section-padding bg-[#F1F8E9]"> {/* Pale green background from reference */}
+        <section className="py-20 bg-[var(--background)]">
             <div className="container-premium !px-4 md:!px-8">
                 <div className="flex flex-col lg:flex-row gap-12 items-center">
 
                     {/* Left Side: Header Text */}
                     <div className="lg:w-1/3 text-center lg:text-left">
                         <h2
-                            className="text-3xl md:text-5xl font-semibold text-[#8ba45d] mb-4" // Olive green heading
-                            style={{ fontFamily: "var(--font-peachi)" }}
+                            className="text-4xl md:text-5xl font-bold text-[var(--primary)] mb-6 font-playfair"
                         >
-                            {title || "What Our Customers Say"}
+                            {title || "Trusted by thousands"}
                         </h2>
-                        <p className="text-[var(--text-secondary)] mb-8 text-sm md:text-base max-w-md mx-auto lg:mx-0">
+                        <p className="text-xl md:text-2xl text-[var(--text-primary)] mb-8 font-inter opacity-90 max-w-md mx-auto lg:mx-0">
                             {subtitle || "We value your trust & feedback. Our #VStoriesTribe results & reviews are 100% honest. No retouch."}
                         </p>
 
@@ -142,15 +141,15 @@ export default function CustomerLove({ testimonials = [], title, subtitle }: Cus
                                         </div>
                                     </div>
 
-                                    <p className="text-[var(--primary)] text-base md:text-lg mb-6 leading-relaxed break-words whitespace-normal">
+                                    <p className="text-[var(--text-primary)] text-lg mb-6 leading-relaxed font-inter italic opacity-90">
                                         "{review.text || review.content}"
                                     </p>
 
                                     <div>
-                                        <h4 className="font-bold text-gray-900 text-sm md:text-base">
+                                        <h4 className="font-bold text-[var(--text-primary)] text-base font-inter">
                                             {review.name || review.author}
                                         </h4>
-                                        <p className="text-xs text-gray-600 font-medium">
+                                        <p className="text-sm text-[var(--text-primary)] opacity-60 font-inter">
                                             {review.role || "Verified Buyer"}
                                         </p>
                                     </div>
