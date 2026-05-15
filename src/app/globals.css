@@ -103,11 +103,6 @@
   --font-body: var(--font-fira-sans);
 }
 
-/* Force all peachi usages to use fira-sans for consistent typography */
-body {
-  --font-peachi: var(--font-fira-sans) !important;
-}
-
 /* ============================================
    Global Styles
    ============================================ */
