@@ -515,10 +515,10 @@ button:disabled {
   box-shadow: var(--shadow-glow);
 }
 
-/* Container */
+/* Container - Refined to 1440px brand standard */
 .container-premium {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
