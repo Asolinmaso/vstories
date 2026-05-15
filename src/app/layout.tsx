@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fira_Sans } from "next/font/google";
+import { Fira_Sans, Inter, Playfair_Display, Poppins } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import ClientLayout from "@/components/layout/ClientLayout";
@@ -12,6 +12,25 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import SessionProvider from "@/components/providers/SessionProvider";
 
 export const revalidate = 60;
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
 
 const firaSans = Fira_Sans({
   variable: "--font-fira-sans",
@@ -104,7 +123,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${firaSans.variable} ${peachi.variable} antialiased bg-[var(--background)]`}
+        className={`${firaSans.variable} ${peachi.variable} ${inter.variable} ${playfair.variable} ${poppins.variable} antialiased bg-[var(--background)]`}
       >
         <SessionProvider>
           <AuthProvider>

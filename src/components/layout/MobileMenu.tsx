@@ -7,7 +7,11 @@ import { X } from "lucide-react";
 interface MobileMenuProps {
     isOpen: boolean;
     onClose: () => void;
-    navLinks: { href: string; label: string }[];
+    navLinks: { 
+        href: string; 
+        label: string; 
+        dropdown?: { href: string; label: string }[] 
+    }[];
 }
 
 export default function MobileMenu({
@@ -58,19 +62,35 @@ export default function MobileMenu({
                             <ul className="space-y-4">
                                 {navLinks.map((link, index) => (
                                     <motion.li
-                                        key={link.href}
+                                        key={link.label}
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: index * 0.1 }}
                                     >
-                                        <Link
-                                            href={link.href}
-                                            className="block py-3 text-lg font-medium text-[var(--primary)] hover:text-[var(--highlight)] transition-colors border-b border-[var(--primary)]/10"
-                                            onClick={onClose}
-                                            style={{ fontFamily: "var(--font-fira-sans)" }}
-                                        >
-                                            {link.label}
-                                        </Link>
+                                        <div className="flex flex-col">
+                                            <Link
+                                                href={link.href}
+                                                className="block py-3 text-lg font-bold text-[var(--primary)] hover:text-[var(--highlight)] transition-colors"
+                                                onClick={() => !link.dropdown && onClose()}
+                                            >
+                                                {link.label}
+                                            </Link>
+                                            {link.dropdown && (
+                                                <ul className="pl-4 space-y-2 mb-4 border-l-2 border-[var(--primary)]/10">
+                                                    {link.dropdown.map((sublink) => (
+                                                        <li key={sublink.label}>
+                                                            <Link
+                                                                href={sublink.href}
+                                                                className="block py-2 text-base font-medium text-black/60 hover:text-[var(--primary)] transition-colors"
+                                                                onClick={onClose}
+                                                            >
+                                                                {sublink.label}
+                                                            </Link>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
                                     </motion.li>
                                 ))}
                             </ul>

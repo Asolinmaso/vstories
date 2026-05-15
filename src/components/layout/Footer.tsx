@@ -76,24 +76,23 @@ function FooterAccordion({
 
 export default function Footer() {
     return (
-        <footer className="bg-[var(--secondary)] text-[var(--background)] dark-section">
+        <footer className="bg-[var(--primary)] text-[var(--secondary-light)]">
             {/* Main Footer */}
             <div className="container-premium section-padding">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
                     {/* Brand Column */}
-                    <div className="lg:col-span-1 text-center md:text-left">
-                        <Link href="/" className="inline-block mb-6">
+                    <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                        <Link href="/" className="inline-block mb-8">
                             <Image
-                                src="/images/logo landscape.svg"
+                                src="/images/logo.png"
                                 alt="V Stories"
-                                width={180}
-                                height={50}
-                                className="h-12 w-auto object-contain"
+                                width={80}
+                                height={80}
+                                className="rounded-full"
                             />
                         </Link>
-                        <p className="text-sm text-[var(--background)]/80 leading-relaxed mb-6">
-                            Reviving ancient herbal practices with modern standards. 100%
-                            natural, chemical-free products crafted with love.
+                        <p className="text-base text-[var(--secondary-light)]/80 leading-relaxed mb-8 max-w-sm">
+                            V STORIES is a premium herbal hair and skincare brand dedicated to reviving ancient herbal practices with modern standards. 100% natural, chemical-free products crafted with 40+ organic herbs & cold-pressed oils.
                         </p>
                         <div className="flex gap-4 justify-center md:justify-start">
                             <a
@@ -156,46 +155,35 @@ export default function Footer() {
                     </FooterAccordion>
 
                     {/* Contact */}
-                    <FooterAccordion title="Contact">
-                        <ul className="space-y-4">
-                            <li className="flex items-center gap-3">
-                                <Phone className="w-4 h-4 text-[var(--highlight)]" />
-                                <a
-                                    href="tel:+916383921957"
-                                    className="text-sm text-[var(--background)]/80 hover:text-[var(--background)] transition-colors"
-                                >
-                                    +91 6383921957
-                                </a>
-                            </li>
-                            <li className="flex items-center gap-3">
-                                <Mail className="w-4 h-4 text-[var(--highlight)]" />
-                                <a
-                                    href="mailto:hello@vstories.in"
-                                    className="text-sm text-[var(--background)]/80 hover:text-[var(--background)] transition-colors"
-                                >
-                                    hello@vstories.in
-                                </a>
-                            </li>
-                            <li className="flex items-center gap-3">
-                                <MapPin className="w-4 h-4 text-[var(--highlight)]" />
-                                <span className="text-sm text-[var(--background)]/80">
-                                    Kilakarai, Tamil Nadu
-                                </span>
-                            </li>
-                        </ul>
-                    </FooterAccordion>
+                    {/* Join Community */}
+                    <div className="lg:col-span-1">
+                        <h4 className="text-xl font-bold mb-6 font-inter">Join our community</h4>
+                        <p className="text-sm text-[var(--secondary-light)]/80 mb-6 font-inter">
+                            Be the first to know about new products, exclusive offers and skincare tips.
+                        </p>
+                        <div className="flex flex-col gap-4">
+                            <input 
+                                type="email" 
+                                placeholder="Email address"
+                                className="bg-transparent border border-[var(--secondary-light)]/30 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[var(--secondary-light)]"
+                            />
+                            <button className="bg-[var(--secondary-light)] text-[var(--primary)] py-3 rounded-lg font-bold hover:bg-white transition-all">
+                                Join
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             {/* Bottom Bar */}
-            <div className="border-t border-[var(--background)]/10">
-                <div className="container-premium py-6">
-                    <div className="flex flex-col items-center text-center gap-2">
-                        <p className="text-xs text-[var(--background)]/60">
+            <div className="border-t border-[var(--secondary-light)]/10">
+                <div className="container-premium py-8">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+                        <p className="text-sm text-[var(--secondary-light)]/60 font-inter">
                             © {new Date().getFullYear()} V STORIES. All rights reserved.
                         </p>
-                        <p className="text-xs text-[var(--background)]/60">
-                            Crafted with ♡ in Tamil Nadu, India
+                        <p className="text-sm text-[var(--secondary-light)]/60 font-inter">
+                            Made with care for you.
                         </p>
                     </div>
                 </div>

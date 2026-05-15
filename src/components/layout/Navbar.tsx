@@ -14,19 +14,22 @@ import { useLoginModal } from "@/context/LoginModalContext";
 const MobileMenu = dynamic(() => import("./MobileMenu"), { ssr: false });
 const CartDrawer = dynamic(() => import("./CartDrawer"), { ssr: false });
 
-// ... existing imports ...
-
 const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About Us" },
-    { href: "/shop/hair", label: "Hair" },
-    { href: "/shop/skin", label: "Skin Care" },
-    { href: "/shop/combos", label: "Combos & Gifts" },
-    { href: "/shop", label: "Shop All" },
+    { 
+        href: "/shop", 
+        label: "Products", 
+        dropdown: [
+            { href: "/shop/skin", label: "Skin Care" },
+            { href: "/shop/hair", label: "Hair Care" },
+            { href: "/shop/combos", label: "Combo / Gift Packs" },
+            { href: "/shop/samples", label: "Sample Packs" },
+        ]
+    },
     { href: "/contact", label: "Contact Us" },
+    { href: "/blog", label: "Blog" },
 ];
-
-// ... within Navbar component ...
 
 interface NavbarProps {
     announcement?: {
@@ -44,7 +47,7 @@ export default function Navbar({ announcement }: NavbarProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const cartItems = useCartStore((state) => state.items);
     const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -58,9 +61,9 @@ export default function Navbar({ announcement }: NavbarProps) {
     // Clear search on navigation
     useEffect(() => {
         setSearchQuery("");
+        setActiveDropdown(null);
     }, [pathname]);
 
-    // ... existing useEffect ...
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 50);
@@ -82,27 +85,32 @@ export default function Navbar({ announcement }: NavbarProps) {
             
             {/* Announcement Bar */}
             {announcement?.enabled && (
-                <div className="bg-[var(--primary)] py-2.5 overflow-hidden relative z-50">
-                    <div className="container-premium flex items-center justify-center text-center px-4">
-                        <p className="text-sm font-medium tracking-wide !text-white" style={{ color: '#FFFFFF' }}>
+                <div className="bg-[var(--primary)] py-2.5 z-50">
+                    <div className="container-premium flex items-center justify-center gap-6 text-center">
+                        <p className="text-sm md:text-base font-medium text-white tracking-wide">
                             {announcement.text}
                         </p>
+                        <Link 
+                            href="/shop" 
+                            className="bg-white text-[var(--primary)] px-5 py-1 rounded-full text-xs font-bold hover:bg-[var(--secondary-light)] transition-all uppercase tracking-wider"
+                        >
+                            Shop Now
+                        </Link>
                     </div>
                 </div>
             )}
 
             {/* Main Navbar */}
             <header
-                className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled
-                    ? "glass shadow-md py-2"
-                    : "bg-[var(--background)]/80 py-2"
+                className={`sticky top-0 z-50 transition-all duration-500 ${isScrolled
+                    ? "bg-white/95 backdrop-blur-md shadow-sm py-2"
+                    : "bg-[var(--background)] py-4"
                     }`}
             >
                 <div className="container-premium">
-                    <nav className="flex items-center justify-between">
+                    <nav className="flex items-center justify-between relative">
                         {/* Left - Mobile: Hamburger + Logo */}
-                        <div className="flex items-center gap-3 lg:gap-8">
-                            {/* Mobile Menu Button */}
+                        <div className="flex items-center gap-4">
                             <button
                                 className="lg:hidden p-2 -ml-2 text-[var(--primary)]"
                                 onClick={() => setIsMobileMenuOpen(true)}
@@ -111,85 +119,115 @@ export default function Navbar({ announcement }: NavbarProps) {
                                 <Menu className="w-6 h-6" />
                             </button>
 
-                            {/* Logo Icon - Shows on all screens */}
                             <Link href="/" className="flex-shrink-0">
                                 <Image
                                     src="/images/logo.png"
                                     alt="V Stories Logo"
-                                    width={45}
-                                    height={45}
-                                    className="rounded-full lg:w-[55px] lg:h-[55px]"
+                                    width={isScrolled ? 50 : 65}
+                                    height={isScrolled ? 50 : 65}
+                                    className="rounded-full transition-all duration-500"
                                 />
                             </Link>
-
                         </div>
 
-                        {/* Center - All Navigation Links */}
-                        <div className="hidden lg:flex items-center justify-center gap-8 absolute left-1/2 -translate-x-1/2">
+                        {/* Center - Navigation Links */}
+                        <div className="hidden lg:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
                             {navLinks.map((link) => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className="text-base font-semibold text-black hover:text-[var(--gold)] transition-all duration-300 relative group tracking-wide whitespace-nowrap"
+                                <div 
+                                    key={link.label}
+                                    className="relative group"
+                                    onMouseEnter={() => link.dropdown && setActiveDropdown(link.label)}
+                                    onMouseLeave={() => setActiveDropdown(null)}
                                 >
-                                    {link.label}
-                                    <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-[var(--gold)] to-[var(--highlight)] transition-all duration-300 group-hover:w-full" />
-                                </Link>
+                                    <Link
+                                        href={link.href}
+                                        className={`flex items-center gap-1 text-[15px] font-semibold transition-all duration-300 relative tracking-wide uppercase ${
+                                            pathname === link.href ? "text-[var(--primary)]" : "text-black/70 hover:text-[var(--primary)]"
+                                        }`}
+                                    >
+                                        {link.label}
+                                        {link.dropdown && (
+                                            <svg className={`w-4 h-4 transition-transform duration-300 ${activeDropdown === link.label ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        )}
+                                        <span className={`absolute -bottom-1 left-0 h-[2px] bg-[var(--primary)] transition-all duration-300 ${
+                                            pathname === link.href ? "w-full" : "w-0 group-hover:w-full"
+                                        }`} />
+                                    </Link>
+
+                                    {/* Dropdown Menu */}
+                                    {link.dropdown && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10, pointerEvents: "none" }}
+                                            animate={{ 
+                                                opacity: activeDropdown === link.label ? 1 : 0, 
+                                                y: activeDropdown === link.label ? 0 : 10,
+                                                pointerEvents: activeDropdown === link.label ? "auto" : "none"
+                                            }}
+                                            className="absolute top-full left-0 mt-2 w-56 bg-white shadow-xl rounded-xl overflow-hidden border border-gray-100 z-[100]"
+                                        >
+                                            <div className="py-2">
+                                                {link.dropdown.map((sublink) => (
+                                                    <Link
+                                                        key={sublink.label}
+                                                        href={sublink.href}
+                                                        className="block px-6 py-3 text-sm font-medium text-gray-700 hover:bg-[var(--background-warm)] hover:text-[var(--primary)] transition-colors"
+                                                    >
+                                                        {sublink.label}
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </div>
                             ))}
                         </div>
 
                         {/* Right - Icons */}
-                        <div className="hidden lg:flex items-center gap-3 justify-end flex-shrink-0">
-                            <div className="flex items-center gap-2 border-l border-[var(--primary)]/20 pl-3">
-                                {/* Desktop Search Input */}
-                                <form onSubmit={handleSearch} className="relative group">
+                        <div className="hidden lg:flex items-center gap-5">
+                            {/* Search */}
+                            <form onSubmit={handleSearch} className="relative">
+                                <div className="flex items-center gap-3 px-4 py-2 rounded-full border border-black/10 bg-black/5 w-[200px] focus-within:w-[240px] focus-within:bg-white focus-within:border-[var(--primary)]/30 transition-all duration-300">
+                                    <Search className="w-4 h-4 text-black/50" />
                                     <input
                                         type="text"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         placeholder="Search..."
-                                        aria-label="Search products"
-                                        className="pl-4 pr-10 py-2 rounded-full border border-gray-200 bg-gray-50/50 focus:bg-white text-sm focus:outline-none focus:border-[var(--primary)] w-[130px] focus:w-[160px] transition-all duration-300 shadow-sm"
+                                        className="bg-transparent text-sm focus:outline-none w-full font-inter placeholder:text-black/30"
                                     />
-                                    <button
-                                        type="submit"
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[var(--primary)] transition-colors"
-                                        aria-label="Search"
-                                    >
-                                        <Search className="w-4 h-4" />
-                                    </button>
-                                </form>
+                                </div>
+                            </form>
 
+                            <div className="flex items-center gap-2">
                                 {user ? (
                                     <Link
                                         href="/profile"
-                                        className="p-2 text-[var(--primary)] hover:text-[var(--gold)] transition-colors relative group"
+                                        className="p-2 text-[var(--primary)] hover:scale-110 transition-transform relative"
                                         aria-label="Profile"
                                     >
-                                        <User className="w-5 h-5" />
-                                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></span>
+                                        <User className="w-6 h-6" />
+                                        <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></span>
                                     </Link>
                                 ) : (
                                     <button
                                         onClick={openLoginModal}
-                                        className="flex items-center gap-2 px-6 py-2 rounded-full text-sm font-bold transition-all shadow-md hover:shadow-lg whitespace-nowrap bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)]"
-                                        aria-label="Login"
+                                        className="flex items-center gap-2 px-6 py-2 rounded-full text-sm font-bold bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] transition-all shadow-sm hover:shadow-md uppercase tracking-wider"
                                     >
-                                        <User className="w-4 h-4" />
                                         Login
                                     </button>
                                 )}
+                                
                                 <button
-                                    className="relative p-2 text-[var(--primary)] hover:text-[var(--gold)] transition-colors"
+                                    className="relative p-2 text-[var(--primary)] hover:scale-110 transition-transform"
                                     onClick={() => setIsCartOpen(true)}
                                     aria-label="Cart"
                                 >
-                                    <ShoppingBag className="w-5 h-5" />
+                                    <ShoppingBag className="w-6 h-6" />
                                     {cartCount > 0 && (
                                         <motion.span
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
-                                            className="absolute -top-0.5 -right-0.5 w-5 h-5 flex items-center justify-center bg-[var(--highlight)] text-white text-xs font-medium rounded-full"
+                                            className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-[var(--highlight)] text-white text-[10px] font-bold rounded-full border-2 border-white"
                                         >
                                             {cartCount}
                                         </motion.span>
@@ -199,28 +237,16 @@ export default function Navbar({ announcement }: NavbarProps) {
                         </div>
 
                         {/* Mobile Icons */}
-                        <div className="flex lg:hidden items-center gap-2">
-                            {/* Search Hidden as per request */}
-                            <button
-                                className="hidden p-2 text-[var(--primary)]"
-                                onClick={() => setIsSearchOpen(true)}
-                                aria-label="Search"
-                            >
-                                <Search className="w-5 h-5" />
-                            </button>
-
-                            {/* Profile Icon */}
+                        <div className="flex lg:hidden items-center gap-3">
                             {user ? (
-                                <Link href="/profile" className="p-2 text-[var(--primary)]" aria-label="Profile">
-                                    <User className="w-5 h-5" />
+                                <Link href="/profile" className="p-2 text-[var(--primary)]">
+                                    <User className="w-6 h-6" />
                                 </Link>
                             ) : (
                                 <button
                                     onClick={openLoginModal}
-                                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-[var(--primary)] text-white"
-                                    aria-label="Login"
+                                    className="px-4 py-1.5 rounded-full text-xs font-bold bg-[var(--primary)] text-white uppercase tracking-wider"
                                 >
-                                    <User className="w-3.5 h-3.5" />
                                     Login
                                 </button>
                             )}
@@ -230,9 +256,9 @@ export default function Navbar({ announcement }: NavbarProps) {
                                 onClick={() => setIsCartOpen(true)}
                                 aria-label="Cart"
                             >
-                                <ShoppingBag className="w-5 h-5" />
+                                <ShoppingBag className="w-6 h-6" />
                                 {cartCount > 0 && (
-                                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 flex items-center justify-center bg-[var(--highlight)] text-white text-[10px] font-medium rounded-full">
+                                    <span className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-[var(--highlight)] text-white text-[10px] font-bold rounded-full border-2 border-white">
                                         {cartCount}
                                     </span>
                                 )}

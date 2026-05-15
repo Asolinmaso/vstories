@@ -1,16 +1,15 @@
-import HeroCarousel from "@/components/home/HeroCarousel";
+import Hero from "@/components/home/Hero";
 import FeaturedBestsellers from "@/components/home/FeaturedBestsellers";
 import CategoryBanners from "@/components/home/CategoryBanners";
-import VStoriesDifference from "@/components/home/VStoriesDifference";
+import FindWhatYouNeed from "@/components/home/FindWhatYouNeed";
+import CategoryGrid from "@/components/home/CategoryGrid";
+import OffersSection from "@/components/home/OffersSection";
+import BrandStoryBanner from "@/components/home/BrandStoryBanner";
+import CleanBeauty from "@/components/home/CleanBeauty";
+import TrustFeatures from "@/components/home/TrustFeatures";
 import RealResults from "@/components/home/RealResults";
-import CategoryShowcase from "@/components/home/CategoryShowcase";
-import GroundedInNature from "@/components/home/GroundedInNature";
 import CustomerLove from "@/components/home/CustomerLove";
-import IngredientSpotlight from "@/components/home/IngredientSpotlight";
 import Marquee from "@/components/ui/Marquee";
-import FounderStory from "@/components/home/FounderStory";
-import ComboOffer from "@/components/home/ComboOffer";
-import FeedbackSection from "@/components/home/FeedbackSection";
 import { getProducts } from "@/lib/services/product.service";
 import { getWebsiteConfig } from "@/lib/services/website.service";
 
@@ -52,48 +51,45 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      {/* Hero Section */}
-      <HeroCarousel images={config.carouselImages} />
+      {/* 1. Hero Section */}
+      <Hero />
 
-      {/* Trust Marquee */}
-      <Marquee items={trustItems} variant="light" speed="slow" />
+      {/* 2. Trust Marquee */}
+      <Marquee items={trustItems} variant="dark" speed="slow" />
 
-      {/* Category Banners (Restored: 4 image cards) */}
-      <CategoryBanners />
+      {/* 3. Browse by category */}
+      <CategoryGrid />
 
-      {/* Featured Bestsellers */}
+      {/* 4. Find what your skin & hair truly needs */}
+      <FindWhatYouNeed products={products} />
+
+      {/* 5. Featured Bestsellers */}
       <FeaturedBestsellers dbProducts={products} />
 
-      {/* Real Results / Testimonials */}
+      {/* 6. Experience Banners */}
+      <CategoryBanners />
+
+      {/* 7. Offers Crafted for You */}
+      <OffersSection />
+
+      {/* 8. Brand Story Banner */}
+      <BrandStoryBanner />
+
+      {/* 9. Real Results */}
       <RealResults />
 
-      {/* Save Big On Combos */}
-      <ComboOffer />
-
-      {/* Founder Story */}
-      <FounderStory />
-
-      {/* Shop By Category (Tabs & Scroll) */}
-      <CategoryShowcase dbProducts={products} />
-
-      {/* Grounded In Nature (Brand Features) */}
-      <GroundedInNature />
-
-      {/* Customer Love (Reviews) */}
+      {/* 10. Customer Love (Reviews) */}
       <CustomerLove
         testimonials={config.testimonialsList}
         title={config.testimonialsHeader.title}
         subtitle={config.testimonialsHeader.subtitle}
       />
 
-      {/* Feedback Section */}
-      <FeedbackSection products={products} />
+      {/* 11. Clean, effective & honest */}
+      <CleanBeauty />
 
-      {/* Ingredient Spotlight */}
-      {/* <IngredientSpotlight /> */}
-
-      {/* V Stories Difference */}
-      <VStoriesDifference />
+      {/* 12. Bottom Trust Features */}
+      <TrustFeatures />
     </>
   );
 }

@@ -6,39 +6,37 @@
    ============================================ */
 
 :root {
-  /* Primary Colors - Refined to Deep Forest Green */
-  --primary: #1A3026;
-  --primary-dark: #0F1D17;
+  /* Primary Colors - Refined to Deep Forest Green (Figma) */
+  --primary: #1D3B29;
+  --primary-dark: #1A3E25;
   --primary-light: #2A4538;
 
   /* Secondary Colors */
-  --secondary: #3A5D20;
-  --secondary-light: #869D57;
-  --secondary-pale: #b8c78a;
+  --secondary: #778E6B;
+  --secondary-light: #F7EDE2;
+  --secondary-pale: #F4F0EC;
 
-  /* Accent / CTA - Gold Luxury */
-  --highlight: #C27E0F;
-  --highlight-dark: #a36a0d;
-  --highlight-light: #d4941f;
-  --gold: #D4AF37;
-  --gold-light: #E8C547;
-  --gold-glow: rgba(212, 175, 55, 0.4);
+  /* Accent / CTA - Gold Luxury (Figma) */
+  --highlight: #E8BF72;
+  --highlight-dark: #B99757;
+  --highlight-light: #F4F0EC;
+  --gold: #E8BF72;
+  --gold-light: #F4F0EC;
+  --gold-glow: rgba(232, 191, 114, 0.4);
 
-  /* Neutrals - Refined Warm Cream */
-  --background: #F9F4F0;
-  --background-dark: #F2E9E1;
-  --background-warm: #FAF6F2;
-  --cream: #FAF8F5;
+  /* Neutrals - Refined Warm Cream (Figma) */
+  --background: #FCFAF4;
+  --background-dark: #F3EEE9;
+  --background-warm: #F4EEE2;
+  --cream: #FCFAF4;
   --white: #FFFFFF;
-  --black: #1a1a1a;
+  --black: #000000;
 
   /* Text Colors */
-  --text-primary: #1D3515;
-  --text-secondary: #2d2d2d;
-  /* Darkened from #4a4a4a for better visibility */
+  --text-primary: #2E2E2E;
+  --text-secondary: #000000;
   --text-muted: #525252;
-  /* Darkened from #6b6b6b */
-  --text-light: #EFE9DC;
+  --text-light: #F7EDE2;
 
   /* Premium Gradients */
   --gradient-primary: linear-gradient(135deg, #1D3515 0%, #3A5D20 100%);
@@ -99,32 +97,31 @@
   --color-highlight: var(--highlight);
   --color-background: var(--background);
   --color-white: var(--white);
-  --font-heading: var(--font-peachi);
-  --font-body: var(--font-fira-sans);
+  --font-heading: var(--font-playfair);
+  --font-body: var(--font-inter);
 }
 
-/* ============================================
-   Global Styles
-   ============================================ */
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
+/* Base Typography Configuration */
 body {
   background-color: var(--background);
   color: var(--text-primary);
-  font-family: var(--font-fira-sans), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-playfair), serif;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.font-playfair { font-family: var(--font-playfair), serif; }
+.font-inter { font-family: var(--font-inter), sans-serif; }
+.font-poppins { font-family: var(--font-poppins), sans-serif; }
 
 /* ============================================
    Typography
