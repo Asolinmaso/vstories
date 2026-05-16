@@ -29,19 +29,23 @@ function SectionTag({ label, dark = false }: { label: string; dark?: boolean }) 
   );
 }
 
-/* ─── Value card (responsive, no fixed positioning) ───────── */
-function ValueCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+/* ─── Value card (responsive, with optional hanging line) ───── */
+function ValueCard({ icon, title, desc, containerClassName = "", lineClassName = "" }: { icon: React.ReactNode; title: string; desc: string; containerClassName?: string; lineClassName?: string }) {
   return (
-    <div className="flex flex-col items-center text-center gap-4 px-4">
-      <div className="relative flex items-center justify-center w-32 h-32 md:w-36 md:h-36 rounded-full"
+    <div className={`flex flex-col items-center text-center px-2 relative ${containerClassName}`}>
+      {/* Desktop hanging line connecting to the title area */}
+      {lineClassName && (
+        <div className={`hidden md:block absolute left-1/2 -translate-x-1/2 w-[1px] bg-[#1D3B29] ${lineClassName}`} />
+      )}
+      <div className="relative flex items-center justify-center w-28 h-28 md:w-36 md:h-36 rounded-full"
         style={{ background: "linear-gradient(231.77deg,#CBA45A 16.84%,#FFEAC3 54.23%,#C39641 91.63%)" }}>
-        <div className="flex items-center justify-center rounded-full w-24 h-24"
+        <div className="flex items-center justify-center rounded-full w-20 h-20 md:w-24 md:h-24"
           style={{ background: "#1D3B29", boxShadow: "0px 4px 20px rgba(0,0,0,0.25)" }}>
           {icon}
         </div>
       </div>
-      <span className="font-inter font-semibold text-[#2E2E2E] text-lg md:text-2xl">{title}</span>
-      <span className="font-inter font-normal text-[#2E2E2E] text-sm md:text-base max-w-[200px]">{desc}</span>
+      <span className="font-inter font-semibold text-[#2E2E2E] text-lg md:text-2xl mt-4">{title}</span>
+      <span className="font-inter font-normal text-[#2E2E2E] text-sm md:text-base max-w-[200px] mt-2">{desc}</span>
     </div>
   );
 }
@@ -106,11 +110,39 @@ export default function AboutContent() {
               What We Stand For
             </h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4">
-            <ValueCard icon={<Leaf className="w-8 h-8 text-[#F4F0EC]" />} title="100% Natural" desc="Every ingredient is sourced from nature, ensuring purity and effectiveness." />
-            <ValueCard icon={<Heart className="w-8 h-8 text-[#F4F0EC]" />} title="Made with Love" desc="Each product is crafted with care and passion for holistic beauty." />
-            <ValueCard icon={<Users className="w-8 h-8 text-[#F4F0EC]" />} title="Community Focused" desc="We believe in empowering our community through natural wellness." />
-            <ValueCard icon={<Award className="w-8 h-8 text-[#F4F0EC]" />} title="Quality First" desc="We never compromise on quality, using only the finest herbs and oils." />
+          {/* Hanging values grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-4 md:gap-4 relative pt-4 md:pt-10">
+            {/* Horizontal connecting line (hidden on mobile) */}
+            <div className="hidden md:block absolute top-0 left-[12.5%] right-[12.5%] h-[1px] bg-[#1D3B29]" />
+            
+            <ValueCard 
+              icon={<Leaf className="w-8 h-8 text-[#F4F0EC]" />} 
+              title="100% Natural" 
+              desc="Every ingredient is sourced from nature, ensuring purity and effectiveness." 
+              containerClassName="md:pt-[50px]"
+              lineClassName="top-0 h-[50px]"
+            />
+            <ValueCard 
+              icon={<Heart className="w-8 h-8 text-[#F4F0EC]" />} 
+              title="Made with Love" 
+              desc="Each product is crafted with care and passion for holistic beauty." 
+              containerClassName="md:pt-[160px]"
+              lineClassName="top-0 h-[160px]"
+            />
+            <ValueCard 
+              icon={<Users className="w-8 h-8 text-[#F4F0EC]" />} 
+              title="Community Focused" 
+              desc="We believe in empowering our community through natural wellness." 
+              containerClassName="md:pt-[160px]"
+              lineClassName="top-0 h-[160px]"
+            />
+            <ValueCard 
+              icon={<Award className="w-8 h-8 text-[#F4F0EC]" />} 
+              title="Quality First" 
+              desc="We never compromise on quality, using only the finest herbs and oils." 
+              containerClassName="md:pt-[30px]"
+              lineClassName="top-0 h-[30px]"
+            />
           </div>
         </div>
       </section>
