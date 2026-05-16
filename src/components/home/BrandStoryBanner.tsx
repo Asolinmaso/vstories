@@ -21,7 +21,7 @@ export default function BrandStoryBanner() {
 
       {/* Content - left aligned per Figma */}
       <div className="absolute inset-0 w-full flex items-center">
-        <div className="w-full max-w-[1440px] mx-auto px-[100px]">
+        <div className="w-full max-w-[1440px] mx-auto px-6 md:px-[100px]">
           <div style={{ maxWidth: "562px" }}>
             <motion.h2
               initial={{ opacity: 0, y: 30 }}

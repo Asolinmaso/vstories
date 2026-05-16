@@ -30,7 +30,7 @@ export default function OffersSection() {
 
   return (
     <section className="py-20" style={{ background: "#FCFAF4" }}>
-      <div className="w-full max-w-[1440px] mx-auto px-[100px]">
+      <div className="w-full max-w-[1440px] mx-auto px-6 md:px-[100px]">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-16">
           <motion.div
@@ -84,10 +84,9 @@ export default function OffersSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-start gap-6 p-6"
+            className="flex items-start gap-6 p-6 w-full md:w-auto md:min-w-[333px]"
             style={{
-              width: "333px",
-              height: "182px",
+              minHeight: "182px",
               background: "#F9F6F1",
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
               borderRadius: "12px",
@@ -142,10 +141,9 @@ export default function OffersSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="flex items-start gap-6 p-6"
+            className="flex items-start gap-6 p-6 w-full md:w-auto md:min-w-[315px]"
             style={{
-              width: "315px",
-              height: "182px",
+              minHeight: "182px",
               background: "#778E6B",
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
               borderRadius: "12px",
@@ -200,10 +198,9 @@ export default function OffersSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="flex items-start gap-6 p-6"
+            className="flex items-start gap-6 p-6 w-full md:w-auto md:min-w-[300px]"
             style={{
-              width: "300px",
-              height: "182px",
+              minHeight: "182px",
               background: "#F9F6F1",
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
               borderRadius: "12px",

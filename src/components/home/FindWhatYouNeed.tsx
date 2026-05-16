@@ -223,7 +223,7 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
       className="py-20"
       style={{ background: "#FCFAF4" }}
     >
-      <div className="w-full max-w-[1440px] mx-auto px-[100px]">
+      <div className="w-full max-w-[1440px] mx-auto px-6 md:px-[100px]">
         {/* Section header: subtitle row with decorative leaves */}
         <div className="flex flex-col items-center text-center mb-8">
           <motion.div
