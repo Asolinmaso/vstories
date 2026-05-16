@@ -56,19 +56,14 @@ function ProductCard({ product }: { product: Product }) {
 
   return (
     <div
-      className="relative flex flex-col bg-[#FCFAF4]"
+      className="relative flex flex-col bg-[#FCFAF4] w-full rounded-xl overflow-hidden"
       style={{
-        width: "396px",
-        height: "641px",
-        maxWidth: "100%",
         border: "1px solid #D9D9D9",
         boxShadow: "0px 20px 20px rgba(0, 0, 0, 0.1)",
-        borderRadius: "12px",
-        overflow: "hidden",
       }}
     >
       {/* Product Image */}
-      <div className="relative" style={{ width: "100%", height: "387px", flexShrink: 0 }}>
+      <div className="relative w-full aspect-[396/387] flex-shrink-0">
         <Image
           src={product.images?.[0] || "/images/products/prophetic-face-serum.png"}
           alt={product.name}
@@ -103,7 +98,7 @@ function ProductCard({ product }: { product: Product }) {
         </p>
 
         {/* Price + Rating row */}
-        <div className="flex items-center justify-between mt-4" style={{ width: "348px", maxWidth: "100%" }}>
+        <div className="flex items-center justify-between mt-4 w-full flex-wrap gap-2">
           {/* Price */}
           <div className="flex items-center gap-2">
             <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: "24px", lineHeight: "29px" }}>
@@ -131,31 +126,22 @@ function ProductCard({ product }: { product: Product }) {
         <div className="flex items-center gap-4 mt-6">
           <button
             onClick={handleAddToCart}
-            className="font-inter font-medium text-[#1D3B29] transition-all hover:bg-[#1D3B29] hover:text-white"
+            className="font-inter font-medium text-[#1D3B29] transition-all hover:bg-[#1D3B29] hover:text-white rounded-lg flex-1"
             style={{
-              width: "162px",
-              height: "43px",
+              padding: "10px",
               border: "1px solid #1D3B29",
-              borderRadius: "8px",
-              fontSize: "16px",
-              lineHeight: "19px",
+              fontSize: "14px",
             }}
           >
             Add to cart
           </button>
           <Link
             href={`/product/${product.slug || product.id}`}
-            className="font-inter font-medium text-[#F7EDE2] transition-all hover:opacity-90"
+            className="font-inter font-medium text-[#F7EDE2] transition-all hover:opacity-90 flex-1 flex items-center justify-center rounded-lg"
             style={{
-              width: "162px",
-              height: "43px",
+              padding: "10px",
               background: "#1D3B29",
-              borderRadius: "8px",
-              fontSize: "16px",
-              lineHeight: "19px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              fontSize: "14px",
             }}
           >
             Buy Now
@@ -301,8 +287,8 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
           ))}
         </div>
 
-        {/* Product Cards */}
-        <div className="flex flex-wrap justify-center gap-6">
+        {/* Product Cards - grid layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product: any) => (
               <ProductCard key={product.id} product={product} />

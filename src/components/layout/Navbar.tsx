@@ -109,26 +109,23 @@ export default function Navbar({ announcement }: NavbarProps) {
 
             {/* Main Navbar */}
             <header
-                className={`sticky top-0 z-50 transition-all duration-500 bg-[#F3EEE9] shadow-sm h-[100px] flex items-center`}
+                className={`sticky top-0 z-50 transition-all duration-500 bg-[#F3EEE9] shadow-sm h-[80px] md:h-[100px] flex items-center`}
             >
-                <div className="container-premium px-[100px] pr-[105px]">
-                    <nav className="grid grid-cols-[171px_142px_424px_142px_356px] items-center w-full">
-                        {/* 1. Left - Logo (171x52) */}
-                        <Link href="/" className="flex-shrink-0 w-[171px]">
+                <div className="w-full max-w-[1440px] mx-auto px-4 md:px-[100px]">
+                    <nav className="flex items-center justify-between w-full">
+                        {/* Logo – always visible */}
+                        <Link href="/" className="flex-shrink-0">
                             <Image
                                 src="/images/logo.png"
                                 alt="V Stories Logo"
-                                width={171}
-                                height={52}
-                                className="object-contain"
+                                width={140}
+                                height={44}
+                                className="object-contain w-[120px] md:w-[171px] h-auto"
                             />
                         </Link>
 
-                        {/* 2. Spacer (142px) */}
-                        <div className="hidden lg:block w-[142px]" />
-
-                        {/* 3. Center - Navigation Links (Width: 424px) */}
-                        <div className="hidden lg:flex items-center gap-[24px] w-[424px]">
+                        {/* Desktop nav links – hidden on mobile */}
+                        <div className="hidden lg:flex items-center gap-[24px]">
                             {navLinks.map((link) => (
                                 <div
                                     key={link.label}
@@ -180,11 +177,8 @@ export default function Navbar({ announcement }: NavbarProps) {
                             ))}
                         </div>
 
-                        {/* 4. Spacer (142px) */}
-                        <div className="hidden lg:block w-[142px]" />
-
-                        {/* 5. Right Section (Width: 356px) */}
-                        <div className="hidden lg:flex items-center gap-[32px] w-[356px]">
+                        {/* Desktop right section */}
+                        <div className="hidden lg:flex items-center gap-[32px]">
                             {/* Search Bar */}
                             <form onSubmit={handleSearch} className="relative">
                                 <div className="flex items-center gap-3 px-4 py-[12px] rounded-lg border border-black bg-transparent w-[229px] h-[40px]">
@@ -237,32 +231,26 @@ export default function Navbar({ announcement }: NavbarProps) {
                             )}
                         </div>
 
-                        {/* Mobile Controls */}
-                        <div className="flex lg:hidden items-center justify-between w-full">
-                            <button
-                                className="p-2 text-black"
-                                onClick={() => setIsMobileMenuOpen(true)}
-                                aria-label="Open menu"
-                            >
-                                <Menu className="w-6 h-6" />
-                            </button>
-
-                            <Link href="/" className="flex-shrink-0">
-                                <Image
-                                    src="/images/logo.png"
-                                    alt="V Stories Logo"
-                                    width={120}
-                                    height={36}
-                                    className="object-contain"
-                                />
-                            </Link>
-
+                        {/* Mobile controls – hamburger + cart */}
+                        <div className="flex lg:hidden items-center gap-3">
                             <button
                                 className="relative p-2 text-black"
                                 onClick={() => setIsCartOpen(true)}
                                 aria-label="Cart"
                             >
                                 <ShoppingBag className="w-6 h-6" />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center bg-[var(--highlight)] text-white text-[9px] font-bold rounded-full">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </button>
+                            <button
+                                className="p-2 text-black"
+                                onClick={() => setIsMobileMenuOpen(true)}
+                                aria-label="Open menu"
+                            >
+                                <Menu className="w-6 h-6" />
                             </button>
                         </div>
                     </nav>
