@@ -100,9 +100,21 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
   };
 
   return (
-    <div className="flex flex-col gap-5 w-full">
+    <div
+      className="flex flex-col justify-center items-start gap-6"
+      style={{ width: "292px" }}
+    >
       {/* Image box */}
-      <div className="relative w-full aspect-[292/303] rounded-lg overflow-hidden" style={{ background: "#EAEAEA" }}>
+      <div
+        className="relative"
+        style={{
+          width: "292px",
+          height: "303px",
+          background: "#EAEAEA",
+          borderRadius: "8px",
+          overflow: "hidden",
+        }}
+      >
         <Image
           src={product.image_url || "/images/products/prophetic-face-serum.png"}
           alt={product.name}
@@ -129,13 +141,16 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
       </div>
 
       {/* Info */}
-      <div className="flex flex-col gap-3 w-full">
-        <h3 className="font-inter font-semibold text-[#2E2E2E] text-lg md:text-xl lg:text-2xl">
+      <div className="flex flex-col gap-3" style={{ width: "292px" }}>
+        <h3
+          className="font-inter font-semibold text-[#2E2E2E]"
+          style={{ fontSize: "24px", lineHeight: "29px" }}
+        >
           {product.name}
         </h3>
 
         {/* Price + Rating row */}
-        <div className="flex items-center justify-between w-full flex-wrap gap-2">
+        <div className="flex items-center justify-between" style={{ width: "292px" }}>
           <div className="flex items-center gap-2">
             <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: "24px", lineHeight: "29px" }}>
               ₹{product.price}
@@ -160,8 +175,15 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
         {/* Shop Now Button */}
         <button
           onClick={handleShop}
-          className="font-inter font-medium text-[#F7EDE2] hover:opacity-90 transition-all flex items-center justify-center rounded-lg"
-          style={{ padding: "12px 24px", background: "#1A3E25", fontSize: "16px" }}
+          className="font-inter font-medium text-[#F7EDE2] hover:opacity-90 transition-all flex items-center justify-center"
+          style={{
+            width: "127px",
+            height: "43px",
+            background: "#1A3E25",
+            borderRadius: "8px",
+            fontSize: "16px",
+            lineHeight: "19px",
+          }}
         >
           Shop Now
         </button>
@@ -178,7 +200,7 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
 
   return (
     <section className="py-20" style={{ background: "#FCFAF4" }}>
-      <div className="w-full max-w-[1440px] mx-auto px-6 md:px-[100px]">
+      <div className="w-full max-w-[1440px] mx-auto px-[100px]">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-12">
           <motion.div
@@ -228,8 +250,8 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
           </motion.p>
         </div>
 
-        {/* Products Grid - 2 cols on mobile, 4 on desktop */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        {/* Products Grid - 4 columns */}
+        <div className="flex flex-wrap justify-center gap-6">
           {displayProducts.map((product: any, index: number) => (
             <motion.div
               key={product.id}

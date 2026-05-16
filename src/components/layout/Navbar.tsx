@@ -93,13 +93,13 @@ export default function Navbar({ announcement }: NavbarProps) {
                                     <path d="M2.67806 0.393273C3.33698 0.746016 3.86524 1.26031 4.27352 1.86988C4.93665 2.86007 5.32531 4.08777 5.64054 5.36694C6.27084 7.92543 6.64437 10.715 7.77326 12.1466C8.83291 13.4904 10.0172 14.1032 11.144 14.2227C11.6287 14.2742 12.107 14.2325 12.5642 14.1104C12.5917 10.6285 11.032 6.71738 8.37049 4.61054C11.4761 6.14733 13.7451 9.27599 14.257 13.1784L13.89 13.4892C14.0091 13.4058 14.1242 13.3167 14.2348 13.2224C15.98 11.7396 16.8379 8.81822 14.9913 5.57157C14.1428 4.07991 12.3091 2.18967 9.91609 1.04988C7.84587 0.0639353 5.3733 -0.379387 2.67804 0.393385L2.67806 0.393273ZM19.3181 4.63049C19.4716 5.22489 19.4715 5.83468 19.3522 6.42831C19.1435 7.46589 18.6174 8.47483 18.0145 9.46774C16.8086 11.4535 15.3099 13.4204 15.1202 14.9811C14.9406 16.4594 15.288 17.553 15.9002 18.3107C16.1619 18.6351 16.4825 18.9075 16.8453 19.114C19.0068 16.963 20.4558 13.5914 20.1231 10.6547C21.0827 13.5168 20.5478 16.8457 18.4592 19.5823C20.4194 19.7039 22.7021 18.4343 23.5656 15.3296C23.9656 13.8911 24.0093 11.5905 23.2428 9.41464C22.5922 7.56759 21.3813 5.80863 19.3182 4.63062L19.3181 4.63049ZM-1.99875e-05 15.0004C0.277852 17.3556 1.42587 19.1575 2.87451 20.4786C4.58089 22.0347 6.72078 22.8962 8.20421 23.0928C11.4058 23.5172 13.47 21.9199 14.1261 20.0736C10.7839 20.9173 7.50419 20.1036 5.24087 18.1012C7.81924 19.5575 11.4967 19.5496 14.3277 18.4088C14.2799 17.995 14.1546 17.594 13.9582 17.2267C13.4992 16.368 12.6247 15.6205 11.1908 15.2059C9.67724 14.7684 7.27655 15.3731 4.97243 15.7013C3.82046 15.8656 2.68427 15.9536 1.64553 15.7383C1.0509 15.6151 0.488478 15.3744 9.28297e-05 15.0005L-1.99875e-05 15.0004Z" fill="currentColor" />
                                 </svg>
                             </div>
-                            <p className="text-[#1D3B29] font-inter font-normal text-sm md:text-xl lg:text-[24px] md:leading-[29px] text-left md:text-center">
+                            <p className="text-[#1D3B29] font-inter font-normal text-sm md:text-[24px] md:leading-[29px] whitespace-nowrap">
                                 Flat 20% OFF on Hair Care | Use code: HAIR20
                             </p>
                         </div>
                         <Link
                             href="/shop"
-                            className="bg-[#1D3B29] !text-white px-4 py-2 md:px-6 md:py-3 rounded-[8px] text-xs md:text-[16px] font-medium hover:bg-[#2A4F38] transition-all font-inter shrink-0 shadow-sm whitespace-nowrap"
+                            className="bg-[#1D3B29] !text-white px-6 py-3 rounded-[8px] text-sm md:text-[16px] font-medium hover:bg-[#2A4F38] transition-all font-inter shrink-0 shadow-sm"
                         >
                             Shop Now
                         </Link>
@@ -109,23 +109,26 @@ export default function Navbar({ announcement }: NavbarProps) {
 
             {/* Main Navbar */}
             <header
-                className={`sticky top-0 z-50 transition-all duration-500 bg-[#F3EEE9] shadow-sm h-[80px] md:h-[100px] flex items-center`}
+                className={`sticky top-0 z-50 transition-all duration-500 bg-[#F3EEE9] shadow-sm h-[100px] flex items-center`}
             >
-                <div className="w-full max-w-[1440px] mx-auto px-4 md:px-[100px]">
-                    <nav className="flex items-center justify-between w-full">
-                        {/* Logo – always visible */}
-                        <Link href="/" className="flex-shrink-0">
+                <div className="container-premium px-[100px] pr-[105px]">
+                    <nav className="grid grid-cols-[171px_142px_424px_142px_356px] items-center w-full">
+                        {/* 1. Left - Logo (171x52) */}
+                        <Link href="/" className="flex-shrink-0 w-[171px]">
                             <Image
                                 src="/images/logo.png"
                                 alt="V Stories Logo"
-                                width={140}
-                                height={44}
-                                className="object-contain w-[120px] md:w-[171px] h-auto"
+                                width={171}
+                                height={52}
+                                className="object-contain"
                             />
                         </Link>
 
-                        {/* Desktop nav links – hidden on mobile */}
-                        <div className="hidden lg:flex items-center gap-[24px]">
+                        {/* 2. Spacer (142px) */}
+                        <div className="hidden lg:block w-[142px]" />
+
+                        {/* 3. Center - Navigation Links (Width: 424px) */}
+                        <div className="hidden lg:flex items-center gap-[24px] w-[424px]">
                             {navLinks.map((link) => (
                                 <div
                                     key={link.label}
@@ -177,8 +180,11 @@ export default function Navbar({ announcement }: NavbarProps) {
                             ))}
                         </div>
 
-                        {/* Desktop right section */}
-                        <div className="hidden lg:flex items-center gap-[32px]">
+                        {/* 4. Spacer (142px) */}
+                        <div className="hidden lg:block w-[142px]" />
+
+                        {/* 5. Right Section (Width: 356px) */}
+                        <div className="hidden lg:flex items-center gap-[32px] w-[356px]">
                             {/* Search Bar */}
                             <form onSubmit={handleSearch} className="relative">
                                 <div className="flex items-center gap-3 px-4 py-[12px] rounded-lg border border-black bg-transparent w-[229px] h-[40px]">
@@ -231,26 +237,32 @@ export default function Navbar({ announcement }: NavbarProps) {
                             )}
                         </div>
 
-                        {/* Mobile controls – hamburger + cart */}
-                        <div className="flex lg:hidden items-center gap-3">
-                            <button
-                                className="relative p-2 text-black"
-                                onClick={() => setIsCartOpen(true)}
-                                aria-label="Cart"
-                            >
-                                <ShoppingBag className="w-6 h-6" />
-                                {cartCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center bg-[var(--highlight)] text-white text-[9px] font-bold rounded-full">
-                                        {cartCount}
-                                    </span>
-                                )}
-                            </button>
+                        {/* Mobile Controls */}
+                        <div className="flex lg:hidden items-center justify-between w-full">
                             <button
                                 className="p-2 text-black"
                                 onClick={() => setIsMobileMenuOpen(true)}
                                 aria-label="Open menu"
                             >
                                 <Menu className="w-6 h-6" />
+                            </button>
+
+                            <Link href="/" className="flex-shrink-0">
+                                <Image
+                                    src="/images/logo.png"
+                                    alt="V Stories Logo"
+                                    width={120}
+                                    height={36}
+                                    className="object-contain"
+                                />
+                            </Link>
+
+                            <button
+                                className="relative p-2 text-black"
+                                onClick={() => setIsCartOpen(true)}
+                                aria-label="Cart"
+                            >
+                                <ShoppingBag className="w-6 h-6" />
                             </button>
                         </div>
                     </nav>

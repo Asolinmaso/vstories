@@ -176,7 +176,7 @@ export default function RealResults() {
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-[100px] pt-16">
+      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-[100px] pt-16">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-12">
           <motion.div

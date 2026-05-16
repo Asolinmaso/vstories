@@ -17,7 +17,7 @@ export default function ClientLayout({ children, announcement }: ClientLayoutPro
     const pathname = usePathname();
     const isAdmin = pathname?.startsWith("/admin");
     // Pages that embed their own Figma footer
-    const hasOwnFooter = false; // All pages use shared Footer
+    const hasOwnFooter = pathname === "/about" || pathname === "/blog";
 
     return (
         <LoginModalProvider>

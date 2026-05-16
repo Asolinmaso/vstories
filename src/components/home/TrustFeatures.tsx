@@ -46,7 +46,7 @@ export default function TrustFeatures() {
       className="w-full"
       style={{ background: "#F7F3EF", height: "185px", display: "flex", alignItems: "center" }}
     >
-      <div className="w-full max-w-[1440px] mx-auto px-6 md:px-[100px]">
+      <div className="w-full max-w-[1440px] mx-auto px-[100px]">
         <div className="flex items-center justify-around">
           {features.map((feature, idx) => (
             <div

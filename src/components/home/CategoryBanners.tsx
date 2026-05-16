@@ -8,7 +8,7 @@ export default function CategoryBanners() {
   return (
     <section className="py-12" style={{ background: "#FCFAF4" }}>
       <div
-        className="w-full max-w-[1440px] mx-auto px-6 md:px-[100px]"
+        className="w-full max-w-[1440px] mx-auto px-[100px]"
       >
         <div className="flex flex-col md:flex-row gap-8">
           {/* Banner 1: Hair Care */}
