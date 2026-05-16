@@ -62,7 +62,31 @@ export async function middleware(request: NextRequest) {
         }
     );
 
-    await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Protect user routes
+    const isUserRoute = pathname.startsWith('/profile') || pathname.startsWith('/account') || pathname.startsWith('/checkout') || pathname.startsWith('/order-success');
+    if (isUserRoute && !user) {
+        return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    // Protect admin routes
+    if (pathname.startsWith('/admin')) {
+        if (!user) {
+            return NextResponse.redirect(new URL('/', request.url));
+        }
+        
+        // Fetch user profile to check role
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+        if (profile?.role !== 'admin') {
+            return NextResponse.redirect(new URL('/', request.url));
+        }
+    }
 
     return response;
 }

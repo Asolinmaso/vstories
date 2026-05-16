@@ -5,93 +5,127 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function Hero() {
-  const thumbnails = [
-    "/images/thumb-1.png", // We'll need to make sure these exist or use placeholders
-    "/images/thumb-2.png",
-    "/images/thumb-3.png",
-    "/images/thumb-4.png",
-  ];
-
   return (
-    <section className="relative w-full bg-[var(--background-warm)] overflow-hidden min-h-[600px] md:min-h-[762px] flex items-center">
-      <div className="container-premium grid grid-cols-1 lg:grid-cols-2 gap-12 items-center py-12 md:py-0">
-        {/* Left Content */}
-        <div className="z-10 order-2 lg:order-1 px-4 lg:px-0">
-          <motion.h1 
+    <section className="relative w-full overflow-hidden" style={{ background: "#F4EEE2", minHeight: "762px" }}>
+      {/* Full-width background image */}
+      <div className="absolute inset-0 w-full h-full">
+        <Image
+          src="/images/hero-main.png"
+          alt="Nature's Goodness Clinically Crafted"
+          fill
+          className="object-cover object-center"
+          priority
+        />
+      </div>
+
+      {/* Content positioned absolutely over image, left-aligned per Figma */}
+      <div className="relative z-10 w-full min-h-[762px] flex items-center">
+        <div className="w-full max-w-[1440px] mx-auto px-[100px]">
+          {/* Heading */}
+          <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-4xl md:text-5xl lg:text-[64px] font-semibold leading-tight lg:leading-[85px] text-black mb-8 max-w-[543px] font-playfair"
+            className="font-playfair font-semibold text-black"
+            style={{
+              width: "543px",
+              fontSize: "64px",
+              lineHeight: "85px",
+              marginTop: "204px",
+              maxWidth: "100%",
+            }}
           >
-            Nature’s Goodness Clinically Crafted
+            Nature&apos;s Goodness Clinically Crafted
           </motion.h1>
-          
-          <motion.p 
+
+          {/* Subtext */}
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="text-lg md:text-xl lg:text-[24px] text-black mb-12 max-w-[628px] font-inter lg:leading-[29px]"
+            className="font-inter font-normal text-black"
+            style={{
+              width: "628px",
+              fontSize: "24px",
+              lineHeight: "29px",
+              marginTop: "20px",
+              maxWidth: "100%",
+            }}
           >
-            Clean, effective & honest skincare and haircare enriched with natural ingredients & powerful herbs for real, visible results.
+            Clean, effective &amp; honest skincare and haircare enriched with natural ingredients &amp; powerful herbs for real, visible results.
           </motion.p>
-          
+
+          {/* Explore Products Button */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            style={{ marginTop: "24px" }}
           >
-            <Link 
-              href="/shop" 
-              className="inline-flex items-center justify-center px-10 py-4 bg-[var(--primary)] !text-white rounded-lg text-lg font-bold hover:bg-[var(--primary-dark)] transition-all shadow-lg hover:shadow-xl uppercase tracking-wider"
+            <Link
+              href="/shop"
+              className="inline-flex items-center justify-center font-inter font-medium hover:opacity-90 transition-all"
+              style={{
+                width: "179px",
+                height: "43px",
+                background: "#1D3B29",
+                borderRadius: "8px",
+                color: "#F7EDE2",
+                fontSize: "16px",
+                lineHeight: "19px",
+              }}
             >
               Explore Products
             </Link>
           </motion.div>
 
-          {/* Thumbnails */}
-          <motion.div 
+          {/* Thumbnails row */}
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.6 }}
-            className="mt-12 md:mt-20 flex flex-wrap gap-4 items-end"
+            className="flex items-end gap-0"
+            style={{ marginTop: "28px", marginBottom: "0" }}
           >
-            {[1, 2, 3, 4].map((i) => (
-              <div 
-                key={i} 
-                className="w-[60px] h-[60px] rounded-xl border border-[var(--primary)] overflow-hidden hover:scale-110 transition-transform cursor-pointer shadow-sm relative"
+            {[
+              "/images/thumb-1.png",
+              "/images/thumb-2.png",
+              "/images/thumb-3.png",
+              "/images/thumb-4.png",
+            ].map((src, i) => (
+              <div
+                key={i}
+                className="relative overflow-hidden hover:scale-110 transition-transform cursor-pointer"
+                style={{
+                  width: "60px",
+                  height: "60px",
+                  border: "1px solid #1D3B29",
+                  borderRadius: "12px",
+                  marginLeft: i === 0 ? "0" : "16px",
+                }}
               >
                 <Image
-                  src={`/images/thumb-${i}.png`}
-                  alt={`Product thumbnail ${i}`}
+                  src={src}
+                  alt={`Product ${i + 1}`}
                   fill
                   className="object-cover"
                 />
               </div>
             ))}
-            <div className="w-[30px] h-[2px] bg-[var(--primary)] mb-7 ml-2 hidden md:block" />
-          </motion.div>
-        </div>
-
-        {/* Right Content - Hero Image */}
-        <div className="relative h-[400px] md:h-[764px] w-full order-1 lg:order-2">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="relative w-full h-full"
-          >
-            {/* Main Product Image */}
-            <Image
-              src="/images/hero-main.png" // We'll use the generated image here
-              alt="Nature's Goodness Product"
-              fill
-              className="object-cover lg:object-contain object-center lg:object-right"
-              priority
+            {/* Indicator line under first thumbnail per Figma */}
+            <div
+              className="hidden md:block"
+              style={{
+                width: "30px",
+                height: "0",
+                border: "2px solid #1A3E25",
+                marginLeft: "15px",
+                marginBottom: "15px",
+              }}
             />
-            
-            {/* Floating Element - Ellipse in Figma */}
-            <div className="absolute top-[-200px] right-[-400px] w-[759px] h-[759px] rounded-full bg-gradient-to-b from-[rgba(26,62,37,0.9)] to-[rgba(26,62,37,0.4)] blur-3xl opacity-20 -z-10 hidden lg:block" />
           </motion.div>
+          {/* Spacer to push content down and match 762px height */}
+          <div style={{ paddingBottom: "80px" }} />
         </div>
       </div>
     </section>

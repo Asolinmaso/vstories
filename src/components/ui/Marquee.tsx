@@ -13,15 +13,14 @@ export default function Marquee({
     variant = "light",
     speed = "normal",
 }: MarqueeProps) {
-    const bgColor = variant === "dark" ? "bg-[var(--primary)]" : "bg-[var(--primary)]";
-    const textColor = "text-[var(--secondary-light)]";
-    const accentColor = "text-[var(--secondary-light)]";
+    const bgColor = variant === "dark" ? "#1D3B29" : "#1D3B29";
+    const color = "#F7EDE2";
 
     const animationDuration =
         speed === "slow" ? "40s" : speed === "fast" ? "15s" : "25s";
 
     return (
-        <div className={`${bgColor} py-5 overflow-hidden border-b border-[var(--primary)]/10`}>
+        <div className="py-5 overflow-hidden border-b border-[var(--primary)]/10" style={{ backgroundColor: bgColor }}>
             <div
                 className="flex whitespace-nowrap min-w-full"
                 style={{
@@ -34,10 +33,11 @@ export default function Marquee({
                             <div key={`${i}-${index}`} className="flex items-center">
                                 <span
                                     className="text-lg md:text-2xl font-medium font-inter"
+                                    style={{ color: color }}
                                 >
                                     {item}
                                 </span>
-                                <div className="mx-8 w-3 h-3 rounded-full bg-[var(--secondary-light)]" />
+                                <div className="mx-8 w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
                             </div>
                         ))}
                     </div>

@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { motion } from "framer-motion";
 import AboutContent from "./AboutContent";
 
 export const metadata: Metadata = {

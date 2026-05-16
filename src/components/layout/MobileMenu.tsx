@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { X } from "lucide-react";
 
 interface MobileMenuProps {
@@ -19,6 +20,7 @@ export default function MobileMenu({
     onClose,
     navLinks,
 }: MobileMenuProps) {
+    const pathname = usePathname();
     return (
         <AnimatePresence>
             {isOpen && (
@@ -70,7 +72,11 @@ export default function MobileMenu({
                                         <div className="flex flex-col">
                                             <Link
                                                 href={link.href}
-                                                className="block py-3 text-lg font-bold text-[var(--primary)] hover:text-[var(--highlight)] transition-colors"
+                                                className={`block py-3 text-lg transition-colors ${
+                                                    (pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href)))
+                                                        ? "font-black text-[var(--primary)]" 
+                                                        : "font-medium text-black hover:text-[var(--primary)]"
+                                                }`}
                                                 onClick={() => !link.dropdown && onClose()}
                                             >
                                                 {link.label}

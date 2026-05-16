@@ -16,6 +16,8 @@ interface ClientLayoutProps {
 export default function ClientLayout({ children, announcement }: ClientLayoutProps) {
     const pathname = usePathname();
     const isAdmin = pathname?.startsWith("/admin");
+    // Pages that embed their own Figma footer
+    const hasOwnFooter = pathname === "/about" || pathname === "/blog";
 
     return (
         <LoginModalProvider>
@@ -23,7 +25,7 @@ export default function ClientLayout({ children, announcement }: ClientLayoutPro
             <main id="main-content" className={isAdmin ? "" : "pt-0"}>
                 {children}
             </main>
-            {!isAdmin && <Footer />}
+            {!isAdmin && !hasOwnFooter && <Footer />}
         </LoginModalProvider>
     );
 }

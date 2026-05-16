@@ -138,8 +138,11 @@ export default function Navbar({ announcement }: NavbarProps) {
                                 >
                                     <Link
                                         href={link.href}
-                                        className={`flex items-center gap-1.5 text-[16px] leading-[19px] transition-all duration-300 font-inter ${link.label === "Home" ? "font-semibold text-black" : "font-normal text-black hover:text-[var(--primary)]"
-                                            }`}
+                                        className={`flex items-center gap-1.5 text-[16px] leading-[19px] transition-all duration-300 font-inter ${
+                                            (pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href)))
+                                                ? "font-semibold text-[var(--primary)]" 
+                                                : "font-normal text-black hover:text-[var(--primary)]"
+                                        }`}
                                     >
                                         <span className={link.label === "Products" ? "w-[68px]" : ""}>{link.label}</span>
                                         {link.dropdown && (
@@ -226,7 +229,8 @@ export default function Navbar({ announcement }: NavbarProps) {
                             ) : (
                                 <button
                                     onClick={openLoginModal}
-                                    className="flex items-center justify-center w-[95px] h-[43px] rounded-[8px] text-[16px] leading-[19px] font-medium bg-[#1D3B29] text-[#F7EDE2] hover:bg-[#2A4F38] transition-all font-inter"
+                                    className="flex items-center justify-center w-[95px] h-[43px] rounded-[8px] text-[16px] leading-[19px] font-medium hover:bg-[#2A4F38] transition-all font-inter"
+                                    style={{ backgroundColor: '#1D3B29', color: '#F7EDE2' }}
                                 >
                                     Log In
                                 </button>
