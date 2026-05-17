@@ -1,4 +1,4 @@
-import Hero from "@/components/home/Hero";
+import HeroCarousel from "@/components/home/HeroCarousel";
 import FeaturedBestsellers from "@/components/home/FeaturedBestsellers";
 import CategoryBanners from "@/components/home/CategoryBanners";
 import FindWhatYouNeed from "@/components/home/FindWhatYouNeed";
@@ -52,7 +52,7 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {/* 1. Hero Section */}
-      <Hero />
+      <HeroCarousel />
 
       {/* 2. Trust Marquee */}
       <Marquee items={trustItems} variant="dark" speed="slow" />

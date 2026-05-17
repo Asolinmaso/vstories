@@ -151,7 +151,7 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
         {/* CTA */}
         <Link
           href={`/blog/${post.slug}`}
-          className="inline-flex items-center justify-center font-inter font-medium text-[#F7EDE2] hover:opacity-90 transition-all"
+          className="inline-flex items-center justify-center font-inter font-medium hover:opacity-90 transition-all"
           style={{
             width: 162,
             height: 43,
@@ -159,6 +159,7 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
             borderRadius: 8,
             fontSize: 16,
             lineHeight: "19px",
+            color: "#FFFFFF",
           }}
         >
           Read Article
@@ -196,7 +197,7 @@ export default function BlogContent() {
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="relative overflow-hidden" style={{ height: 581, background: "#F5F5F5" }}>
         <Image
-          src="/images/banner-hair.png"
+          src="/images/blog/blog hero.png"
           alt="Our Blog"
           fill
           className="object-cover"
@@ -283,7 +284,7 @@ export default function BlogContent() {
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center gap-10 mt-10">
+          <div className="flex items-center justify-center gap-10 mt-10">
             <button
               className="flex items-center justify-center"
               style={{
@@ -320,39 +321,23 @@ export default function BlogContent() {
               {
                 title: "Free Shipping",
                 desc: "On orders above ₹799",
-                icon: (
-                  <svg width="50" height="40" viewBox="0 0 50 40" fill="none">
-                    <rect x="1.25" y="1.25" width="30" height="22.5" rx="1" stroke="#1D3B29" strokeWidth="2.5" />
-                    <path d="M31.25 11.25H42.5L48.75 20V31.25H31.25V11.25Z" stroke="#1D3B29" strokeWidth="2.5" strokeLinejoin="round" />
-                    <circle cx="11.25" cy="33.75" r="5" stroke="#1D3B29" strokeWidth="2.5" />
-                    <circle cx="40" cy="33.75" r="5" stroke="#1D3B29" strokeWidth="2.5" />
-                  </svg>
-                ),
+                icon: "/images/icons/shippings.png",
               },
               {
                 title: "Cash On Delivery",
                 desc: "₹25 Per Order",
-                icon: (
-                  <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                    <rect x="2" y="10" width="36" height="26" rx="3" stroke="#1D3B29" strokeWidth="2.5" />
-                    <path d="M2 18H38" stroke="#1D3B29" strokeWidth="2.5" />
-                    <path d="M10 26H16M22 26H30" stroke="#1D3B29" strokeWidth="2.5" strokeLinecap="round" />
-                  </svg>
-                ),
+                icon: "/images/icons/savings.png",
               },
               {
                 title: "Secure Payments",
                 desc: "Razor Pay Payment",
-                icon: (
-                  <svg width="35" height="40" viewBox="0 0 35 40" fill="none">
-                    <path d="M17.5 2L3 8V20C3 28.284 9.64 35.944 17.5 38C25.36 35.944 32 28.284 32 20V8L17.5 2Z" stroke="#1D3B29" strokeWidth="2.5" strokeLinejoin="round" />
-                    <path d="M12 20L16 24L24 16" stroke="#1D3B29" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                ),
+                icon: "/images/icons/payments.png",
               },
             ].map((f) => (
               <div key={f.title} className="flex flex-col items-center gap-3" style={{ width: 216 }}>
-                <div style={{ height: 40 }}>{f.icon}</div>
+                <div className="relative w-10 h-10">
+                  <Image src={f.icon} alt={f.title} fill className="object-contain" />
+                </div>
                 <h4 className="font-playfair font-semibold text-[#2E2E2E] text-center" style={{ fontSize: 24, lineHeight: "32px" }}>
                   {f.title}
                 </h4>
@@ -365,112 +350,6 @@ export default function BlogContent() {
         </div>
       </div>
 
-      {/* ── FOOTER ───────────────────────────────────────────── */}
-      <footer style={{ background: "#1D3B29" }}>
-        <div className="w-full max-w-[1440px] mx-auto" style={{ padding: "84px 98px 0" }}>
-          <div className="flex gap-20">
-            {/* Brand */}
-            <div className="flex flex-col gap-8" style={{ width: 220 }}>
-              <Image src="/images/logo.png" alt="V Stories" width={160} height={51} className="object-contain brightness-[10]" />
-              <p className="font-inter font-normal text-[#F7EDE2]" style={{ fontSize: 16, lineHeight: "19px" }}>
-                Reviving ancient herbal practices with modern standards. 100% natural, chemical-free products crafted with love.
-              </p>
-              <div className="flex gap-6">
-                {[
-                  { label: "f", href: "#" },
-                  { label: "in", href: "#" },
-                  { label: "tw", href: "#" },
-                ].map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    className="flex items-center justify-center rounded-full"
-                    style={{ width: 40, height: 40, border: "1px solid #E8BF72" }}
-                  >
-                    <span className="font-inter text-xs text-[#E8BF72]">{s.label}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div className="flex flex-col gap-6" style={{ width: 89 }}>
-              <span className="font-inter font-medium text-[#F7EDE2]" style={{ fontSize: 16 }}>Quick Links</span>
-              <div className="flex flex-col gap-4">
-                {[["Home", "/"], ["About Us", "/about"], ["Products", "/shop"], ["Blog", "/blog"], ["Career", "#"]].map(([l, h]) => (
-                  <Link key={l} href={h} className="font-inter font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors" style={{ fontSize: 16 }}>{l}</Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Categories */}
-            <div className="flex flex-col gap-6" style={{ width: 138 }}>
-              <span className="font-inter font-medium text-[#F7EDE2]" style={{ fontSize: 16 }}>Categories</span>
-              <div className="flex flex-col gap-4">
-                {[["Skin Care", "/shop?cat=skin"], ["Hair Care", "/shop?cat=hair"], ["Combo/Gift Packs", "/shop?cat=combos"], ["Sample Packs", "/shop?cat=samples"]].map(([l, h]) => (
-                  <Link key={l} href={h} className="font-inter font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors" style={{ fontSize: 16 }}>{l}</Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Policies */}
-            <div className="flex flex-col gap-6" style={{ width: 208 }}>
-              <span className="font-inter font-medium text-[#F7EDE2]" style={{ fontSize: 16 }}>Policies</span>
-              <div className="flex flex-col gap-4">
-                {[
-                  "Privacy Policies",
-                  "Terms & Conditions",
-                  "Shipping & Cancellations",
-                  "Returns & Refunds",
-                  "Collaboration & Partnership",
-                ].map((l) => (
-                  <Link key={l} href="#" className="font-inter font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors" style={{ fontSize: 16 }}>{l}</Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Contact */}
-            <div className="flex flex-col gap-6" style={{ width: 250 }}>
-              <span className="font-inter font-medium text-[#F7EDE2]" style={{ fontSize: 16 }}>Contact Us</span>
-              <div className="flex flex-col gap-4">
-                {[
-                  { icon: "📞", text: "+91 6383921957" },
-                  { icon: "✉", text: "hello@vstories.in" },
-                  { icon: "📍", text: "Kilakarai, Tamil Nadu" },
-                ].map((c) => (
-                  <div key={c.text} className="flex items-center gap-4">
-                    <div
-                      className="flex items-center justify-center rounded-full flex-shrink-0"
-                      style={{ width: 24, height: 24, border: "1px solid #E8BF72" }}
-                    >
-                      <span style={{ fontSize: 10, color: "#E8BF72" }}>{c.icon}</span>
-                    </div>
-                    <span className="font-inter font-normal text-[#F7EDE2]" style={{ fontSize: 16 }}>{c.text}</span>
-                  </div>
-                ))}
-              </div>
-              <span className="font-inter font-medium text-[#F7EDE2]" style={{ fontSize: 16 }}>Join Our Community</span>
-              <div
-                className="flex items-center justify-center rounded-full"
-                style={{ width: 40, height: 40, border: "1px solid #E8BF72" }}
-              >
-                <span style={{ fontSize: 12, color: "#E8BF72" }}>W</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Divider + copyright */}
-        <div className="relative mt-12" style={{ height: 80 }}>
-          <div style={{ position: "absolute", bottom: 40, left: 0, right: 0, height: 2, background: "#B99757" }} />
-          <p
-            className="absolute font-inter font-normal text-[#F7EDE2] text-center"
-            style={{ bottom: 12, left: "50%", transform: "translateX(-50%)", fontSize: 16, lineHeight: "19px", whiteSpace: "nowrap" }}
-          >
-            © 2026 Vstories. All rights reserved. | Designed &amp; Developed By Manvian
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

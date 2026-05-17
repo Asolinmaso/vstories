@@ -113,15 +113,28 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-playfair), serif;
   color: var(--text-primary);
   line-height: 1.2;
 }
 
-.font-playfair { font-family: var(--font-playfair), serif; }
-.font-inter { font-family: var(--font-inter), sans-serif; }
-.font-poppins { font-family: var(--font-poppins), sans-serif; }
+.font-playfair {
+  font-family: var(--font-playfair), serif;
+}
+
+.font-inter {
+  font-family: var(--font-inter), sans-serif;
+}
+
+.font-poppins {
+  font-family: var(--font-poppins), sans-serif;
+}
 
 /* ============================================
    Typography
@@ -531,7 +544,7 @@ button:disabled {
 
 @media (min-width: 1024px) {
   .container-premium {
-    padding: 0 3rem;
+    padding: 40px 60px;
   }
 }
 

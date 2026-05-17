@@ -10,7 +10,7 @@ export default function Hero() {
       {/* Full-width background image */}
       <div className="absolute inset-0 w-full h-full">
         <Image
-          src="/images/hero-main.png"
+          src="/images/hero4.png"
           alt="Nature's Goodness Clinically Crafted"
           fill
           className="object-cover object-center"
@@ -88,10 +88,10 @@ export default function Hero() {
             style={{ marginTop: "28px", marginBottom: "0" }}
           >
             {[
-              "/images/thumb-1.png",
-              "/images/thumb-2.png",
-              "/images/thumb-3.png",
-              "/images/thumb-4.png",
+              "/images/hero4.png",
+              "/images/hero3.png",
+              "/images/hero2.png",
+              "/images/hero1.png",
             ].map((src, i) => (
               <div
                 key={i}

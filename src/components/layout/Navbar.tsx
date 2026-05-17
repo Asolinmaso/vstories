@@ -85,7 +85,7 @@ export default function Navbar({ announcement }: NavbarProps) {
 
             {/* Announcement Bar */}
             {announcement?.enabled && (
-                <div className="bg-[#FCFAF4] py-6 md:py-[35px] z-50 border-b border-[#1D3B29]/5">
+                <div className="bg-[#FCFAF4] h-[55px] md:h-[80px] flex items-center z-30 border-b border-[#1D3B29]/5">
                     <div className="container-premium flex items-center justify-center gap-4 md:gap-[29px] text-center">
                         <div className="flex items-center gap-2 md:gap-[13px]">
                             <div className="text-[#1D3B29] -rotate-[18.46deg] shrink-0">
@@ -109,7 +109,7 @@ export default function Navbar({ announcement }: NavbarProps) {
 
             {/* Main Navbar */}
             <header
-                className={`sticky top-0 z-50 transition-all duration-500 bg-[#F3EEE9] shadow-sm h-[100px] flex items-center`}
+                className={`sticky top-0 z-50 transition-all duration-500 bg-[#F3EEE9] shadow-sm h-[80px] flex items-center`}
             >
                 <div className="container-premium px-[100px] pr-[105px]">
                     <nav className="grid grid-cols-[171px_142px_424px_142px_356px] items-center w-full">
@@ -138,11 +138,10 @@ export default function Navbar({ announcement }: NavbarProps) {
                                 >
                                     <Link
                                         href={link.href}
-                                        className={`flex items-center gap-1.5 text-[16px] leading-[19px] transition-all duration-300 font-inter ${
-                                            (pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href)))
-                                                ? "font-semibold text-[var(--primary)]" 
-                                                : "font-normal text-black hover:text-[var(--primary)]"
-                                        }`}
+                                        className={`flex items-center gap-1.5 text-[16px] leading-[19px] transition-all duration-300 font-inter ${(pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href)))
+                                            ? "font-semibold text-[var(--primary)]"
+                                            : "font-normal text-black hover:text-[var(--primary)]"
+                                            }`}
                                     >
                                         <span className={link.label === "Products" ? "w-[68px]" : ""}>{link.label}</span>
                                         {link.dropdown && (
