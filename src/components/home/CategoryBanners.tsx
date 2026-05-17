@@ -27,7 +27,7 @@ export default function CategoryBanners() {
             }}
           >
             <Image
-              src="/images/banner-hair.png"
+              src="/images/home/bestseller.png"
               alt="Hair Care Banner"
               fill
               className="object-cover"
@@ -73,11 +73,12 @@ export default function CategoryBanners() {
 
               <Link
                 href="/shop/hair"
-                className="font-inter font-medium text-[#F7EDE2] flex items-center justify-center hover:opacity-90 transition-all"
+                className="font-inter font-medium flex items-center justify-center hover:opacity-90 transition-all"
                 style={{
                   width: "164px",
                   height: "43px",
                   background: "#1D3B29",
+                  color: "#F7EDE2",
                   borderRadius: "8px",
                   fontSize: "16px",
                   lineHeight: "19px",
@@ -105,7 +106,7 @@ export default function CategoryBanners() {
             }}
           >
             <Image
-              src="/images/banner-skin.png"
+              src="/images/home/bestseller2.png"
               alt="Skin Care Banner"
               fill
               className="object-cover"
@@ -136,14 +137,14 @@ export default function CategoryBanners() {
               </div>
 
               <h3
-                className="font-playfair font-semibold text-white"
+                className="font-playfair font-semibold text-[#2E2E2E]"
                 style={{ fontSize: "32px", lineHeight: "43px", maxWidth: "330px" }}
               >
                 Clear, Balanced, Healthy Skin
               </h3>
 
               <p
-                className="font-inter font-normal text-white"
+                className="font-inter font-normal text-[#2E2E2E]"
                 style={{ fontSize: "16px", lineHeight: "19px", maxWidth: "233px" }}
               >
                 Explore gentle, plant-based skincare for everyday glow and long-term skin health.
@@ -151,11 +152,12 @@ export default function CategoryBanners() {
 
               <Link
                 href="/shop/skin"
-                className="font-inter font-medium text-[#1D3B29] flex items-center justify-center hover:opacity-90 transition-all"
+                className="font-inter font-medium flex items-center justify-center hover:opacity-90 transition-all"
                 style={{
                   width: "183px",
                   height: "43px",
                   background: "#F4F0EC",
+                  color: "#1D3B29",
                   borderRadius: "8px",
                   fontSize: "16px",
                   lineHeight: "19px",

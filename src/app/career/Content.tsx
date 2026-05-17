@@ -97,7 +97,7 @@ const jobs: JobProps[] = [
 export default function CareerContent() {
   const [fileName, setFileName] = useState("No File Chosen");
   const [form, setForm] = useState({
-    name: "", phone: "", email: "", jobPosition: "", message: "",
+    name: "", countryCode: "+91", phone: "", email: "", jobPosition: "", message: "",
   });
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -111,12 +111,39 @@ export default function CareerContent() {
     alert("Application submitted! We'll get back to you shortly.");
   };
 
+  const countryCodes = [
+    { code: "+91", country: "IN" },
+    { code: "+1", country: "US" },
+    { code: "+44", country: "UK" },
+    { code: "+971", country: "UAE" },
+    { code: "+61", country: "AU" },
+    { code: "+65", country: "SG" },
+    { code: "+49", country: "DE" },
+    { code: "+33", country: "FR" },
+    { code: "+81", country: "JP" },
+    { code: "+966", country: "SA" },
+    { code: "+965", country: "KW" },
+    { code: "+974", country: "QA" },
+    { code: "+968", country: "OM" },
+    { code: "+973", country: "BH" },
+    { code: "+31", country: "NL" },
+    { code: "+39", country: "IT" },
+    { code: "+34", country: "ES" },
+    { code: "+27", country: "ZA" },
+    { code: "+55", country: "BR" },
+    { code: "+52", country: "MX" },
+    { code: "+60", country: "MY" },
+    { code: "+62", country: "ID" },
+    { code: "+63", country: "PH" },
+    { code: "+82", country: "KR" },
+  ];
+
   return (
     <div className="w-full" style={{ background: "#FCFAF4" }}>
       {/* ── HERO BANNER ────────────────────────────────────── */}
-      <section className="relative w-full" style={{ height: 581, marginTop: 100 }}>
+      <section className="relative w-full" style={{ height: 581 }}>
         <Image
-          src="/images/founder-image.png"
+          src="/images/career/career hero.png"
           alt="Career at V Stories"
           fill
           className="object-cover"
@@ -141,8 +168,8 @@ export default function CareerContent() {
           </p>
           <a
             href="#openings"
-            className="inline-flex items-center justify-center font-inter font-semibold text-[#F7EDE2] rounded-[8px] hover:bg-[#2A4F38] transition-all"
-            style={{ width: 218, height: 43, background: "#1D3B29", fontSize: 16 }}
+            className="inline-flex items-center justify-center font-inter font-semibold hover:bg-[#2A4F38] transition-all"
+            style={{ width: 218, height: 43, background: "#1D3B29", fontSize: 16, color: "#FFFFFF" }}
           >
             Explore Opportunities
           </a>
@@ -186,7 +213,7 @@ export default function CareerContent() {
           {/* Left: Image */}
           <div className="relative flex-shrink-0 rounded-2xl overflow-hidden" style={{ width: 548, height: 419 }}>
             <Image
-              src="/images/brand-story-bg.png"
+              src="/images/career/career.png"
               alt="Apply to V Stories"
               fill
               className="object-cover"
@@ -197,8 +224,8 @@ export default function CareerContent() {
               style={{ background: "rgba(29,59,41,0.5)" }}
             >
               <p
-                className="font-inter font-medium text-white text-center"
-                style={{ fontSize: 24, lineHeight: "32px", padding: "24px" }}
+                className="font-inter font-medium text-center"
+                style={{ fontSize: 24, lineHeight: "32px", padding: "24px", color: "#FFFFFF" }}
               >
                 Great people grow here. So does impact.
               </p>
@@ -242,11 +269,22 @@ export default function CareerContent() {
                   borderBottom: "1px solid #2E2E2E",
                 }}
               >
-                <div className="flex items-center gap-1 flex-shrink-0">
-                  <span className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: 16 }}>+91</span>
-                  <svg width="10" height="5" viewBox="0 0 10 5" fill="none">
-                    <path d="M0 0L5 5L10 0H0Z" fill="#2E2E2E" />
-                  </svg>
+                <div className="flex items-center gap-1 flex-shrink-0 relative">
+                  <select
+                    value={form.countryCode}
+                    onChange={e => setForm({ ...form, countryCode: e.target.value })}
+                    className="bg-transparent font-inter font-normal text-[#2E2E2E] outline-none appearance-none cursor-pointer pr-4"
+                    style={{ fontSize: 16 }}
+                  >
+                    {countryCodes.map(c => (
+                      <option key={c.code} value={c.code}>{c.code}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg width="10" height="5" viewBox="0 0 10 5" fill="none">
+                      <path d="M0 0L5 5L10 0H0Z" fill="#2E2E2E" />
+                    </svg>
+                  </div>
                 </div>
                 <input
                   type="tel"
@@ -364,12 +402,13 @@ export default function CareerContent() {
               {/* Submit */}
               <button
                 type="submit"
-                className="absolute font-inter font-semibold text-[#F7EDE2] rounded-[8px] hover:bg-[#2A4F38] transition-all"
+                className="absolute font-inter font-semibold rounded-[8px] hover:bg-[#2A4F38] transition-all"
                 style={{
                   left: 537, top: 252,
                   width: 103, height: 43,
                   background: "#1D3B29",
                   fontSize: 16,
+                  color: "#FFFFFF",
                 }}
               >
                 Submit
@@ -378,6 +417,40 @@ export default function CareerContent() {
           </div>
         </div>
       </section>
+      {/* ── TRUST BAR ─────────────────────────────────────── */}
+      <div style={{ background: "#F7F3EF", height: 185, display: "flex", alignItems: "center", marginTop: 40 }}>
+        <div className="w-full max-w-[1440px] mx-auto px-[100px]">
+          <div className="flex items-center justify-around">
+            {[
+              {
+                title: "Free Shipping",
+                desc: "On orders above ₹799",
+                icon: "/images/icons/shippings.png",
+              },
+              {
+                title: "Cash On Delivery",
+                desc: "₹25 Per Order",
+                icon: "/images/icons/savings.png",
+              },
+              {
+                title: "Secure Payments",
+                desc: "Razor pay Payment",
+                icon: "/images/icons/payments.png",
+              },
+            ].map((item, idx) => (
+              <div key={idx} className="flex flex-col items-center gap-3">
+                <div className="relative w-[50px] h-[50px]">
+                  <Image src={item.icon} alt={item.title} fill className="object-contain" />
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="font-playfair font-semibold text-[#2E2E2E]" style={{ fontSize: 24 }}>{item.title}</span>
+                  <span className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: 16 }}>{item.desc}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

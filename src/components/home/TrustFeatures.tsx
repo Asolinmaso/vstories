@@ -1,4 +1,4 @@
-"use client";
+import Image from "next/image";
 
 export default function TrustFeatures() {
   const features = [
@@ -6,37 +6,42 @@ export default function TrustFeatures() {
       title: "Free Shipping",
       desc: "On orders above ₹799",
       icon: (
-        <svg width="50" height="40" viewBox="0 0 50 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="1.25" y="1.25" width="30" height="22.5" rx="1" stroke="#1D3B29" strokeWidth="2.5"/>
-          <path d="M31.25 11.25H42.5L48.75 20V31.25H31.25V11.25Z" stroke="#1D3B29" strokeWidth="2.5" strokeLinejoin="round"/>
-          <circle cx="11.25" cy="33.75" r="5" stroke="#1D3B29" strokeWidth="2.5"/>
-          <circle cx="40" cy="33.75" r="5" stroke="#1D3B29" strokeWidth="2.5"/>
-          <path d="M16.25 33.75H31.25" stroke="#1D3B29" strokeWidth="2.5"/>
-        </svg>
+        <div className="relative w-10 h-10">
+          <Image
+            src="/images/icons/shippings.png"
+            alt="Free Shipping"
+            fill
+            className="object-contain"
+          />
+        </div>
       ),
     },
     {
       title: "Cash On Delivery",
       desc: "₹25 Per Order",
       icon: (
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2" y="10" width="36" height="26" rx="3" stroke="#1D3B29" strokeWidth="2.5"/>
-          <path d="M2 18H38" stroke="#1D3B29" strokeWidth="2.5"/>
-          <path d="M10 26H16" stroke="#1D3B29" strokeWidth="2.5" strokeLinecap="round"/>
-          <path d="M22 26H30" stroke="#1D3B29" strokeWidth="2.5" strokeLinecap="round"/>
-          <path d="M14 10V6" stroke="#1D3B29" strokeWidth="2.5" strokeLinecap="round"/>
-          <path d="M26 10V6" stroke="#1D3B29" strokeWidth="2.5" strokeLinecap="round"/>
-        </svg>
+        <div className="relative w-10 h-10">
+          <Image
+            src="/images/icons/savings.png"
+            alt="Cash On Delivery"
+            fill
+            className="object-contain"
+          />
+        </div>
       ),
     },
     {
       title: "Secure Payments",
       desc: "Razor Pay Payment",
       icon: (
-        <svg width="35" height="40" viewBox="0 0 35 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M17.5 2L3 8V20C3 28.284 9.64 35.944 17.5 38C25.36 35.944 32 28.284 32 20V8L17.5 2Z" stroke="#1D3B29" strokeWidth="2.5" strokeLinejoin="round"/>
-          <path d="M12 20L16 24L24 16" stroke="#1D3B29" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        <div className="relative w-10 h-10">
+          <Image
+            src="/images/icons/payments.png"
+            alt="Secure Payments"
+            fill
+            className="object-contain"
+          />
+        </div>
       ),
     },
   ];

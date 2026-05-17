@@ -46,7 +46,7 @@ function ComparisonCard({ testimonial }: { testimonial: typeof testimonials[0] }
     <div
       className="relative flex-shrink-0"
       style={{
-        width: "398px",
+        width: "380px",
         height: "447px",
         background: "#FFFFFF",
         border: "1px solid #D9D9D9",
@@ -56,7 +56,7 @@ function ComparisonCard({ testimonial }: { testimonial: typeof testimonials[0] }
       }}
     >
       {/* Before/After Images top section */}
-      <div className="relative" style={{ width: "398px", height: "276px" }}>
+      <div className="relative" style={{ width: "380px", height: "276px" }}>
         {/* After image */}
         <div
           className="absolute inset-0"
@@ -143,9 +143,10 @@ function ComparisonCard({ testimonial }: { testimonial: typeof testimonials[0] }
         {/* Product badge */}
         <Link
           href={`/product/${testimonial.productSlug}`}
-          className="inline-flex items-center justify-center font-inter font-normal text-[#F7EDE2] hover:opacity-90 transition-all"
+          className="inline-flex items-center justify-center font-inter font-normal hover:opacity-90 transition-all"
           style={{
             background: "#1D3B29",
+            color: "#F7EDE2",
             borderRadius: "24px",
             padding: "10px",
             fontSize: "16px",
@@ -160,21 +161,33 @@ function ComparisonCard({ testimonial }: { testimonial: typeof testimonials[0] }
   );
 }
 
+function LeafIcon({ flipped = false }: { flipped?: boolean }) {
+  return (
+    <div className="relative w-6 h-6">
+      <Image
+        src={flipped ? "/images/icons/leafright.png" : "/images/icons/leafleft.png"}
+        alt="Leaf"
+        fill
+        className="object-contain"
+      />
+    </div>
+  );
+}
+
 export default function RealResults() {
   return (
     <section
       className="relative w-full"
       style={{ height: "780px", background: "#F4F0EC", overflow: "hidden" }}
     >
-      {/* Background texture image */}
-      <div className="absolute inset-0 opacity-20">
-        <Image
-          src="/images/banner-hair.png"
-          alt=""
-          fill
-          className="object-cover"
-        />
-      </div>
+      {/* Background image */}
+      <Image
+        src="/images/home/transformation.png"
+        alt="Transformations Background"
+        fill
+        className="object-cover opacity-10"
+        priority
+      />
 
       <div className="relative z-10 w-full max-w-[1440px] mx-auto px-[100px] pt-16">
         {/* Section Header */}
@@ -185,19 +198,11 @@ export default function RealResults() {
             viewport={{ once: true }}
             className="flex items-end gap-6 mb-4"
           >
-            <div style={{ transform: "rotate(-18.46deg)" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="#1D3B29" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2.67806 0.393273C3.33698 0.746016 3.86524 1.26031 4.27352 1.86988C4.93665 2.86007 5.32531 4.08777 5.64054 5.36694C6.27084 7.92543 6.64437 10.715 7.77326 12.1466C8.83291 13.4904 10.0172 14.1032 11.144 14.2227C11.6287 14.2742 12.107 14.2325 12.5642 14.1104C12.5917 10.6285 11.032 6.71738 8.37049 4.61054C11.4761 6.14733 13.7451 9.27599 14.257 13.1784C14.0091 13.4058 14.1242 13.3167 14.2348 13.2224C15.98 11.7396 16.8379 8.81822 14.9913 5.57157C14.1428 4.07991 12.3091 2.18967 9.91609 1.04988C7.84587 0.0639353 5.3733 -0.379387 2.67804 0.393385L2.67806 0.393273Z"/>
-              </svg>
-            </div>
+            <LeafIcon />
             <span className="font-playfair font-normal text-[#000000]" style={{ fontSize: "24px", lineHeight: "32px" }}>
               Transformation
             </span>
-            <div style={{ transform: "matrix(-0.95, -0.32, -0.32, 0.95, 0, 0)" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="#1D3B29" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2.67806 0.393273C3.33698 0.746016 3.86524 1.26031 4.27352 1.86988C4.93665 2.86007 5.32531 4.08777 5.64054 5.36694C6.27084 7.92543 6.64437 10.715 7.77326 12.1466C8.83291 13.4904 10.0172 14.1032 11.144 14.2227C11.6287 14.2742 12.107 14.2325 12.5642 14.1104C12.5917 10.6285 11.032 6.71738 8.37049 4.61054C11.4761 6.14733 13.7451 9.27599 14.257 13.1784C14.0091 13.4058 14.1242 13.3167 14.2348 13.2224C15.98 11.7396 16.8379 8.81822 14.9913 5.57157C14.1428 4.07991 12.3091 2.18967 9.91609 1.04988C7.84587 0.0639353 5.3733 -0.379387 2.67804 0.393385L2.67806 0.393273Z"/>
-              </svg>
-            </div>
+            <LeafIcon flipped />
           </motion.div>
 
           <motion.h2

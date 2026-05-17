@@ -7,15 +7,19 @@ import Link from "next/link";
 export default function BrandStoryBanner() {
   return (
     <section
-      className="relative w-full overflow-hidden"
-      style={{ height: "377px" }}
+      className="relative w-full overflow-hidden dark-section"
+      style={{
+        height: "377px",
+        marginTop: "50px"
+      }}
     >
       {/* Background image */}
       <Image
-        src="/images/brand-story-bg.png"
+        src="/images/home/homebg.png"
         alt="More Than Skincare. A Story of Care."
         fill
         className="object-cover"
+        style={{ objectPosition: "center -280px" }}
         priority
       />
 
@@ -28,14 +32,15 @@ export default function BrandStoryBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="font-playfair font-semibold text-white"
+              className="font-playfair font-semibold"
               style={{
                 fontSize: "48px",
                 lineHeight: "64px",
                 maxWidth: "486px",
+                color: "#FFFFFF",
               }}
             >
-              More Than Skincare. A Story of Care.
+              More Than Skincare. <br /> A Story of Care.
             </motion.h2>
 
             <motion.p
@@ -43,11 +48,13 @@ export default function BrandStoryBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="font-inter font-normal text-white mt-4"
+              className="font-inter font-normal mt-4"
               style={{
                 fontSize: "24px",
                 lineHeight: "29px",
                 maxWidth: "562px",
+                color: "#FFFFFF",
+                fontWeight: 300,
               }}
             >
               Inspired by real experiences, built for Indian skin, our journey blends tradition with modern science.
@@ -63,7 +70,7 @@ export default function BrandStoryBanner() {
                 href="/about"
                 className="inline-flex items-center justify-center font-inter font-medium mt-8 hover:opacity-90 transition-all"
                 style={{
-                  width: "169px",
+                  width: "181px",
                   height: "43px",
                   border: "1px solid #E8BF72",
                   borderRadius: "8px",

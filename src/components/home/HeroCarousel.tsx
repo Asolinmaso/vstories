@@ -12,115 +12,242 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 interface HeroCarouselProps {
-    images?: string[];
+  images?: string[];
 }
 
 export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
-    const defaultSlides = [
-        {
-            id: 1,
-            image: "/images/category-hair.png", // Using available images as placeholder
-            title: "Discover Nature's Secret",
-            subtitle: "Premium Herbal Hair Care",
-            cta: "Shop Hair Care",
-            link: "/shop/hair",
-        },
-        {
-            id: 2,
-            image: "/images/category-face.png",
-            title: "Radiant Skin Awaits",
-            subtitle: "100% Natural Skincare",
-            cta: "Shop Skincare",
-            link: "/shop/face",
-        },
-        {
-            id: 3,
-            image: "/images/category-best.png",
-            title: "Our Best Sellers",
-            subtitle: "Loved by Thousands",
-            cta: "View Bestsellers",
-            link: "/shop/bestsellers",
-        },
-    ];
+  const slides = [
+    {
+      id: "hero-1",
+      image: "/images/home/hero4.png",
+      title: "Nature's Goodness",
+      subtitle: "Clinically Crafted",
+      cta: "Explore Products",
+      link: "/shop",
+    },
+    {
+      id: "hero-2",
+      image: "/images/home/hero3.png",
+      title: "Nature's Goodness",
+      subtitle: "Clinically Crafted",
+      cta: "Explore Products",
+      link: "/shop",
+    },
+    {
+      id: "hero-3",
+      image: "/images/home/hero2.png",
+      title: "Nature's Goodness",
+      subtitle: "Clinically Crafted",
+      cta: "Explore Products",
+      link: "/shop",
+    },
+    {
+      id: "hero-4",
+      image: "/images/home/hero1.png",
+      title: "Nature's Goodness",
+      subtitle: "Clinically Crafted",
+      cta: "Explore Products",
+      link: "/shop",
+    },
+    ...(images.length > 4
+      ? images.slice(4).map((img, idx) => ({
+        id: `extra-${idx}`,
+        image: img,
+        title: "",
+        subtitle: "",
+        cta: "Shop Now",
+        link: "/shop",
+      }))
+      : [])
+  ];
 
-    const slides = images.length > 0
-        ? images.map((img, idx) => ({
-            id: idx,
-            image: img,
-            title: "", // For user uploaded banners, text is usually in the image
-            subtitle: "",
-            cta: "Shop Now",
-            link: "/shop",
-        }))
-        : defaultSlides;
+  return (
+    <section className="relative w-full overflow-hidden" style={{ background: "#F4EEE2", minHeight: "762px" }}>
+      <div className="relative w-full h-full">
+        <Swiper
+          modules={[Autoplay, EffectFade, Pagination]}
+          effect="fade"
+          speed={1000}
+          autoplay={{
+            delay: 5000,
+            disableOnInteraction: false,
+          }}
+          pagination={{
+            clickable: true,
+            renderBullet: (index, className) => {
+              return `<span class="${className} hero-thumb-bullet">
+                                <img src="${slides[index].image}" alt="slide ${index + 1}" />
+                                <div class="thumb-indicator"></div>
+                            </span>`;
+            },
+          }}
+          className="w-full"
+          style={{ height: "762px" }}
+        >
+          {slides.map((slide, idx) => (
+            <SwiperSlide key={slide.id} className="relative w-full h-full">
+              {/* Background Image */}
+              <div className="absolute inset-0 w-full h-full">
+                <Image
+                  src={slide.image}
+                  alt={slide.title}
+                  fill
+                  className="object-cover object-center"
+                  priority={idx === 0}
+                  sizes="100vw"
+                />
+              </div>
 
-    return (
-        <section className="relative w-full bg-[var(--background)] px-1 md:px-1 pt-2 md:pt-4 pb-2">
-            <div className="relative h-[28vh] md:h-[80vh] w-full overflow-hidden rounded-[2.5rem] md:rounded-[4rem] shadow-md border border-white/20">
-                <Swiper
-                    modules={[Autoplay, EffectFade, Pagination]}
-                    effect="fade"
-                    speed={1000}
-                    autoplay={{
-                        delay: 5000,
-                        disableOnInteraction: false,
+              {/* Content positioned absolutely over image, left-aligned per Hero.tsx */}
+              <div className="relative z-10 w-full h-full flex items-center">
+                <div className="w-full max-w-[1440px] mx-auto px-[100px]">
+                  {/* Heading */}
+                  <motion.h1
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="font-playfair font-semibold text-black"
+                    style={{
+                      width: "543px",
+                      fontSize: "64px",
+                      lineHeight: "85px",
+                      marginTop: "100px",
+                      maxWidth: "100%",
                     }}
-                    pagination={{
-                        clickable: true,
+                  >
+                    {slide.title} {slide.subtitle}
+                  </motion.h1>
+
+                  {/* Subtext */}
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                    className="font-inter font-normal text-black"
+                    style={{
+                      width: "628px",
+                      fontSize: "24px",
+                      lineHeight: "29px",
+                      marginTop: "20px",
+                      maxWidth: "100%",
                     }}
-                    className="h-full w-full"
-                >
-                    {slides.map((slide, idx) => (
-                        <SwiperSlide key={slide.id} className="relative h-full w-full">
-                            {/* Background Image */}
-                            <div className="absolute inset-0 h-full w-full">
-                                <Image
-                                    src={slide.image}
-                                    alt={slide.title}
-                                    fill
-                                    className="object-cover object-center"
-                                    priority={idx === 0}
-                                    sizes="100vw"
-                                />
-                                {/* Overlay - lighter for better visibility of products */}
-                                <div className="absolute inset-0 bg-black/10" />
-                            </div>
+                  >
+                    Clean, effective & honest skincare and haircare enriched with natural ingredients & powerful herbs for real, visible results.
+                  </motion.p>
 
-                            {/* Link overlay for entire slide */}
-                            <Link href={slide.link} className="absolute inset-0 z-20">
-                                <span className="sr-only">{slide.title || "Shop Now"}</span>
-                            </Link>
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
-            </div>
+                  {/* Explore Products Button */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+                    style={{ marginTop: "24px" }}
+                  >
+                    <Link
+                      href={slide.link}
+                      className="inline-flex items-center justify-center font-inter font-medium hover:opacity-90 transition-all"
+                      style={{
+                        width: "179px",
+                        height: "43px",
+                        background: "#1D3B29",
+                        borderRadius: "8px",
+                        color: "#F7EDE2",
+                        fontSize: "16px",
+                        lineHeight: "19px",
+                      }}
+                    >
+                      {slide.cta}
+                    </Link>
+                  </motion.div>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
 
-            {/* Custom Styles for Swiper Pagination */}
-            <style jsx global>{`
+      {/* Custom Styles for Swiper Pagination - Thumbnail Style */}
+      <style jsx global>{`
         .swiper-pagination {
           position: absolute;
-          bottom: 2rem !important;
-          right: 3rem !important;
-          left: auto !important;
+          bottom: 3rem !important;
+          left: 9% !important;
+          right: auto !important;
           width: auto !important;
           display: flex;
-          gap: 0.5rem;
+          gap: 1.25rem;
           z-index: 30;
+          padding: 0.5rem 0;
         }
-        .swiper-pagination-bullet {
-          width: 8px !important;
-          height: 8px !important;
-          background: rgba(255, 255, 255, 0.6) !important;
+        
+        .hero-thumb-bullet {
+          width: 55px !important;
+          height: 55px !important;
+          background: none !important;
           opacity: 1 !important;
-          border-radius: 999px !important;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          border-radius: 10px !important;
+          border: 1.5px solid #1A3026 !important;
+          overflow: hidden !important;
+          cursor: pointer;
+          position: relative;
+          transition: all 0.3s ease;
           margin: 0 !important;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+
+        .hero-thumb-bullet img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          opacity: 0.85;
+          transition: all 0.3s ease;
+        }
+
+        .hero-thumb-bullet .thumb-indicator {
+          position: absolute;
+          bottom: -8px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 0;
+          height: 3px;
+          background: #1A3026;
+          transition: width 0.3s ease;
+          border-radius: 4px;
+        }
+
         .swiper-pagination-bullet-active {
-          width: 24px !important;
-          background: white !important;
+          border-width: 2px !important;
+          transform: translateY(-2px);
+        }
+
+        .swiper-pagination-bullet-active img {
+          opacity: 1 !important;
+          transform: scale(1.05);
+        }
+
+        .swiper-pagination-bullet-active .thumb-indicator {
+          width: 32px;
+        }
+
+        @media (max-width: 768px) {
+          .swiper-pagination {
+            bottom: 1.5rem !important;
+            left: 5% !important;
+            gap: 0.75rem;
+          }
+          .hero-thumb-bullet {
+            width: 42px !important;
+            height: 42px !important;
+            border-radius: 8px !important;
+          }
+          .hero-thumb-bullet .thumb-indicator {
+            bottom: -6px;
+            height: 2px;
+          }
+          .swiper-pagination-bullet-active .thumb-indicator {
+            width: 20px;
+          }
         }
       `}</style>
-        </section>
-    );
+    </section>
+  );
 }
