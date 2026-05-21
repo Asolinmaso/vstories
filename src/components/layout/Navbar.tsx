@@ -114,7 +114,7 @@ export default function Navbar({ announcement }: NavbarProps) {
                 <div className="container-premium px-[100px] pr-[105px]">
                     <nav className="grid grid-cols-[171px_142px_424px_142px_356px] items-center w-full">
                         {/* 1. Left - Logo (171x52) */}
-                        <Link href="/" className="flex-shrink-0 w-[171px]">
+                        <Link href="/" className="flex-shrink-0 w-[171px] hidden lg:block">
                             <Image
                                 src="/images/logo.png"
                                 alt="V Stories Logo"

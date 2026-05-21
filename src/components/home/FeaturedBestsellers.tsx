@@ -14,11 +14,11 @@ interface FeaturedBestsellersProps {
 function LeafIcon({ flipped = false }: { flipped?: boolean }) {
   return (
     <div className="relative w-6 h-6">
-      <Image 
-        src={flipped ? "/images/icons/leafright.png" : "/images/icons/leafleft.png"} 
-        alt="Leaf" 
-        fill 
-        className="object-contain" 
+      <Image
+        src={flipped ? "/images/icons/leafright.png" : "/images/icons/leafleft.png"}
+        alt="Leaf"
+        fill
+        className="object-contain"
       />
     </div>
   );
@@ -27,7 +27,7 @@ function LeafIcon({ flipped = false }: { flipped?: boolean }) {
 function StarIcon() {
   return (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="#E8BF72" xmlns="http://www.w3.org/2000/svg">
-      <path d="M14 0L17.0623 9.44286H26.9656L19.2016 15.2857L22.2639 24.7286L14.5 18.8857L6.73607 24.7286L9.79837 15.2857L2.03444 9.44286H12.0377L14 0Z"/>
+      <path d="M14 0L17.0623 9.44286H26.9656L19.2016 15.2857L22.2639 24.7286L14.5 18.8857L6.73607 24.7286L9.79837 15.2857L2.03444 9.44286H12.0377L14 0Z" />
     </svg>
   );
 }
@@ -38,7 +38,7 @@ const fallbackProducts: Product[] = [
     name: "Prophetic-Face Serum",
     price: 250,
     original_price: 280,
-    images: ["/images/products/prophetic-face-serum.png"],
+    images: ["/images/products/serum.png"],
     rating: 4.8,
     reviews_count: 120,
     slug: "prophetic-face-serum",
@@ -57,7 +57,7 @@ const fallbackProducts: Product[] = [
     name: "Herbal Facepack",
     price: 180,
     original_price: 200,
-    images: ["/images/products/herbal-face-pack.png"],
+    images: ["/images/products/facepack.png"],
     rating: 4.8,
     reviews_count: 120,
     slug: "herbal-facepack",
@@ -76,7 +76,7 @@ const fallbackProducts: Product[] = [
     name: "Hibiscus Shampoo",
     price: 250,
     original_price: 280,
-    images: ["/images/products/hibiscus-shampoo.png"],
+    images: ["/images/products/shampoo.png"],
     rating: 4.8,
     reviews_count: 120,
     slug: "hibiscus-shampoo",
@@ -95,7 +95,7 @@ const fallbackProducts: Product[] = [
     name: "V Herbal Hair Oil",
     price: 230,
     original_price: 250,
-    images: ["/images/products/herbal-hair-oil.jpg"],
+    images: ["/images/products/hari oil.png"],
     rating: 4.8,
     reviews_count: 120,
     slug: "v-herbal-hair-oil",
@@ -219,10 +219,7 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
 }
 
 export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsellersProps) {
-  const bestsellerProducts = dbProducts.filter((p) => p.is_bestseller).slice(0, 4);
-  const displayProducts = bestsellerProducts.length > 0
-    ? bestsellerProducts.map((p, i) => ({ ...p, badge: i < 2 ? "Best seller" : i === 2 ? "Most Loved" : "New Launch" }))
-    : fallbackProducts;
+  const displayProducts = fallbackProducts.map((p, i) => ({ ...p, badge: i < 2 ? "Best seller" : i === 2 ? "Most Loved" : "New Launch" }));
 
   return (
     <section className="py-20" style={{ background: "#FCFAF4" }}>

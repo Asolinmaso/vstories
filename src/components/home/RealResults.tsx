@@ -1,16 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Star } from "lucide-react";
 
 const testimonials = [
   {
     id: 1,
-    beforeImage: "/images/testimonials/hair-before-1.png",
-    afterImage: "/images/testimonials/hair-after-1.png",
+    beforeImage: "/images/testimonials/hair-after-1.png",
+    afterImage: "/images/testimonials/hair-before-1.png",
     name: "Priya S.",
     rating: 5,
     quote: "Your haircare combo gave me my hair back! After just 2 months of consistent use, I can see visible new growth.",
@@ -19,8 +18,8 @@ const testimonials = [
   },
   {
     id: 2,
-    beforeImage: "/images/testimonials/skin-before-1.png",
-    afterImage: "/images/testimonials/skin-after-1.png",
+    beforeImage: "/images/testimonials/skin-after-1.png",
+    afterImage: "/images/testimonials/skin-before-1.png",
     name: "Fathima R.",
     rating: 5,
     quote: "Finally, a brand that delivers what it promises. My skin has never looked this radiant and clear!",
@@ -29,8 +28,8 @@ const testimonials = [
   },
   {
     id: 3,
-    beforeImage: "/images/testimonials/hair-before-2.png",
-    afterImage: "/images/testimonials/hair-after-2.png",
+    beforeImage: "/images/testimonials/hair-after-2.png",
+    afterImage: "/images/testimonials/hair-before-2.png",
     name: "Rajesh K.",
     rating: 5,
     quote: "The herbal hair oil has transformed my thinning hair into thick, healthy locks. Amazing results!",
@@ -40,122 +39,100 @@ const testimonials = [
 ];
 
 function ComparisonCard({ testimonial }: { testimonial: typeof testimonials[0] }) {
-  const [sliderPos, setSliderPos] = useState(50);
-
   return (
     <div
-      className="relative flex-shrink-0"
+      className="flex flex-col bg-white border border-[#EAEAEA] rounded-2xl overflow-hidden shadow-[0px_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0px_12px_36px_rgba(0,0,0,0.08)] transition-all duration-300"
       style={{
         width: "380px",
-        height: "447px",
-        background: "#FFFFFF",
-        border: "1px solid #D9D9D9",
-        boxShadow: "0px 5px 10px rgba(0, 0, 0, 0.25)",
-        borderRadius: "12px",
-        overflow: "hidden",
+        height: "450px",
       }}
     >
       {/* Before/After Images top section */}
-      <div className="relative" style={{ width: "380px", height: "276px" }}>
+      <div className="relative w-full h-[276px] overflow-hidden select-none flex">
+        {/* Before image */}
+        <div
+          className="w-1/2 h-full"
+          style={{
+            backgroundImage: `url(${testimonial.beforeImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
         {/* After image */}
         <div
-          className="absolute inset-0"
+          className="w-1/2 h-full"
           style={{
             backgroundImage: `url(${testimonial.afterImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         />
-        {/* Before image (clipped) */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url(${testimonial.beforeImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            clipPath: `inset(0 ${100 - sliderPos}% 0 0)`,
-          }}
-        />
         {/* Divider Line */}
         <div
-          className="absolute top-0 bottom-0 w-1 bg-white z-10"
-          style={{ left: `${sliderPos}%`, transform: "translateX(-50%)" }}
+          className="absolute top-0 bottom-0 w-[2px] bg-white z-10 pointer-events-none"
+          style={{ left: "50%", transform: "translateX(-50%)" }}
         >
           {/* Handle */}
           <div
-            className="absolute flex items-center justify-center bg-white rounded-full"
+            className="absolute flex items-center justify-center bg-white rounded-full border border-[#D9D9D9] shadow-[0px_2px_6px_rgba(0,0,0,0.15)] pointer-events-none"
             style={{
-              width: "40px",
-              height: "40px",
+              width: "36px",
+              height: "36px",
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
             }}
           >
-            <ChevronLeft size={12} color="#2E2E2E" />
-            <ChevronRight size={12} color="#2E2E2E" />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8.5 7.5L4 12L8.5 16.5" stroke="#2E2E2E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M15.5 7.5L20 12L15.5 16.5" stroke="#2E2E2E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
         </div>
-        {/* Input */}
-        <input
-          type="range"
-          min={0}
-          max={100}
-          value={sliderPos}
-          onChange={(e) => setSliderPos(Number(e.target.value))}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20"
-          aria-label="Compare before and after"
-        />
-        {/* Labels */}
-        <span className="absolute bottom-2 left-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full z-10">Before</span>
-        <span className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full z-10">After</span>
       </div>
 
       {/* Content section */}
-      <div
-        className="absolute flex flex-col gap-3"
-        style={{
-          left: "16px",
-          top: "292px",
-          width: "366px",
-        }}
-      >
-        {/* Name + Stars */}
-        <div className="flex items-center justify-between" style={{ width: "366px" }}>
-          <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: "16px", lineHeight: "19px" }}>
-            {testimonial.name}
-          </span>
-          <div className="flex items-center gap-0.5">
-            {[...Array(testimonial.rating)].map((_, i) => (
-              <Star key={i} size={19} fill="#E8BF72" color="#E8BF72" />
-            ))}
+      <div className="flex flex-col flex-grow justify-between p-6">
+        <div>
+          {/* Name + Stars */}
+          <div className="flex items-center justify-between mb-3">
+            <span className="font-inter font-bold text-[#2E2E2E]" style={{ fontSize: "16px", lineHeight: "19px" }}>
+              {testimonial.name}
+            </span>
+            <div className="flex items-center gap-0.5">
+              {[...Array(testimonial.rating)].map((_, i) => (
+                <Star key={i} size={15} fill="#CBA45A" color="#CBA45A" />
+              ))}
+            </div>
           </div>
+
+          {/* Quote */}
+          <p
+            className="font-inter font-normal text-[#4A4A4A] text-sm leading-relaxed"
+            style={{ fontSize: "14px", lineHeight: "20px" }}
+          >
+            &ldquo;{testimonial.quote}&rdquo;
+          </p>
         </div>
 
-        {/* Quote */}
-        <p
-          className="font-inter font-normal text-[#2E2E2E]"
-          style={{ fontSize: "16px", lineHeight: "19px", width: "366px" }}
-        >
-          &ldquo;{testimonial.quote}&rdquo;
-        </p>
-
         {/* Product badge */}
-        <Link
-          href={`/product/${testimonial.productSlug}`}
-          className="inline-flex items-center justify-center font-inter font-normal hover:opacity-90 transition-all"
-          style={{
-            background: "#1D3B29",
-            color: "#F7EDE2",
-            borderRadius: "24px",
-            padding: "10px",
-            fontSize: "16px",
-            lineHeight: "19px",
-            width: "fit-content",
-          }}
-        >
-          Using {testimonial.productName}
-        </Link>
+        <div className="mt-4">
+          <Link
+            href={`/product/${testimonial.productSlug}`}
+            className="inline-flex items-center justify-center font-inter font-semibold transition-all hover:opacity-90"
+            style={{
+              background: "#1D3B29",
+              color: "#FFFFFF",
+              borderRadius: "24px",
+              padding: "6px 16px",
+              fontSize: "12px",
+              lineHeight: "15px",
+              width: "fit-content",
+            }}
+          >
+            Using {testimonial.productName}
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -177,29 +154,29 @@ function LeafIcon({ flipped = false }: { flipped?: boolean }) {
 export default function RealResults() {
   return (
     <section
-      className="relative w-full"
-      style={{ height: "780px", background: "#F4F0EC", overflow: "hidden" }}
+      className="relative w-full overflow-hidden"
+      style={{ minHeight: "750px", background: "#FCFAF4", padding: "80px 0" }}
     >
-      {/* Background image */}
+      {/* Background watermark pattern */}
       <Image
         src="/images/home/transformation.png"
         alt="Transformations Background"
         fill
-        className="object-cover opacity-10"
+        className="object-cover opacity-5 pointer-events-none"
         priority
       />
 
-      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-[100px] pt-16">
+      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-[100px]">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-end gap-6 mb-4"
+            className="flex items-center justify-center gap-3 mb-4"
           >
             <LeafIcon />
-            <span className="font-playfair font-normal text-[#000000]" style={{ fontSize: "24px", lineHeight: "32px" }}>
+            <span className="font-playfair font-normal text-[#1D3B29]" style={{ fontSize: "24px", lineHeight: "32px" }}>
               Transformation
             </span>
             <LeafIcon flipped />
@@ -210,7 +187,7 @@ export default function RealResults() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#2E2E2E]"
+            className="font-playfair font-bold text-[#1D3B29]"
             style={{ fontSize: "48px", lineHeight: "64px" }}
           >
             Visible Results, Naturally
@@ -221,15 +198,15 @@ export default function RealResults() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] mt-4"
-            style={{ fontSize: "24px", lineHeight: "29px", maxWidth: "651px" }}
+            className="font-inter font-normal text-[#4A4A4A] mt-4"
+            style={{ fontSize: "18px", lineHeight: "26px", maxWidth: "650px" }}
           >
             See the transformations our customers have experienced
           </motion.p>
         </div>
 
         {/* Testimonial Cards */}
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="flex flex-wrap justify-center gap-8">
           {testimonials.map((t, i) => (
             <motion.div
               key={t.id}

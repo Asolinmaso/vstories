@@ -113,9 +113,9 @@ export default function ShopContent({ initialProducts }: { initialProducts: Prod
 
                             <div className="pt-8 border-t border-gray-100">
                                 <div className="bg-[var(--primary)] p-6 rounded-3xl text-white">
-                                    <h4 className="font-heading text-xl mb-2">Need Help?</h4>
-                                    <p className="text-xs text-white/70 mb-4">Our herbal experts are here to guide you.</p>
-                                    <Link href="/contact" className="text-xs font-bold text-[var(--highlight)] hover:underline">Chat with us →</Link>
+                                    <h4 className="font-heading text-xl mb-2" style={{ color: "#F7EDE2" }}>Need Help?</h4>
+                                    <p className="text-sm mb-4 opacity-90" style={{ color: "#F7EDE2" }}>Our herbal experts are here to guide you.</p>
+                                    <Link href="/contact" className="text-sm font-bold hover:underline" style={{ color: "#F7EDE2" }}>Chat with us →</Link>
                                 </div>
                             </div>
                         </aside>

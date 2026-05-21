@@ -38,7 +38,7 @@ const defaultReviews = [
     name: "Sneha A.",
     location: "Pune",
     rating: 5,
-    text: "I first tried the sample pack and instantly loved the formulations. The textures, fragrance, and results felt genuinely different from regular products.",
+    text: "I first tried the sample pack and instantly loved the formulations. The textures, fragrance, and results felt genuinely different from regular products",
     bgColor: "#1D3B29",
     cardBg: "#778E6B",
     textColor: "#FFFFFF",
@@ -49,7 +49,7 @@ const defaultReviews = [
     name: "Aarav K.",
     location: "Bangalore",
     rating: 5,
-    text: "The Prophetic Serum feels very gentle on my skin. It helped reduce dullness and gave my skin a fresh, natural glow without irritation.",
+    text: "The Prophetic Serum feels very gentle on my skin. It helped reduce dullness and gave my skin a fresh, natural glow without irritation",
     bgColor: "#E8BF72",
     cardBg: "#FFFFFF",
     textColor: "#2E2E2E",
@@ -117,7 +117,7 @@ export default function CustomerLove({ testimonials = [], title, subtitle }: Cus
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
             className="font-inter font-normal text-[#2E2E2E] text-center mt-4"
-            style={{ fontSize: "24px", lineHeight: "29px", maxWidth: "768px" }}
+            style={{ fontSize: "20px", lineHeight: "28px", maxWidth: "768px" }}
           >
             {subtitle || "Thousands across India trust Vstories for gentle, plant-powered skincare and haircare that truly works with their everyday routines."}
           </motion.p>
@@ -137,9 +137,10 @@ export default function CustomerLove({ testimonials = [], title, subtitle }: Cus
                 width: "397px",
                 height: "262px",
                 background: review.cardBg,
-                boxShadow: "0px 5px 10px rgba(0, 0, 0, 0.25)",
+                boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.08)",
                 borderRadius: "12px",
                 overflow: "hidden",
+                border: review.cardBg === "#FFFFFF" ? "1px solid #EAEAEA" : "none",
               }}
             >
               {/* Stars row */}
@@ -147,9 +148,9 @@ export default function CustomerLove({ testimonials = [], title, subtitle }: Cus
                 className="absolute flex items-center justify-between"
                 style={{ left: "40px", top: "40px", width: "317px" }}
               >
-                <div className="flex gap-0.5">
+                <div className="flex gap-1">
                   {[...Array(review.rating || 5)].map((_, i) => (
-                    <Star key={i} size={19} fill="#E8BF72" color="#E8BF72" />
+                    <Star key={i} size={14} fill="#E8BF72" color="#E8BF72" />
                   ))}
                 </div>
                 {/* Quote icon */}
@@ -165,8 +166,8 @@ export default function CustomerLove({ testimonials = [], title, subtitle }: Cus
                   left: "40px",
                   top: "83px",
                   width: "317px",
-                  fontSize: "16px",
-                  lineHeight: "19px",
+                  fontSize: "15px",
+                  lineHeight: "22px",
                   color: review.textColor,
                 }}
               >
@@ -182,29 +183,29 @@ export default function CustomerLove({ testimonials = [], title, subtitle }: Cus
                 <div
                   className="flex items-center justify-center flex-shrink-0"
                   style={{
-                    width: "40px",
-                    height: "40px",
+                    width: "36px",
+                    height: "36px",
                     background: review.bgColor,
-                    borderRadius: "40px",
+                    borderRadius: "36px",
                   }}
                 >
                   <span
-                    className="font-inter font-normal text-white"
-                    style={{ fontSize: "12px", lineHeight: "15px" }}
+                    className="font-inter font-medium text-white"
+                    style={{ fontSize: "14px", lineHeight: "17px" }}
                   >
                     {review.initials}
                   </span>
                 </div>
                 <div className="flex flex-col gap-0.5">
                   <span
-                    className="font-inter font-normal"
-                    style={{ fontSize: "16px", lineHeight: "19px", color: review.textColor }}
+                    className="font-inter font-medium"
+                    style={{ fontSize: "14px", lineHeight: "17px", color: review.textColor }}
                   >
                     {review.name || review.author}
                   </span>
                   <span
                     className="font-inter font-normal"
-                    style={{ fontSize: "12px", lineHeight: "15px", color: review.textColor }}
+                    style={{ fontSize: "12px", lineHeight: "15px", color: review.textColor, opacity: 0.9 }}
                   >
                     {review.location}
                   </span>

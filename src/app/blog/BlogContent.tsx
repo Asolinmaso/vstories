@@ -27,7 +27,7 @@ const posts: BlogPost[] = [
     excerpt: "Discover time-tested, natural tips to nourish your scalp and strengthen hair from the roots.",
     date: "20 Feb, 2026",
     readTime: "5 Min Read",
-    image: "/images/banner-hair.png",
+    image: "/images/blog/hair care.png",
     category: "Hair Care",
   },
   {
@@ -37,7 +37,7 @@ const posts: BlogPost[] = [
     excerpt: "A closer look at the ancient herb Bhringraj and its amazing benefits for hair growth.",
     date: "20 Feb, 2026",
     readTime: "5 Min Read",
-    image: "/images/cat-hair.png",
+    image: "/images/blog/Incridients.png",
     category: "Ingredients",
   },
   {
@@ -47,7 +47,7 @@ const posts: BlogPost[] = [
     excerpt: "How Ayurveda helps balance your skin naturally for a healthy, radiant glow.",
     date: "20 Feb, 2026",
     readTime: "7 Min Read",
-    image: "/images/banner-skin.png",
+    image: "/images/blog/Skin care.png",
     category: "Skin Care",
   },
   {
@@ -57,7 +57,7 @@ const posts: BlogPost[] = [
     excerpt: "These powerful herbs can help reduce dandruff, irritation & promote scalp wellness.",
     date: "20 Feb, 2026",
     readTime: "5 Min Read",
-    image: "/images/cat-skin.png",
+    image: "/images/blog/wellness.png",
     category: "Wellness",
   },
   {
@@ -67,7 +67,7 @@ const posts: BlogPost[] = [
     excerpt: "From clean ingredients to eco-friendly packaging, here's how we care for you & planet.",
     date: "20 Feb, 2026",
     readTime: "5 Min Read",
-    image: "/images/brand-story-bg.png",
+    image: "/images/blog/Sustainability.png",
     category: "Sustainability",
   },
   {
@@ -77,7 +77,7 @@ const posts: BlogPost[] = [
     excerpt: "Simple steps to create a natural hair care routine that works for your hair type.",
     date: "20 Feb, 2026",
     readTime: "5 Min Read",
-    image: "/images/category-hair.png",
+    image: "/images/blog/Hair.png",
     category: "Hair Care",
   },
 ];
