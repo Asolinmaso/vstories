@@ -81,7 +81,7 @@ export default function AboutContent() {
               Born from Nature. Built for Indian Skin.
             </h1>
             <p className="font-inter font-normal text-[#000000]" style={{ fontSize: 24, lineHeight: "29px", width: 848, color: '#000000' }}>
-              At Vstories, we blend time-tested herbs with modern formulation science to create skincare and haircare that actually works in Indian conditions — from heat and humidity to pollution and stress.
+              At Vstories, we blend time-tested herbs with modern formulation science to create skincare and haircare that actually works in Indian conditions from heat and humidity to pollution and stress.
             </p>
             <Link href="#our-story" className="inline-flex items-center justify-center font-inter font-medium text-[#F7EDE2] hover:opacity-90 transition-all"
               style={{ width: 183, height: 43, background: "#1D3B29", borderRadius: 8, fontSize: 16, color: '#F7EDE2' }}>

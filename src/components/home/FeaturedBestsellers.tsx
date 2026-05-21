@@ -258,11 +258,27 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-2"
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 mb-8"
             style={{ fontSize: "24px", lineHeight: "29px", maxWidth: "671px" }}
           >
             Handpicked by thousands of happy customers across India
           </motion.p>
+
+          <Link
+            href="/shop"
+            className="font-inter font-medium inline-flex items-center justify-center hover:opacity-90 transition-all"
+            style={{
+              width: "162px",
+              height: "43px",
+              background: "#1D3B29",
+              color: "#F7EDE2",
+              borderRadius: "8px",
+              fontSize: "16px",
+              lineHeight: "19px",
+            }}
+          >
+            View All
+          </Link>
         </div>
 
         {/* Products Grid - 4 columns */}
@@ -280,24 +296,6 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
           ))}
         </div>
 
-        {/* View All Button */}
-        <div className="flex justify-center mt-12">
-          <Link
-            href="/shop"
-            className="font-inter font-medium inline-flex items-center justify-center hover:opacity-90 transition-all"
-            style={{
-              width: "162px",
-              height: "43px",
-              background: "#1D3B29",
-              color: "#F7EDE2",
-              borderRadius: "8px",
-              fontSize: "16px",
-              lineHeight: "19px",
-            }}
-          >
-            View All
-          </Link>
-        </div>
       </div>
     </section>
   );
