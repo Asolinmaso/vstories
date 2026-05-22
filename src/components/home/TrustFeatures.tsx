@@ -47,35 +47,23 @@ export default function TrustFeatures() {
   ];
 
   return (
-    <div
-      className="w-full"
-      style={{ background: "#F7F3EF", height: "185px", display: "flex", alignItems: "center" }}
-    >
-      <div className="w-full max-w-[1440px] mx-auto px-[100px]">
-        <div className="flex items-center justify-around">
+    <div className="w-full bg-[#F7F3EF] py-8 lg:h-[185px] lg:py-0 flex items-center">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-around gap-8 sm:gap-4 lg:gap-0">
           {features.map((feature, idx) => (
             <div
               key={idx}
-              className="flex flex-col items-center gap-3"
-              style={{ width: "216px" }}
+              className="flex flex-col items-center gap-3 w-full max-w-[216px] mx-auto sm:mx-0"
             >
-              {/* Icon */}
-              <div className="flex items-center justify-center" style={{ height: "40px" }}>
+              <div className="flex items-center justify-center h-10">
                 {feature.icon}
               </div>
 
-              {/* Text */}
               <div className="flex flex-col items-center gap-2">
-                <h4
-                  className="font-playfair font-semibold text-[#2E2E2E] text-center"
-                  style={{ fontSize: "24px", lineHeight: "32px" }}
-                >
+                <h4 className="font-playfair font-semibold text-[#2E2E2E] text-center text-lg lg:text-2xl lg:leading-8">
                   {feature.title}
                 </h4>
-                <p
-                  className="font-inter font-normal text-[#2E2E2E] text-center"
-                  style={{ fontSize: "16px", lineHeight: "19px" }}
-                >
+                <p className="font-inter font-normal text-[#2E2E2E] text-center text-sm lg:text-base lg:leading-[19px]">
                   {feature.desc}
                 </p>
               </div>

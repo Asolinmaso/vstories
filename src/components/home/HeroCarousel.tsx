@@ -62,7 +62,7 @@ export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
   ];
 
   return (
-    <section className="relative w-full overflow-hidden" style={{ background: "#F4EEE2", minHeight: "762px" }}>
+    <section className="relative w-full overflow-hidden bg-[#F4EEE2] min-h-[420px] sm:min-h-[560px] lg:min-h-[762px]">
       <div className="relative w-full h-full">
         <Swiper
           modules={[Autoplay, EffectFade, Pagination]}
@@ -81,8 +81,7 @@ export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
                             </span>`;
             },
           }}
-          className="w-full"
-          style={{ height: "762px" }}
+          className="w-full min-h-[420px] sm:min-h-[560px] lg:h-[762px]"
         >
           {slides.map((slide, idx) => (
             <SwiperSlide key={slide.id} className="relative w-full h-full">
@@ -100,20 +99,13 @@ export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
 
               {/* Content positioned absolutely over image, left-aligned per Hero.tsx */}
               <div className="relative z-10 w-full h-full flex items-center">
-                <div className="w-full max-w-[1440px] mx-auto px-[100px]">
+                <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
                   {/* Heading */}
                   <motion.h1
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="font-playfair font-semibold text-black"
-                    style={{
-                      width: "543px",
-                      fontSize: "64px",
-                      lineHeight: "85px",
-                      marginTop: "100px",
-                      maxWidth: "100%",
-                    }}
+                    className="font-playfair font-semibold text-black w-full max-w-[543px] mt-8 sm:mt-16 lg:mt-[100px] text-3xl sm:text-4xl md:text-5xl lg:text-[64px] leading-tight sm:leading-snug lg:leading-[85px]"
                   >
                     {slide.title} {slide.subtitle}
                   </motion.h1>
@@ -123,14 +115,7 @@ export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                    className="font-inter font-normal text-black"
-                    style={{
-                      width: "628px",
-                      fontSize: "24px",
-                      lineHeight: "29px",
-                      marginTop: "20px",
-                      maxWidth: "100%",
-                    }}
+                    className="font-inter font-normal text-black w-full max-w-[628px] mt-5 text-base sm:text-lg lg:text-2xl lg:leading-[29px]"
                   >
                     Clean, effective & honest skincare and haircare enriched with natural ingredients & powerful herbs for real, visible results.
                   </motion.p>

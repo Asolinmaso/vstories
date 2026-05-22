@@ -43,8 +43,8 @@ export default function OffersSection() {
   };
 
   return (
-    <section className="py-20" style={{ background: "#FCFAF4" }}>
-      <div className="w-full max-w-[1440px] mx-auto px-[100px]">
+    <section className="py-12 lg:py-20" style={{ background: "#FCFAF4" }}>
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-16">
           <motion.div
@@ -65,8 +65,7 @@ export default function OffersSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#2E2E2E]"
-            style={{ fontSize: "48px", lineHeight: "64px" }}
+            className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px]"
           >
             Offers Crafted for You
           </motion.h2>
@@ -76,24 +75,21 @@ export default function OffersSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-2"
-            style={{ fontSize: "24px", lineHeight: "29px", maxWidth: "1041px" }}
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 text-base sm:text-lg lg:text-2xl lg:leading-[29px] max-w-[1041px]"
           >
             Enjoy thoughtful savings on skincare and haircare made for Indian skin and everyday needs.
           </motion.p>
         </div>
 
         {/* Offer Cards */}
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="flex flex-col items-stretch sm:flex-row sm:flex-wrap sm:justify-center gap-4 sm:gap-6">
           {/* Card 1: Get ₹200 OFF */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-start gap-6 p-6"
+            className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 p-6 w-full max-w-[333px] mx-auto sm:min-h-[182px] lg:h-[182px]"
             style={{
-              width: "333px",
-              height: "182px",
               background: "#F9F6F1",
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
               borderRadius: "12px",
@@ -154,10 +150,8 @@ export default function OffersSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="flex items-start gap-6 p-6"
+            className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 p-6 w-full max-w-[315px] mx-auto sm:min-h-[182px] lg:h-[182px]"
             style={{
-              width: "315px",
-              height: "182px",
               background: "#778E6B",
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
               borderRadius: "12px",
@@ -218,10 +212,8 @@ export default function OffersSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="flex items-start gap-6 p-6"
+            className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 p-6 w-full max-w-[300px] mx-auto sm:min-h-[182px] lg:h-[182px]"
             style={{
-              width: "300px",
-              height: "182px",
               background: "#F9F6F1",
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
               borderRadius: "12px",

@@ -71,11 +71,8 @@ function ProductCard({ product }: { product: Product }) {
 
   return (
     <div
-      className="relative flex flex-col bg-[#FFFFFF]"
+      className="relative flex flex-col bg-[#FFFFFF] w-full max-w-[396px] mx-auto h-auto lg:h-[641px]"
       style={{
-        width: "396px",
-        height: "641px",
-        maxWidth: "100%",
         border: "1px solid #D9D9D9",
         boxShadow: "0px 10px 25px rgba(0, 0, 0, 0.08)",
         borderRadius: "12px",
@@ -83,7 +80,7 @@ function ProductCard({ product }: { product: Product }) {
       }}
     >
       {/* Product Image */}
-      <div className="relative" style={{ width: "100%", height: "387px", flexShrink: 0 }}>
+      <div className="relative w-full h-48 sm:h-64 lg:h-[387px] shrink-0">
         <Image
           src={product.images?.[0] || "/images/home/hero2.png"}
           alt={product.name}
@@ -126,7 +123,7 @@ function ProductCard({ product }: { product: Product }) {
         </p>
 
         {/* Price + Rating row */}
-        <div className="flex items-center justify-between mt-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mt-6">
           {/* Price */}
           <div className="flex items-center gap-2">
             <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: "24px", lineHeight: "29px" }}>
@@ -153,7 +150,7 @@ function ProductCard({ product }: { product: Product }) {
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex items-center gap-4 mt-auto">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-auto">
           <button
             onClick={handleAddToCart}
             className="flex-1 font-inter font-medium text-[#1D3B29] transition-all hover:bg-[#F4F0EC]"
@@ -267,10 +264,10 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
 
   return (
     <section
-      className="py-20"
+      className="py-12 lg:py-20"
       style={{ background: "#FCFAF4" }}
     >
-      <div className="w-full max-w-[1440px] mx-auto px-[100px]">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
         {/* Section header: subtitle row with decorative leaves */}
         <div className="flex flex-col items-center text-center mb-12">
           <motion.div
@@ -294,8 +291,7 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#1D3B29]"
-            style={{ fontSize: "64px", lineHeight: "85px", maxWidth: "100%" }}
+            className="font-playfair font-semibold text-[#1D3B29] text-3xl sm:text-4xl md:text-5xl lg:text-[64px] leading-tight sm:leading-snug lg:leading-[85px] max-w-full"
           >
             Find what your skin &amp; hair truely needs
           </motion.h2>
@@ -305,25 +301,20 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-6"
-            style={{ fontSize: "24px", lineHeight: "29px", maxWidth: "800px" }}
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-6 text-base sm:text-lg lg:text-2xl lg:leading-[29px] max-w-[800px]"
           >
-            Discover gentle, plant-powered skincare and haircare made for <br /> Indian lifestyles, climates, and everyday routines.
+            Discover gentle, plant-powered skincare and haircare made for <br className="hidden sm:block" /> Indian lifestyles, climates, and everyday routines.
           </motion.p>
         </div>
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center gap-6 mb-16">
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-12 lg:mb-16">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className="font-inter font-medium transition-all"
+              className="font-inter font-medium transition-all px-4 py-2 sm:px-8 sm:py-2.5 rounded-[32px] text-sm sm:text-base leading-[19px]"
               style={{
-                padding: "10px 32px",
-                borderRadius: "32px",
-                fontSize: "16px",
-                lineHeight: "19px",
                 background: activeTab === tab ? "#1D3B29" : "transparent",
                 border: "1px solid #1D3B29",
                 color: activeTab === tab ? "#F7EDE2" : "#1D3B29",

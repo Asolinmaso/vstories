@@ -123,7 +123,7 @@ export default function ProductDetailClient({ product, includedProducts = [] }: 
 
     const handleAddToCart = () => {
         addItem({
-            id: `${product.id}-${selectedSize}`,
+            id: product.id,
             name: product.name,
             price: currentPrice,
             image: product.images[0],
@@ -136,7 +136,7 @@ export default function ProductDetailClient({ product, includedProducts = [] }: 
 
     const handleBuyNow = () => {
         addItem({
-            id: `${product.id}-${selectedSize}`,
+            id: product.id,
             name: product.name,
             price: currentPrice,
             image: product.images[0],

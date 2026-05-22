@@ -4,16 +4,6 @@ import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import Image from "next/image";
 
-interface Testimonial {
-  id: number;
-  name: string;
-  rating: number;
-  text: string;
-  image?: string;
-  role?: string;
-  location?: string;
-}
-
 interface CustomerLoveProps {
   testimonials?: any[];
   title?: string;
@@ -83,18 +73,18 @@ export default function CustomerLove({ testimonials = [], title, subtitle }: Cus
     : defaultReviews;
 
   return (
-    <section className="py-20" style={{ background: "#FCFAF4" }}>
-      <div className="w-full max-w-[1440px] mx-auto px-[100px]">
+    <section className="py-12 lg:py-20 bg-[#FCFAF4]">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-16">
+        <div className="flex flex-col items-center text-center mb-10 lg:mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-end gap-6 mb-4"
+            className="flex items-end gap-4 sm:gap-6 mb-4"
           >
             <LeafIcon />
-            <span className="font-playfair font-normal text-[#000000]" style={{ fontSize: "24px", lineHeight: "32px" }}>
+            <span className="font-playfair font-normal text-[#000000] text-lg lg:text-2xl lg:leading-8">
               Real Experiences, Real Confidence
             </span>
             <LeafIcon flipped />
@@ -105,8 +95,7 @@ export default function CustomerLove({ testimonials = [], title, subtitle }: Cus
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#2E2E2E]"
-            style={{ fontSize: "48px", lineHeight: "64px", maxWidth: "774px" }}
+            className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px] max-w-[774px]"
           >
             {title || "Trusted By Thousands Across India"}
           </motion.h2>
@@ -116,15 +105,14 @@ export default function CustomerLove({ testimonials = [], title, subtitle }: Cus
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-4"
-            style={{ fontSize: "20px", lineHeight: "28px", maxWidth: "768px" }}
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-4 text-base sm:text-lg lg:text-xl lg:leading-7 max-w-[768px]"
           >
             {subtitle || "Thousands across India trust Vstories for gentle, plant-powered skincare and haircare that truly works with their everyday routines."}
           </motion.p>
         </div>
 
         {/* Review Cards */}
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="flex flex-col items-center sm:flex-row sm:flex-wrap sm:justify-center gap-4 sm:gap-6">
           {displayReviews.slice(0, 3).map((review: any, index: number) => (
             <motion.div
               key={review.id}
@@ -132,81 +120,46 @@ export default function CustomerLove({ testimonials = [], title, subtitle }: Cus
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="relative flex-shrink-0"
+              className="relative flex-shrink-0 w-full max-w-[397px] min-h-[262px] p-6 sm:p-8 lg:p-10 flex flex-col gap-5"
               style={{
-                width: "397px",
-                height: "262px",
                 background: review.cardBg,
                 boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.08)",
                 borderRadius: "12px",
-                overflow: "hidden",
                 border: review.cardBg === "#FFFFFF" ? "1px solid #EAEAEA" : "none",
               }}
             >
-              {/* Stars row */}
-              <div
-                className="absolute flex items-center justify-between"
-                style={{ left: "40px", top: "40px", width: "317px" }}
-              >
+              <div className="flex items-center justify-between gap-4">
                 <div className="flex gap-1">
                   {[...Array(review.rating || 5)].map((_, i) => (
                     <Star key={i} size={14} fill="#E8BF72" color="#E8BF72" />
                   ))}
                 </div>
-                {/* Quote icon */}
                 <svg width="22" height="16" viewBox="0 0 22 16" fill={review.cardBg === "#778E6B" ? "#1D3B29" : "#E8BF72"} xmlns="http://www.w3.org/2000/svg">
                   <path d="M9.6 0v6.4H6.4C6.4 9.92 7.84 12 10.4 12V16C5.12 16 0 12.48 0 6.4V0H9.6ZM22 0v6.4h-3.2c0 3.52 1.44 5.6 4 5.6V16c-5.28 0-10.4-3.52-10.4-9.6V0H22Z"/>
                 </svg>
               </div>
 
-              {/* Review text */}
               <p
-                className="absolute font-inter font-normal"
-                style={{
-                  left: "40px",
-                  top: "83px",
-                  width: "317px",
-                  fontSize: "15px",
-                  lineHeight: "22px",
-                  color: review.textColor,
-                }}
+                className="font-inter font-normal text-[15px] leading-[22px] flex-1"
+                style={{ color: review.textColor }}
               >
                 {review.text || review.content}
               </p>
 
-              {/* Author info */}
-              <div
-                className="absolute flex items-center gap-3"
-                style={{ left: "40px", top: "183px" }}
-              >
-                {/* Avatar */}
+              <div className="flex items-center gap-3">
                 <div
-                  className="flex items-center justify-center flex-shrink-0"
-                  style={{
-                    width: "36px",
-                    height: "36px",
-                    background: review.bgColor,
-                    borderRadius: "36px",
-                  }}
+                  className="flex items-center justify-center flex-shrink-0 w-9 h-9 rounded-full"
+                  style={{ background: review.bgColor }}
                 >
-                  <span
-                    className="font-inter font-medium text-white"
-                    style={{ fontSize: "14px", lineHeight: "17px" }}
-                  >
+                  <span className="font-inter font-medium text-white text-sm leading-[17px]">
                     {review.initials}
                   </span>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span
-                    className="font-inter font-medium"
-                    style={{ fontSize: "14px", lineHeight: "17px", color: review.textColor }}
-                  >
+                  <span className="font-inter font-medium text-sm leading-[17px]" style={{ color: review.textColor }}>
                     {review.name || review.author}
                   </span>
-                  <span
-                    className="font-inter font-normal"
-                    style={{ fontSize: "12px", lineHeight: "15px", color: review.textColor, opacity: 0.9 }}
-                  >
+                  <span className="font-inter font-normal text-xs leading-[15px] opacity-90" style={{ color: review.textColor }}>
                     {review.location}
                   </span>
                 </div>

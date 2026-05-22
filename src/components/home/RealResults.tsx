@@ -40,15 +40,9 @@ const testimonials = [
 
 function ComparisonCard({ testimonial }: { testimonial: typeof testimonials[0] }) {
   return (
-    <div
-      className="flex flex-col bg-white border border-[#EAEAEA] rounded-2xl overflow-hidden shadow-[0px_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0px_12px_36px_rgba(0,0,0,0.08)] transition-all duration-300"
-      style={{
-        width: "380px",
-        height: "450px",
-      }}
-    >
+    <div className="flex flex-col bg-white border border-[#EAEAEA] rounded-2xl overflow-hidden shadow-[0px_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0px_12px_36px_rgba(0,0,0,0.08)] transition-all duration-300 w-full max-w-[380px] mx-auto h-auto lg:h-[450px]">
       {/* Before/After Images top section */}
-      <div className="relative w-full h-[276px] overflow-hidden select-none flex">
+      <div className="relative w-full h-48 sm:h-56 lg:h-[276px] overflow-hidden select-none flex">
         {/* Before image */}
         <div
           className="w-1/2 h-full"
@@ -153,10 +147,7 @@ function LeafIcon({ flipped = false }: { flipped?: boolean }) {
 
 export default function RealResults() {
   return (
-    <section
-      className="relative w-full overflow-hidden"
-      style={{ minHeight: "750px", background: "#FCFAF4", padding: "80px 0" }}
-    >
+    <section className="relative w-full overflow-hidden bg-[#FCFAF4] py-12 sm:py-16 lg:py-20 lg:min-h-[750px]">
       {/* Background watermark pattern */}
       <Image
         src="/images/home/transformation.png"
@@ -166,7 +157,7 @@ export default function RealResults() {
         priority
       />
 
-      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-[100px]">
+      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-12">
           <motion.div
@@ -187,8 +178,7 @@ export default function RealResults() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-bold text-[#1D3B29]"
-            style={{ fontSize: "48px", lineHeight: "64px" }}
+            className="font-playfair font-bold text-[#1D3B29] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px]"
           >
             Visible Results, Naturally
           </motion.h2>

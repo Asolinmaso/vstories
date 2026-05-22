@@ -21,12 +21,25 @@ export function LoginModalProvider({ children }: { children: ReactNode }) {
     const { user } = useAuth();
     const pathname = usePathname();
 
+    // Open modal when ?login=1 is present (e.g. checkout redirect)
+    useEffect(() => {
+        if (user || typeof window === "undefined") return;
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("login") === "1") {
+            setIsOpen(true);
+        }
+    }, [user, pathname]);
+
     // First-visit popup: show after 2s if not logged in and not on auth/admin pages
     useEffect(() => {
         if (user) return;
         const isAuthPage = pathname === "/login" || pathname === "/signup";
         const isAdmin = pathname?.startsWith("/admin");
         if (isAuthPage || isAdmin) return;
+        if (typeof window !== "undefined") {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("login") === "1") return;
+        }
 
         const seen = localStorage.getItem("vstories_login_prompt");
         if (!seen) {
@@ -45,3 +58,4 @@ export function LoginModalProvider({ children }: { children: ReactNode }) {
         </LoginModalContext.Provider>
     );
 }
+

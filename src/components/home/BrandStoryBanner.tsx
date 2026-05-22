@@ -7,38 +7,27 @@ import Link from "next/link";
 export default function BrandStoryBanner() {
   return (
     <section
-      className="relative w-full overflow-hidden dark-section"
-      style={{
-        height: "377px",
-        marginTop: "50px"
-      }}
+      className="relative w-full overflow-hidden dark-section min-h-[260px] sm:min-h-[320px] lg:h-[377px] mt-6 lg:mt-[50px]"
     >
       {/* Background image */}
       <Image
         src="/images/home/homebg.png"
         alt="More Than Skincare. A Story of Care."
         fill
-        className="object-cover"
-        style={{ objectPosition: "center -280px" }}
+        className="object-cover object-center lg:object-[center_-280px]"
         priority
       />
 
       {/* Content - left aligned per Figma */}
       <div className="absolute inset-0 w-full flex items-center">
-        <div className="w-full max-w-[1440px] mx-auto px-[100px]">
-          <div style={{ maxWidth: "562px" }}>
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
+          <div className="max-w-full lg:max-w-[562px]">
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="font-playfair font-semibold"
-              style={{
-                fontSize: "48px",
-                lineHeight: "64px",
-                maxWidth: "486px",
-                color: "#FFFFFF",
-              }}
+              className="font-playfair font-semibold text-white text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px] max-w-[486px]"
             >
               More Than Skincare. <br /> A Story of Care.
             </motion.h2>
@@ -48,14 +37,7 @@ export default function BrandStoryBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="font-inter font-normal mt-4"
-              style={{
-                fontSize: "24px",
-                lineHeight: "29px",
-                maxWidth: "562px",
-                color: "#FFFFFF",
-                fontWeight: 300,
-              }}
+              className="font-inter font-normal mt-4 text-white font-light text-base sm:text-lg lg:text-2xl lg:leading-[29px] max-w-[562px]"
             >
               Inspired by real experiences, built for Indian skin, our journey blends tradition with modern science.
             </motion.p>

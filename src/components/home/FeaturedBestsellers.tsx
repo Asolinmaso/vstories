@@ -125,21 +125,9 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
   };
 
   return (
-    <div
-      className="flex flex-col justify-center items-start gap-6"
-      style={{ width: "292px" }}
-    >
+    <div className="flex flex-col justify-center items-start gap-6 w-full max-w-[292px] mx-auto">
       {/* Image box */}
-      <div
-        className="relative"
-        style={{
-          width: "292px",
-          height: "303px",
-          background: "#EAEAEA",
-          borderRadius: "8px",
-          overflow: "hidden",
-        }}
-      >
+      <div className="relative w-full aspect-[292/303] lg:w-[292px] lg:h-[303px] bg-[#EAEAEA] rounded-lg overflow-hidden">
         <Image
           src={product.images?.[0] || "/images/products/prophetic-face-serum.png"}
           alt={product.name}
@@ -166,16 +154,13 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
       </div>
 
       {/* Info */}
-      <div className="flex flex-col gap-3" style={{ width: "292px" }}>
-        <h3
-          className="font-inter font-semibold text-[#2E2E2E]"
-          style={{ fontSize: "24px", lineHeight: "29px" }}
-        >
+      <div className="flex flex-col gap-3 w-full">
+        <h3 className="font-inter font-semibold text-[#2E2E2E] text-lg lg:text-2xl lg:leading-[29px]">
           {product.name}
         </h3>
 
         {/* Price + Rating row */}
-        <div className="flex items-center justify-between" style={{ width: "292px" }}>
+        <div className="flex flex-wrap items-center justify-between gap-2 w-full">
           <div className="flex items-center gap-2">
             <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: "24px", lineHeight: "29px" }}>
               ₹{product.price}
@@ -222,8 +207,8 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
   const displayProducts = fallbackProducts.map((p, i) => ({ ...p, badge: i < 2 ? "Best seller" : i === 2 ? "Most Loved" : "New Launch" }));
 
   return (
-    <section className="py-20" style={{ background: "#FCFAF4" }}>
-      <div className="w-full max-w-[1440px] mx-auto px-[100px]">
+    <section className="py-12 lg:py-20" style={{ background: "#FCFAF4" }}>
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-12">
           <motion.div
@@ -247,8 +232,7 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#2E2E2E]"
-            style={{ fontSize: "48px", lineHeight: "64px" }}
+            className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px]"
           >
             Real Ingredients, Real Results
           </motion.h2>
@@ -258,8 +242,7 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 mb-8"
-            style={{ fontSize: "24px", lineHeight: "29px", maxWidth: "671px" }}
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 mb-8 text-base sm:text-lg lg:text-2xl lg:leading-[29px] max-w-[671px]"
           >
             Handpicked by thousands of happy customers across India
           </motion.p>

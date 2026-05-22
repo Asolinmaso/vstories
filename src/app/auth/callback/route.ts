@@ -103,11 +103,11 @@ async function sendWelcomeEmail(
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url);
     const code = searchParams.get('code');
-    const next = searchParams.get('next') ?? '/profile';
+    const next = searchParams.get('next') ?? '/';
 
     // Prevent open-redirect attacks
     const safeNext =
-        next.startsWith('/') && !next.startsWith('//') ? next : '/profile';
+        next.startsWith('/') && !next.startsWith('//') ? next : '/';
 
     if (!code) {
         console.error('[Auth Callback] No authorization code received');

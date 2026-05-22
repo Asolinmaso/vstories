@@ -67,7 +67,10 @@ export async function middleware(request: NextRequest) {
     // Protect user routes
     const isUserRoute = pathname.startsWith('/profile') || pathname.startsWith('/account') || pathname.startsWith('/checkout') || pathname.startsWith('/order-success');
     if (isUserRoute && !user) {
-        return NextResponse.redirect(new URL('/', request.url));
+        const redirectUrl = new URL('/', request.url);
+        redirectUrl.searchParams.set('login', '1');
+        redirectUrl.searchParams.set('redirect', pathname);
+        return NextResponse.redirect(redirectUrl);
     }
 
     // Protect admin routes

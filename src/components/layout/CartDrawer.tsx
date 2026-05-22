@@ -3,8 +3,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { X, Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
-import { useCartStore } from "@/lib/store";
+import { useCartStore, getCartItemKey } from "@/lib/store";
+import { useAuth } from "@/context/AuthContext";
+import { useLoginModal } from "@/context/LoginModalContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface CartDrawerProps {
     isOpen: boolean;
@@ -13,6 +16,18 @@ interface CartDrawerProps {
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     const { items, removeItem, updateQuantity, getTotal } = useCartStore();
+    const { user } = useAuth();
+    const { open: openLoginModal } = useLoginModal();
+    const router = useRouter();
+
+    const handleCheckout = () => {
+        onClose();
+        if (!user) {
+            openLoginModal();
+            return;
+        }
+        router.push("/checkout");
+    };
 
     return (
         <AnimatePresence>
@@ -82,9 +97,11 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 </div>
                             ) : (
                                 <ul className="space-y-6">
-                                    {items.map((item, index) => (
+                                    {items.map((item, index) => {
+                                        const itemKey = getCartItemKey(item);
+                                        return (
                                         <motion.li
-                                            key={item.cartItemId || `${item.id}-${item.size || 'default'}-${index}`}
+                                            key={itemKey || `${item.id}-${index}`}
                                             layout
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
@@ -130,8 +147,8 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                                     <div className="flex items-center gap-2 bg-[var(--white)] rounded-md border border-[var(--primary)]/10">
                                                         <button
                                                             onClick={() =>
-                                                                item.cartItemId && updateQuantity(
-                                                                    item.cartItemId,
+                                                                updateQuantity(
+                                                                    itemKey,
                                                                     Math.max(1, item.quantity - 1)
                                                                 )
                                                             }
@@ -145,7 +162,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                                         </span>
                                                         <button
                                                             onClick={() =>
-                                                                item.cartItemId && updateQuantity(item.cartItemId, item.quantity + 1)
+                                                                updateQuantity(itemKey, item.quantity + 1)
                                                             }
                                                             className="p-1.5 text-[var(--primary)] hover:text-[var(--highlight)] transition-colors"
                                                             aria-label="Increase quantity"
@@ -154,7 +171,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                                         </button>
                                                     </div>
                                                     <button
-                                                        onClick={() => item.cartItemId && removeItem(item.cartItemId)}
+                                                        onClick={() => removeItem(itemKey)}
                                                         className="p-1.5 text-[var(--text-muted)] hover:text-red-500 transition-colors"
                                                         aria-label="Remove item"
                                                     >
@@ -163,7 +180,8 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                                 </div>
                                             </div>
                                         </motion.li>
-                                    ))}
+                                        );
+                                    })}
                                 </ul>
                             )}
                         </div>
@@ -185,13 +203,12 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 <p className="text-xs text-[var(--text-muted)] mb-4">
                                     Shipping calculated at checkout
                                 </p>
-                                <Link
-                                    href="/checkout"
-                                    onClick={onClose}
+                                <button
+                                    onClick={handleCheckout}
                                     className="w-full btn-primary"
                                 >
                                     Proceed to Checkout
-                                </Link>
+                                </button>
                                 <button
                                     onClick={onClose}
                                     className="w-full mt-3 text-sm text-[var(--primary)] hover:text-[var(--highlight)] transition-colors"

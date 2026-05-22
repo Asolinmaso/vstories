@@ -47,7 +47,6 @@ export default function Navbar({ announcement }: NavbarProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const cartItems = useCartStore((state) => state.items);
     const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -61,7 +60,6 @@ export default function Navbar({ announcement }: NavbarProps) {
     // Clear search on navigation
     useEffect(() => {
         setSearchQuery("");
-        setActiveDropdown(null);
     }, [pathname]);
 
     useEffect(() => {
@@ -85,56 +83,55 @@ export default function Navbar({ announcement }: NavbarProps) {
 
             {/* Announcement Bar */}
             {announcement?.enabled && (
-                <div className="bg-[#FCFAF4] h-[55px] md:h-[80px] flex items-center z-30 border-b border-[#1D3B29]/5">
-                    <div className="container-premium flex items-center justify-center gap-4 md:gap-[29px] text-center">
-                        <div className="flex items-center gap-2 md:gap-[13px]">
-                            <div className="text-[#1D3B29] -rotate-[18.46deg] shrink-0">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M2.67806 0.393273C3.33698 0.746016 3.86524 1.26031 4.27352 1.86988C4.93665 2.86007 5.32531 4.08777 5.64054 5.36694C6.27084 7.92543 6.64437 10.715 7.77326 12.1466C8.83291 13.4904 10.0172 14.1032 11.144 14.2227C11.6287 14.2742 12.107 14.2325 12.5642 14.1104C12.5917 10.6285 11.032 6.71738 8.37049 4.61054C11.4761 6.14733 13.7451 9.27599 14.257 13.1784L13.89 13.4892C14.0091 13.4058 14.1242 13.3167 14.2348 13.2224C15.98 11.7396 16.8379 8.81822 14.9913 5.57157C14.1428 4.07991 12.3091 2.18967 9.91609 1.04988C7.84587 0.0639353 5.3733 -0.379387 2.67804 0.393385L2.67806 0.393273ZM19.3181 4.63049C19.4716 5.22489 19.4715 5.83468 19.3522 6.42831C19.1435 7.46589 18.6174 8.47483 18.0145 9.46774C16.8086 11.4535 15.3099 13.4204 15.1202 14.9811C14.9406 16.4594 15.288 17.553 15.9002 18.3107C16.1619 18.6351 16.4825 18.9075 16.8453 19.114C19.0068 16.963 20.4558 13.5914 20.1231 10.6547C21.0827 13.5168 20.5478 16.8457 18.4592 19.5823C20.4194 19.7039 22.7021 18.4343 23.5656 15.3296C23.9656 13.8911 24.0093 11.5905 23.2428 9.41464C22.5922 7.56759 21.3813 5.80863 19.3182 4.63062L19.3181 4.63049ZM-1.99875e-05 15.0004C0.277852 17.3556 1.42587 19.1575 2.87451 20.4786C4.58089 22.0347 6.72078 22.8962 8.20421 23.0928C11.4058 23.5172 13.47 21.9199 14.1261 20.0736C10.7839 20.9173 7.50419 20.1036 5.24087 18.1012C7.81924 19.5575 11.4967 19.5496 14.3277 18.4088C14.2799 17.995 14.1546 17.594 13.9582 17.2267C13.4992 16.368 12.6247 15.6205 11.1908 15.2059C9.67724 14.7684 7.27655 15.3731 4.97243 15.7013C3.82046 15.8656 2.68427 15.9536 1.64553 15.7383C1.0509 15.6151 0.488478 15.3744 9.28297e-05 15.0005L-1.99875e-05 15.0004Z" fill="currentColor" />
-                                </svg>
+                <div className="bg-[#FCFAF4] z-30 border-b border-[#1D3B29]/5 overflow-hidden">
+                    <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-[100px] py-2 md:py-0 md:h-[80px] md:flex md:items-center">
+                        <div className="flex items-center justify-between gap-2 sm:justify-center sm:gap-4 md:gap-[29px] w-full min-w-0">
+                            <div className="flex items-center gap-2 md:gap-[13px] min-w-0 flex-1 sm:flex-initial">
+                                <div className="text-[#1D3B29] -rotate-[18.46deg] shrink-0 hidden sm:block">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="md:w-6 md:h-6">
+                                        <path d="M2.67806 0.393273C3.33698 0.746016 3.86524 1.26031 4.27352 1.86988C4.93665 2.86007 5.32531 4.08777 5.64054 5.36694C6.27084 7.92543 6.64437 10.715 7.77326 12.1466C8.83291 13.4904 10.0172 14.1032 11.144 14.2227C11.6287 14.2742 12.107 14.2325 12.5642 14.1104C12.5917 10.6285 11.032 6.71738 8.37049 4.61054C11.4761 6.14733 13.7451 9.27599 14.257 13.1784L13.89 13.4892C14.0091 13.4058 14.1242 13.3167 14.2348 13.2224C15.98 11.7396 16.8379 8.81822 14.9913 5.57157C14.1428 4.07991 12.3091 2.18967 9.91609 1.04988C7.84587 0.0639353 5.3733 -0.379387 2.67804 0.393385L2.67806 0.393273ZM19.3181 4.63049C19.4716 5.22489 19.4715 5.83468 19.3522 6.42831C19.1435 7.46589 18.6174 8.47483 18.0145 9.46774C16.8086 11.4535 15.3099 13.4204 15.1202 14.9811C14.9406 16.4594 15.288 17.553 15.9002 18.3107C16.1619 18.6351 16.4825 18.9075 16.8453 19.114C19.0068 16.963 20.4558 13.5914 20.1231 10.6547C21.0827 13.5168 20.5478 16.8457 18.4592 19.5823C20.4194 19.7039 22.7021 18.4343 23.5656 15.3296C23.9656 13.8911 24.0093 11.5905 23.2428 9.41464C22.5922 7.56759 21.3813 5.80863 19.3182 4.63062L19.3181 4.63049ZM-1.99875e-05 15.0004C0.277852 17.3556 1.42587 19.1575 2.87451 20.4786C4.58089 22.0347 6.72078 22.8962 8.20421 23.0928C11.4058 23.5172 13.47 21.9199 14.1261 20.0736C10.7839 20.9173 7.50419 20.1036 5.24087 18.1012C7.81924 19.5575 11.4967 19.5496 14.3277 18.4088C14.2799 17.995 14.1546 17.594 13.9582 17.2267C13.4992 16.368 12.6247 15.6205 11.1908 15.2059C9.67724 14.7684 7.27655 15.3731 4.97243 15.7013C3.82046 15.8656 2.68427 15.9536 1.64553 15.7383C1.0509 15.6151 0.488478 15.3744 9.28297e-05 15.0005L-1.99875e-05 15.0004Z" fill="currentColor" />
+                                    </svg>
+                                </div>
+                                <p className="text-[#1D3B29] font-inter font-normal text-[11px] leading-snug sm:text-sm md:text-[24px] md:leading-[29px] min-w-0">
+                                    <span className="sm:hidden">20% OFF Hair Care · Code HAIR20</span>
+                                    <span className="hidden sm:inline md:whitespace-nowrap">{announcement.text}</span>
+                                </p>
                             </div>
-                            <p className="text-[#1D3B29] font-inter font-normal text-sm md:text-[24px] md:leading-[29px] whitespace-nowrap">
-                                Flat 20% OFF on Hair Care | Use code: HAIR20
-                            </p>
+                            <Link
+                                href="/shop"
+                                className="bg-[#1D3B29] !text-white px-3 py-1.5 sm:px-4 sm:py-2 md:px-6 md:py-3 rounded-[8px] text-[11px] sm:text-xs md:text-[16px] font-medium hover:bg-[#2A4F38] transition-all font-inter shrink-0 shadow-sm whitespace-nowrap"
+                            >
+                                Shop Now
+                            </Link>
                         </div>
-                        <Link
-                            href="/shop"
-                            className="bg-[#1D3B29] !text-white px-6 py-3 rounded-[8px] text-sm md:text-[16px] font-medium hover:bg-[#2A4F38] transition-all font-inter shrink-0 shadow-sm"
-                        >
-                            Shop Now
-                        </Link>
                     </div>
                 </div>
             )}
 
             {/* Main Navbar */}
             <header
-                className={`sticky top-0 z-50 transition-all duration-500 bg-[#F3EEE9] shadow-sm h-[80px] flex items-center`}
+                className="sticky top-0 z-50 transition-all duration-500 bg-[#F3EEE9] shadow-sm h-16 lg:h-[80px] flex items-center w-full"
             >
-                <div className="container-premium px-[100px] pr-[105px]">
-                    <nav className="grid grid-cols-[171px_142px_424px_142px_356px] items-center w-full">
-                        {/* 1. Left - Logo (171x52) */}
-                        <Link href="/" className="flex-shrink-0 w-[171px] hidden lg:block">
+                <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-[100px]">
+                    <nav className="flex items-center justify-between gap-4 w-full min-w-0">
+                        {/* Logo */}
+                        <Link href="/" className="flex-shrink-0 hidden lg:block">
                             <Image
                                 src="/images/logo.png"
                                 alt="V Stories Logo"
                                 width={171}
                                 height={52}
-                                className="object-contain"
+                                className="object-contain w-[140px] xl:w-[171px] h-auto"
+                                style={{ height: "auto" }}
                             />
                         </Link>
 
-                        {/* 2. Spacer (142px) */}
-                        <div className="hidden lg:block w-[142px]" />
-
-                        {/* 3. Center - Navigation Links (Width: 424px) */}
-                        <div className="hidden lg:flex items-center gap-[24px] w-[424px]">
+                        {/* Center - Navigation Links */}
+                        <div className="hidden lg:flex items-center justify-center gap-6 xl:gap-[24px] flex-1 min-w-0">
                             {navLinks.map((link) => (
                                 <div
                                     key={link.label}
                                     className="relative group"
-                                    onMouseEnter={() => link.dropdown && setActiveDropdown(link.label)}
-                                    onMouseLeave={() => setActiveDropdown(null)}
                                 >
                                     <Link
                                         href={link.href}
@@ -146,47 +143,37 @@ export default function Navbar({ announcement }: NavbarProps) {
                                         <span className={link.label === "Products" ? "w-[68px]" : ""}>{link.label}</span>
                                         {link.dropdown && (
                                             <div className="w-[12px] h-[6px] flex items-center justify-center">
-                                                <svg className={`w-3 h-3 transition-transform duration-300 ${activeDropdown === link.label ? 'rotate-0' : 'rotate-180'}`} viewBox="0 0 12 6" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M1 1L6 5L11 1" /></svg>
+                                                <svg className="w-3 h-3 transition-transform duration-300 rotate-180 group-hover:rotate-0" viewBox="0 0 12 6" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M1 1L6 5L11 1" /></svg>
                                             </div>
                                         )}
                                     </Link>
 
                                     {/* Dropdown Menu */}
                                     {link.dropdown && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 10, pointerEvents: "none" }}
-                                            animate={{
-                                                opacity: activeDropdown === link.label ? 1 : 0,
-                                                y: activeDropdown === link.label ? 0 : 10,
-                                                pointerEvents: activeDropdown === link.label ? "auto" : "none"
-                                            }}
-                                            className="absolute top-full left-0 mt-2 w-56 bg-white shadow-xl rounded-xl overflow-hidden border border-gray-100 z-[100]"
-                                        >
-                                            <div className="py-2">
-                                                {link.dropdown.map((sublink) => (
-                                                    <Link
-                                                        key={sublink.label}
-                                                        href={sublink.href}
-                                                        className="block px-6 py-3 text-sm font-medium text-gray-700 hover:bg-[var(--background-warm)] hover:text-[var(--primary)] transition-colors"
-                                                    >
-                                                        {sublink.label}
-                                                    </Link>
-                                                ))}
+                                        <div className="absolute top-full left-0 pt-2 w-56 z-[100] opacity-0 invisible translate-y-2 pointer-events-none transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto">
+                                            <div className="bg-white shadow-xl rounded-xl overflow-hidden border border-gray-100">
+                                                <div className="py-2">
+                                                    {link.dropdown.map((sublink) => (
+                                                        <Link
+                                                            key={sublink.label}
+                                                            href={sublink.href}
+                                                            className="block px-6 py-3 text-sm font-medium text-gray-700 hover:bg-[var(--background-warm)] hover:text-[var(--primary)] transition-colors"
+                                                        >
+                                                            {sublink.label}
+                                                        </Link>
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </motion.div>
+                                        </div>
                                     )}
                                 </div>
                             ))}
                         </div>
 
-                        {/* 4. Spacer (142px) */}
-                        <div className="hidden lg:block w-[142px]" />
-
-                        {/* 5. Right Section (Width: 356px) */}
-                        <div className="hidden lg:flex items-center gap-[32px] w-[356px]">
-                            {/* Search Bar */}
+                        {/* Right Section - search, account, cart (always visible on desktop) */}
+                        <div className="hidden lg:flex items-center gap-4 xl:gap-[32px] flex-shrink-0">
                             <form onSubmit={handleSearch} className="relative">
-                                <div className="flex items-center gap-3 px-4 py-[12px] rounded-lg border border-black bg-transparent w-[229px] h-[40px]">
+                                <div className="flex items-center gap-3 px-4 py-[12px] rounded-lg border border-black bg-transparent w-[180px] xl:w-[229px] h-[40px]">
                                     <Search className="w-4 h-4 text-black" strokeWidth={1.5} />
                                     <input
                                         type="text"
@@ -199,70 +186,97 @@ export default function Navbar({ announcement }: NavbarProps) {
                             </form>
 
                             {user ? (
-                                <div className="flex items-center gap-[32px]">
-                                    <Link
-                                        href="/profile"
-                                        className="p-2 text-black hover:scale-110 transition-transform relative"
-                                        aria-label="Profile"
-                                    >
-                                        <User className="w-6 h-6" />
-                                    </Link>
-
-                                    <button
-                                        className="relative p-2 text-black hover:scale-110 transition-transform"
-                                        onClick={() => setIsCartOpen(true)}
-                                        aria-label="Cart"
-                                    >
-                                        <ShoppingBag className="w-6 h-6" />
-                                        {cartCount > 0 && (
-                                            <motion.span
-                                                initial={{ scale: 0 }}
-                                                animate={{ scale: 1 }}
-                                                className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-[var(--highlight)] text-white text-[10px] font-bold rounded-full border-2 border-white"
-                                            >
-                                                {cartCount}
-                                            </motion.span>
-                                        )}
-                                    </button>
-                                </div>
+                                <Link
+                                    href="/profile"
+                                    className="p-2 text-black hover:scale-110 transition-transform"
+                                    aria-label="Profile"
+                                >
+                                    <User className="w-6 h-6" />
+                                </Link>
                             ) : (
                                 <button
                                     onClick={openLoginModal}
-                                    className="flex items-center justify-center w-[95px] h-[43px] rounded-[8px] text-[16px] leading-[19px] font-medium hover:bg-[#2A4F38] transition-all font-inter"
+                                    className="flex items-center justify-center min-w-[95px] h-[43px] px-4 rounded-[8px] text-[16px] leading-[19px] font-medium hover:bg-[#2A4F38] transition-all font-inter"
                                     style={{ backgroundColor: '#1D3B29', color: '#F7EDE2' }}
                                 >
                                     Log In
                                 </button>
                             )}
+
+                            <button
+                                className="relative p-2 text-black hover:scale-110 transition-transform"
+                                onClick={() => setIsCartOpen(true)}
+                                aria-label="Cart"
+                            >
+                                <ShoppingBag className="w-6 h-6" />
+                                {cartCount > 0 && (
+                                    <motion.span
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-[var(--highlight)] text-white text-[10px] font-bold rounded-full border-2 border-white"
+                                    >
+                                        {cartCount}
+                                    </motion.span>
+                                )}
+                            </button>
                         </div>
 
                         {/* Mobile Controls */}
-                        <div className="flex lg:hidden items-center justify-between w-full">
+                        <div className="relative flex lg:hidden items-center justify-between w-full min-w-0">
                             <button
-                                className="p-2 text-black"
+                                className="flex h-10 w-10 shrink-0 items-center justify-center text-black"
                                 onClick={() => setIsMobileMenuOpen(true)}
                                 aria-label="Open menu"
                             >
                                 <Menu className="w-6 h-6" />
                             </button>
 
-                            <Link href="/" className="flex-shrink-0">
+                            <Link
+                                href="/"
+                                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                            >
                                 <Image
                                     src="/images/logo.png"
                                     alt="V Stories Logo"
                                     width={120}
                                     height={36}
-                                    className="object-contain"
+                                    className="object-contain w-[96px] sm:w-[110px] h-auto max-h-9"
+                                    style={{ height: "auto" }}
+                                    priority
                                 />
                             </Link>
 
-                            <button
-                                className="relative p-2 text-black"
-                                onClick={() => setIsCartOpen(true)}
-                                aria-label="Cart"
-                            >
-                                <ShoppingBag className="w-6 h-6" />
-                            </button>
+                            <div className="flex items-center justify-end shrink-0">
+                                {user ? (
+                                    <Link
+                                        href="/profile"
+                                        className="flex h-10 w-10 items-center justify-center text-black"
+                                        aria-label="Profile"
+                                    >
+                                        <User className="w-5 h-5" />
+                                    </Link>
+                                ) : (
+                                    <button
+                                        onClick={openLoginModal}
+                                        className="flex h-10 w-10 items-center justify-center text-black"
+                                        aria-label="Log in"
+                                    >
+                                        <User className="w-5 h-5" />
+                                    </button>
+                                )}
+                                <button
+                                    className="relative flex h-10 w-10 items-center justify-center text-black"
+                                    onClick={() => setIsCartOpen(true)}
+                                    aria-label="Cart"
+                                >
+                                    <ShoppingBag className="w-5 h-5" />
+                                    {cartCount > 0 && (
+                                        <span className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center bg-[var(--highlight)] text-white text-[9px] font-bold rounded-full">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </button>
+                            </div>
                         </div>
                     </nav>
                 </div>
