@@ -157,7 +157,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                                         </span>
                                     )}
                                 </div>
-                                
+
                                 <div className="flex items-center gap-1 bg-[#F4EEE2] px-2 py-0.5 rounded-md">
                                     <span className="text-[#E8BF72]">★</span>
                                     <span className="text-sm font-semibold text-[var(--text-primary)]">{product.rating || "4.8"}</span>
@@ -174,8 +174,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                                     Add to cart
                                 </button>
                                 <button
-                                    onClick={() => {/* handle buy now */}}
-                                    className="py-2.5 bg-[var(--primary)] text-[var(--secondary-light)] text-sm font-medium rounded-lg hover:bg-[var(--primary-dark)] transition-all"
+                                    onClick={() => {/* handle buy now */ }}
+                                    className="py-2.5 bg-[var(--primary)] text-primary text-sm font-medium rounded-lg hover:bg-[var(--primary-dark)] transition-all"
                                 >
                                     Buy Now
                                 </button>

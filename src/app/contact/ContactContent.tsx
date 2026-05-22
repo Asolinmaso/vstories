@@ -140,10 +140,10 @@ export default function ContactContent() {
                     }
                 `}} />
                 <div className="max-w-2xl">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-[#1A3026] mb-4 md:mb-6 leading-tight" style={{ fontFamily: "var(--font-peachi), serif" }}>
+                    <h1 className="font-playfair font-semibold mb-4 md:mb-6" style={{ fontSize: "64px", lineHeight: "100%", color: "#000000" }}>
                         Get In Touch With Us
                     </h1>
-                    <p className="text-sm sm:text-base md:text-lg text-[#1A3026] font-bold px-4">
+                    <p className="font-inter font-normal text-base md:text-[24px] text-[#1A3026] px-4 md:leading-[32px]">
                         We&apos;re here to help with your skincare and haircare<br className="hidden md:block" /> journey. Reach out anytime.
                     </p>
                 </div>

@@ -155,14 +155,14 @@ export default function Footer() {
             {/* Decorative Vine Line - Full Width */}
             <div className="relative w-full flex flex-col items-center pt-2">
                 <div className="flex items-center w-full justify-between gap-0">
-                    <div className="relative h-[45px] flex-grow">
-                        <Image src="/images/icons/footerleft.png" alt="Vine Left" fill className="object-contain object-right" />
+                    <div className="relative h-[45px] flex-grow overflow-hidden">
+                        <Image src="/images/icons/footerleft.png" alt="Vine Left" fill className="object-cover object-right" />
                     </div>
                     <div className="relative w-[50px] h-[50px] mx-4 flex-shrink-0">
                         <Image src="/images/icons/footermiddle.png" alt="Vine Middle" fill className="object-contain" />
                     </div>
-                    <div className="relative h-[45px] flex-grow">
-                        <Image src="/images/icons/footerright.png" alt="Vine Right" fill className="object-contain object-left" />
+                    <div className="relative h-[45px] flex-grow overflow-hidden">
+                        <Image src="/images/icons/footerright.png" alt="Vine Right" fill className="object-cover object-left" />
                     </div>
                 </div>
 

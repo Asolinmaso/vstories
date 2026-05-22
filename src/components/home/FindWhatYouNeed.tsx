@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 import { Product } from "@/lib/services/product.service";
 import { useCartStore } from "@/lib/store";
+import { useWishlistStore } from "@/lib/wishlistStore";
 import { toast } from "sonner";
 
 interface FindWhatYouNeedProps {
@@ -29,6 +30,34 @@ function LeafIcon({ flipped = false }: { flipped?: boolean }) {
 
 function ProductCard({ product }: { product: Product }) {
   const addItem = useCartStore((s) => s.addItem);
+  
+  const { hasItem, addItem: addWishlistItem, removeItem: removeWishlistItem, items: wishlistItems } = useWishlistStore();
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+      setIsLiked(hasItem(product.id));
+  }, [hasItem, product.id, wishlistItems]);
+
+  const toggleWishlist = async (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (isLiked) {
+          await removeWishlistItem(product.id);
+          setIsLiked(false);
+          toast.success("Removed from Wishlist");
+      } else {
+          await addWishlistItem({
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              image: product.images?.[0] || "",
+              slug: product.slug || product.id,
+          });
+          setIsLiked(true);
+          toast.success("Added to Wishlist");
+      }
+  };
 
   const handleAddToCart = () => {
     addItem({
@@ -74,10 +103,17 @@ function ProductCard({ product }: { product: Product }) {
             {product.name}
           </h3>
           <button
+            onClick={toggleWishlist}
             className="w-8 h-8 flex items-center justify-center transition-colors hover:scale-110"
-            aria-label="Add to wishlist"
+            aria-label={isLiked ? "Remove from wishlist" : "Add to wishlist"}
           >
-            <Heart size={24} strokeWidth={1.5} color="#2E2E2E" />
+            <Heart 
+              size={24} 
+              strokeWidth={1.5} 
+              color={isLiked ? "#EF4444" : "#2E2E2E"} 
+              fill={isLiked ? "#EF4444" : "transparent"} 
+              className="transition-colors duration-300" 
+            />
           </button>
         </div>
 
@@ -163,7 +199,7 @@ const fallbackProducts: Product[] = [
     original_price: 280,
     description: "A lightweight, day-use herbal formula that gently reduces dark spots and restores natural glow.",
     short_description: "Gentle daily serum",
-    images: ["/images/products/prophetic-face-serum.png"],
+    images: ["/images/products/serum.png"],
     rating: 4.8,
     reviews_count: 120,
     slug: "prophetic-face-serum",
@@ -182,7 +218,7 @@ const fallbackProducts: Product[] = [
     original_price: 280,
     description: "A gentle yet powerful herbal blend that deeply cleanses and restores skin's natural radiance.",
     short_description: "Deep cleansing face pack",
-    images: ["/images/products/herbal-face-pack.png"],
+    images: ["/images/products/facepack.png"],
     rating: 4.8,
     reviews_count: 120,
     slug: "herbal-facepack",
@@ -201,7 +237,7 @@ const fallbackProducts: Product[] = [
     original_price: 280,
     description: "A gentle cleanser enriched with hibiscus extract for stronger, healthier hair growth.",
     short_description: "Herbal hair cleanser",
-    images: ["/images/products/hibiscus-shampoo.png"],
+    images: ["/images/products/shampoo.png"],
     rating: 4.8,
     reviews_count: 120,
     slug: "hibiscus-shampoo",
@@ -220,22 +256,13 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
   const tabs = ["Skin Care", "Hair Care", "Combo & Gift Packs", "Sample Packs"];
 
   const filteredProducts = (() => {
-    const filtered = products.filter((p) => {
+    return fallbackProducts.filter((p) => {
       if (activeTab === "Skin Care") return p.category_id === "skin" || p.category_id === "face";
       if (activeTab === "Hair Care") return p.category_id === "hair";
       if (activeTab === "Combo & Gift Packs") return p.category_id === "combos" || p.category_id === "gifts";
       if (activeTab === "Sample Packs") return p.category_id === "samples";
       return true;
-    }).slice(0, 3);
-
-    if (filtered.length === 0) {
-      return fallbackProducts.filter((p) => {
-        if (activeTab === "Skin Care") return p.category_id === "skin";
-        if (activeTab === "Hair Care") return p.category_id === "hair";
-        return false;
-      }).slice(0, 3) as any[];
-    }
-    return filtered;
+    }).slice(0, 3) as any[];
   })();
 
   return (

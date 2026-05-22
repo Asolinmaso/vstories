@@ -10,7 +10,7 @@ function SectionTag({ label, dark = false }: { label: string; dark?: boolean }) 
   const tc = dark ? "#FFFFFF" : "#000000";
   const leafSuffix = dark ? "-w" : "";
   return (
-    <div className="flex items-center gap-6">
+    <div className="flex items-center gap-3">
       <div className="relative w-6 h-6">
         <Image src={`/images/icons/leafleft${leafSuffix}.png`} alt="Leaf Left" fill className="object-contain" />
       </div>
@@ -23,24 +23,22 @@ function SectionTag({ label, dark = false }: { label: string; dark?: boolean }) 
 }
 
 /* ─── Value orb ───────────────────────────────────────────── */
-function ValueOrb({ icon, title, desc, lineH }: { icon: React.ReactNode; title: string; desc: string; lineH: number }) {
+function ValueOrb({ icon, title, desc, top, left, right }: { icon: React.ReactNode; title: string; desc: string; top: number; left?: string | number; right?: string | number }) {
   return (
-    <div className="flex flex-col items-center" style={{ width: 207 }}>
-      {/* vertical line connecting to banner */}
-      <div className="relative" style={{ width: 1, height: lineH, zIndex: 0 }}>
-        <div className="absolute top-0" style={{ width: 1, height: lineH + 104, marginTop: -204, background: "#1D3B29" }} />
-      </div>
+    <div className="absolute flex flex-col items-center" style={{ width: 207, top, left, right }}>
+      {/* vertical line connecting to top */}
+      <div className="absolute" style={{ width: 1, height: 1000, bottom: "calc(100% - 75px)", background: "rgba(29, 59, 41, 0.3)", left: "50%", transform: "translateX(-50%)", zIndex: 0 }} />
       {/* gold ring + green circle */}
-      <div className="relative flex items-center justify-center" style={{ width: 150, height: 150, marginTop: -99 }}>
-        <div className="absolute inset-0 rounded-full" style={{ background: "linear-gradient(231.77deg,#CBA45A 16.84%,#FFEAC3 54.23%,#C39641 91.63%)" }} />
-        <div className="absolute flex items-center justify-center rounded-full" style={{ marginTop: -49, width: 100, height: 100, background: "#1D3B29", boxShadow: "0px 4px 20px rgba(0,0,0,0.25)" }}>
+      <div className="relative flex items-center justify-center" style={{ width: 140, height: 140 }}>
+        <div className="absolute inset-0 rounded-full" style={{ background: "linear-gradient(180deg, #FCFAF4 0%, #D8AE5E 100%)" }} />
+        <div className="absolute flex items-center justify-center rounded-full" style={{ width: 100, height: 100, marginTop: -45, background: "#1D3B29", boxShadow: "0px 4px 15px rgba(0,0,0,0.2)" }}>
           {icon}
         </div>
       </div>
       {/* label */}
-      <div className="flex flex-col items-center gap-3 mt-4 text-center">
-        <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: 24, lineHeight: "29px" }}>{title}</span>
-        <span className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: 16, lineHeight: "19px" }}>{desc}</span>
+      <div className="flex flex-col items-center gap-2 mt-4 text-center relative z-10">
+        <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: 20, lineHeight: "24px" }}>{title}</span>
+        <span className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: 13, lineHeight: "17px", maxWidth: 170 }}>{desc}</span>
       </div>
     </div>
   );
@@ -55,13 +53,13 @@ function TimelineItem({ year, title, desc }: { year: string; title: string; desc
         <span className="font-inter font-normal text-[#1D3B29]" style={{ fontSize: 24 }}>{year}</span>
       </div>
       {/* card */}
-      <div className="flex flex-col items-center justify-center text-center mt-4 relative z-10" style={{ width: 292, height: 177, background: "#F3EEE9", borderRadius: 24, padding: "0 24px" }}>
+      <div className="flex flex-col items-center justify-center text-center relative z-10" style={{ width: 292, height: 177, marginTop: 16, background: "#F3EEE9", borderRadius: 24, padding: "0 24px" }}>
         <span className="font-inter font-semibold text-[#1D3B29] mb-2" style={{ fontSize: 24, lineHeight: "29px" }}>{title}</span>
         <span className="font-inter font-normal text-[#1D3B29]" style={{ fontSize: 16, lineHeight: "19px", maxWidth: 195 }}>{desc}</span>
       </div>
       {/* node dot */}
-      <div className="flex items-center justify-center rounded-full mt-2" style={{ width: 24, height: 24, background: "#E8BF72" }}>
-        <div style={{ width: 16, height: 16, background: "#1D3B29", borderRadius: "50%" }} />
+      <div className="flex items-center justify-center rounded-full" style={{ width: 16, height: 16, marginTop: 6, background: "#E8BF72" }}>
+        <div style={{ width: 10, height: 10, background: "#1D3B29", borderRadius: "50%" }} />
       </div>
     </div>
   );
@@ -83,7 +81,7 @@ export default function AboutContent() {
               Born from Nature. Built for Indian Skin.
             </h1>
             <p className="font-inter font-normal text-[#000000]" style={{ fontSize: 24, lineHeight: "29px", width: 848, color: '#000000' }}>
-              At Vstories, we blend time-tested herbs with modern formulation science to create skincare and haircare that actually works in Indian conditions — from heat and humidity to pollution and stress.
+              At Vstories, we blend time-tested herbs with modern formulation science to create skincare and haircare that actually works in Indian conditions from heat and humidity to pollution and stress.
             </p>
             <Link href="#our-story" className="inline-flex items-center justify-center font-inter font-medium text-[#F7EDE2] hover:opacity-90 transition-all"
               style={{ width: 183, height: 43, background: "#1D3B29", borderRadius: 8, fontSize: 16, color: '#F7EDE2' }}>
@@ -94,55 +92,45 @@ export default function AboutContent() {
       </section>
 
       {/* ── 2. WHAT WE STAND FOR (hanging values) ────────────── */}
-      <section className="relative overflow-hidden" style={{ background: "#FCFAF4", paddingTop: 60, paddingBottom: 80 }}>
-        <div className="w-full max-w-[1440px] mx-auto px-[100px]">
-          {/* header */}
-          <div className="flex flex-col items-center text-center gap-4 mb-8 mx-auto w-max">
+      <section className="relative overflow-hidden" style={{ background: "#FCFAF4", paddingTop: 60, paddingBottom: 40 }}>
+        <div className="relative w-full max-w-[1440px] mx-auto px-[100px]" style={{ height: 550 }}>
+          {/* Header */}
+          <div className="absolute top-[40px] left-1/2 -translate-x-1/2 flex flex-col items-center text-center gap-4 w-max z-10">
             <SectionTag label="Our Values" />
-            <h2 className="font-playfair font-semibold text-[#2E2E2E]" style={{ fontSize: 48, lineHeight: "72px" }}>
+            <h2 className="font-playfair font-semibold text-[#1D3B29]" style={{ fontSize: 48, lineHeight: "54px" }}>
               What We Stand For
             </h2>
           </div>
 
           {/* 4 hanging orbs — absolute positions to match Figma exactly */}
-          <div className="relative w-full" style={{ height: 550 }}>
-            {/* col 1 */}
-            <div className="absolute top-0 left-0">
-              <ValueOrb
-                lineH={180}
-                icon={<div className="relative w-12 h-12"><Image src="/images/icons/natural.png" alt="Natural" fill className="object-contain" /></div>}
-                title="100% Natural"
-                desc="Every ingredient is sourced from nature, ensuring purity and effectiveness."
-              />
-            </div>
-            {/* col 2 */}
-            <div className="absolute top-0" style={{ left: 280 }}>
-              <ValueOrb
-                lineH={300}
-                icon={<div className="relative w-12 h-12"><Image src="/images/icons/heart.png" alt="Love" fill className="object-contain" /></div>}
-                title="Made with Love"
-                desc="Each product is crafted with care and passion for holistic beauty."
-              />
-            </div>
-            {/* col 3 */}
-            <div className="absolute top-0" style={{ right: 280 }}>
-              <ValueOrb
-                lineH={300}
-                icon={<div className="relative w-12 h-12"><Image src="/images/icons/community.png" alt="Community" fill className="object-contain" /></div>}
-                title="Community Focused"
-                desc="We believe in empowering our community through natural wellness."
-              />
-            </div>
-            {/* col 4 */}
-            <div className="absolute top-0 right-0">
-              <ValueOrb
-                lineH={180}
-                icon={<div className="relative w-12 h-12"><Image src="/images/icons/Quality.png" alt="Quality" fill className="object-contain" /></div>}
-                title="Quality First"
-                desc="We never compromise on quality, using only the finest herbs and oils."
-              />
-            </div>
-          </div>
+          <ValueOrb
+            top={110}
+            left="0%"
+            icon={<div className="relative w-10 h-10"><Image src="/images/icons/natural.png" alt="Natural" fill className="object-contain" /></div>}
+            title="100% Natural"
+            desc="Every ingredient is sourced from nature, ensuring purity and effectiveness."
+          />
+          <ValueOrb
+            top={280}
+            left="20%"
+            icon={<div className="relative w-10 h-10"><Image src="/images/icons/heart.png" alt="Love" fill className="object-contain" /></div>}
+            title="Made with Love"
+            desc="Each product is crafted with care and passion for holistic beauty."
+          />
+          <ValueOrb
+            top={280}
+            right="20%"
+            icon={<div className="relative w-10 h-10"><Image src="/images/icons/community.png" alt="Community" fill className="object-contain" /></div>}
+            title="Community Focused"
+            desc="We believe in empowering our community through natural wellness."
+          />
+          <ValueOrb
+            top={110}
+            right="0%"
+            icon={<div className="relative w-10 h-10"><Image src="/images/icons/Quality.png" alt="Quality" fill className="object-contain" /></div>}
+            title="Quality First"
+            desc="We never compromise on quality, using only the finest herbs and oils."
+          />
         </div>
       </section>
 
@@ -191,7 +179,7 @@ export default function AboutContent() {
           {/* timeline row */}
           <div className="relative mt-16">
             {/* golden rail */}
-            <div className="absolute bottom-[-20px] left-0 w-full h-3 rounded-full" style={{ background: "linear-gradient(231.77deg,#CBA45A 16.84%,#FFEAC3 54.23%,#C39641 91.63%)" }} />
+            <div className="absolute left-0 w-full" style={{ height: "12px", top: "307px", backgroundImage: "url('/images/about/our%20journey.png')", backgroundSize: "100% 100%", backgroundRepeat: "no-repeat", backgroundPosition: "center", paddingBottom: 10 }} />
             <div className="flex justify-between gap-6">
               {[
                 { year: "2021", title: "The Beginning", desc: "V Stories was born from a passion for ancient herbal remedies." },

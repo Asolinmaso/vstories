@@ -137,15 +137,15 @@ export default function CategoryBanners() {
               </div>
 
               <h3
-                className="font-playfair font-semibold text-[#2E2E2E]"
-                style={{ fontSize: "32px", lineHeight: "43px", maxWidth: "330px" }}
+                className="font-playfair font-semibold"
+                style={{ fontSize: "32px", lineHeight: "43px", maxWidth: "330px", color: "#FFFFFF" }}
               >
                 Clear, Balanced, Healthy Skin
               </h3>
 
               <p
-                className="font-inter font-normal text-[#2E2E2E]"
-                style={{ fontSize: "16px", lineHeight: "19px", maxWidth: "233px" }}
+                className="font-inter font-normal"
+                style={{ fontSize: "16px", lineHeight: "19px", maxWidth: "233px", color: "#FFFFFF" }}
               >
                 Explore gentle, plant-based skincare for everyday glow and long-term skin health.
               </p>

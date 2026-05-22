@@ -79,11 +79,7 @@ export default async function Home() {
       <RealResults />
 
       {/* 10. Customer Love (Reviews) */}
-      <CustomerLove
-        testimonials={config.testimonialsList}
-        title={config.testimonialsHeader.title}
-        subtitle={config.testimonialsHeader.subtitle}
-      />
+      <CustomerLove />
 
       {/* 11. Clean, effective & honest */}
       <CleanBeauty />
