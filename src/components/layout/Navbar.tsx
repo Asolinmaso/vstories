@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { Search, User, ShoppingBag, Menu } from "lucide-react";
+import { Search, User, ShoppingBag, Menu, Heart } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { useAuth } from "@/context/AuthContext";
 import { useLoginModal } from "@/context/LoginModalContext";
@@ -186,39 +186,68 @@ export default function Navbar({ announcement }: NavbarProps) {
                             </form>
 
                             {user ? (
-                                <Link
-                                    href="/profile"
-                                    className="p-2 text-black hover:scale-110 transition-transform"
-                                    aria-label="Profile"
-                                >
-                                    <User className="w-6 h-6" />
-                                </Link>
-                            ) : (
-                                <button
-                                    onClick={openLoginModal}
-                                    className="flex items-center justify-center min-w-[95px] h-[43px] px-4 rounded-[8px] text-[16px] leading-[19px] font-medium hover:bg-[#2A4F38] transition-all font-inter"
-                                    style={{ backgroundColor: '#1D3B29', color: '#F7EDE2' }}
-                                >
-                                    Log In
-                                </button>
-                            )}
-
-                            <button
-                                className="relative p-2 text-black hover:scale-110 transition-transform"
-                                onClick={() => setIsCartOpen(true)}
-                                aria-label="Cart"
-                            >
-                                <ShoppingBag className="w-6 h-6" />
-                                {cartCount > 0 && (
-                                    <motion.span
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-[var(--highlight)] text-white text-[10px] font-bold rounded-full border-2 border-white"
+                                <>
+                                    <Link
+                                        href="/profile/wishlist"
+                                        className="p-2 text-black hover:scale-110 transition-transform"
+                                        aria-label="Wishlist"
                                     >
-                                        {cartCount}
-                                    </motion.span>
-                                )}
-                            </button>
+                                        <Heart className="w-6 h-6" strokeWidth={1.5} />
+                                    </Link>
+
+                                    <button
+                                        className="relative p-2 text-black hover:scale-110 transition-transform"
+                                        onClick={() => setIsCartOpen(true)}
+                                        aria-label="Cart"
+                                    >
+                                        <ShoppingBag className="w-6 h-6" strokeWidth={1.5} />
+                                        {cartCount > 0 && (
+                                            <motion.span
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-[var(--highlight)] text-white text-[10px] font-bold rounded-full border-2 border-white"
+                                            >
+                                                {cartCount}
+                                            </motion.span>
+                                        )}
+                                    </button>
+
+                                    <Link
+                                        href="/profile"
+                                        className="p-2 text-black hover:scale-110 transition-transform"
+                                        aria-label="Profile"
+                                    >
+                                        <User className="w-6 h-6" strokeWidth={1.5} />
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <button
+                                        onClick={() => openLoginModal()}
+                                        className="flex items-center justify-center min-w-[95px] h-[43px] px-4 rounded-[8px] text-[16px] leading-[19px] font-medium hover:bg-[#2A4F38] transition-all font-inter"
+                                        style={{ backgroundColor: '#1D3B29', color: '#F7EDE2' }}
+                                    >
+                                        Log In
+                                    </button>
+
+                                    <button
+                                        className="relative p-2 text-black hover:scale-110 transition-transform"
+                                        onClick={() => setIsCartOpen(true)}
+                                        aria-label="Cart"
+                                    >
+                                        <ShoppingBag className="w-6 h-6" strokeWidth={1.5} />
+                                        {cartCount > 0 && (
+                                            <motion.span
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-[var(--highlight)] text-white text-[10px] font-bold rounded-full border-2 border-white"
+                                            >
+                                                {cartCount}
+                                            </motion.span>
+                                        )}
+                                    </button>
+                                </>
+                            )}
                         </div>
 
                         {/* Mobile Controls */}
@@ -246,36 +275,59 @@ export default function Navbar({ announcement }: NavbarProps) {
                                 />
                             </Link>
 
-                            <div className="flex items-center justify-end shrink-0">
+                            <div className="flex items-center justify-end shrink-0 gap-0.5">
                                 {user ? (
-                                    <Link
-                                        href="/profile"
-                                        className="flex h-10 w-10 items-center justify-center text-black"
-                                        aria-label="Profile"
-                                    >
-                                        <User className="w-5 h-5" />
-                                    </Link>
+                                    <>
+                                        <Link
+                                            href="/profile/wishlist"
+                                            className="flex h-10 w-10 items-center justify-center text-black"
+                                            aria-label="Wishlist"
+                                        >
+                                            <Heart className="w-5 h-5" strokeWidth={1.5} />
+                                        </Link>
+                                        <button
+                                            className="relative flex h-10 w-10 items-center justify-center text-black"
+                                            onClick={() => setIsCartOpen(true)}
+                                            aria-label="Cart"
+                                        >
+                                            <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
+                                            {cartCount > 0 && (
+                                                <span className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center bg-[var(--highlight)] text-white text-[9px] font-bold rounded-full">
+                                                    {cartCount}
+                                                </span>
+                                            )}
+                                        </button>
+                                        <Link
+                                            href="/profile"
+                                            className="flex h-10 w-10 items-center justify-center text-black"
+                                            aria-label="Profile"
+                                        >
+                                            <User className="w-5 h-5" strokeWidth={1.5} />
+                                        </Link>
+                                    </>
                                 ) : (
-                                    <button
-                                        onClick={openLoginModal}
-                                        className="flex h-10 w-10 items-center justify-center text-black"
-                                        aria-label="Log in"
-                                    >
-                                        <User className="w-5 h-5" />
-                                    </button>
+                                    <>
+                                        <button
+                                            onClick={() => openLoginModal()}
+                                            className="flex h-10 w-10 items-center justify-center text-black"
+                                            aria-label="Log in"
+                                        >
+                                            <User className="w-5 h-5" strokeWidth={1.5} />
+                                        </button>
+                                        <button
+                                            className="relative flex h-10 w-10 items-center justify-center text-black"
+                                            onClick={() => setIsCartOpen(true)}
+                                            aria-label="Cart"
+                                        >
+                                            <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
+                                            {cartCount > 0 && (
+                                                <span className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center bg-[var(--highlight)] text-white text-[9px] font-bold rounded-full">
+                                                    {cartCount}
+                                                </span>
+                                            )}
+                                        </button>
+                                    </>
                                 )}
-                                <button
-                                    className="relative flex h-10 w-10 items-center justify-center text-black"
-                                    onClick={() => setIsCartOpen(true)}
-                                    aria-label="Cart"
-                                >
-                                    <ShoppingBag className="w-5 h-5" />
-                                    {cartCount > 0 && (
-                                        <span className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center bg-[var(--highlight)] text-white text-[9px] font-bold rounded-full">
-                                            {cartCount}
-                                        </span>
-                                    )}
-                                </button>
                             </div>
                         </div>
                     </nav>

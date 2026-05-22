@@ -1,14 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { supabase } from "@/lib/supabase-browser";
+import {
+    AuthFieldErrors,
+    hasFieldErrors,
+    validateEmailField,
+    validateLoginForm,
+    validatePasswordField,
+    validateSignupForm,
+} from "@/lib/auth-validation";
 
 interface LoginModalProps {
     onClose: () => void;
+    initialTab?: "login" | "signup";
 }
 
 function UnderlineInput({
@@ -19,6 +28,8 @@ function UnderlineInput({
     required,
     maxLength,
     className = "",
+    error,
+    autoComplete,
 }: {
     type?: string;
     placeholder: string;
@@ -27,17 +38,26 @@ function UnderlineInput({
     required?: boolean;
     maxLength?: number;
     className?: string;
+    error?: string;
+    autoComplete?: string;
 }) {
     return (
-        <input
-            type={type}
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            required={required}
-            maxLength={maxLength}
-            className={`w-full bg-transparent border-0 border-b border-[#8F8F8F] px-2.5 py-2.5 text-base text-black placeholder:text-[#8F8F8F] outline-none font-[family-name:var(--font-poppins)] ${className}`}
-        />
+        <div className="w-full">
+            <input
+                type={type}
+                placeholder={placeholder}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                required={required}
+                maxLength={maxLength}
+                autoComplete={autoComplete}
+                aria-invalid={!!error}
+                className={`w-full bg-transparent border-0 border-b px-2.5 py-2.5 text-base text-black placeholder:text-[#8F8F8F] outline-none font-[family-name:var(--font-poppins)] ${
+                    error ? "border-red-400" : "border-[#8F8F8F]"
+                } ${className}`}
+            />
+            {error && <p className="mt-1.5 text-xs text-red-600 font-[family-name:var(--font-inter)]">{error}</p>}
+        </div>
     );
 }
 
@@ -52,9 +72,9 @@ function GoogleIcon() {
     );
 }
 
-export default function LoginModal({ onClose }: LoginModalProps) {
+export default function LoginModal({ onClose, initialTab = "login" }: LoginModalProps) {
     const router = useRouter();
-    const [tab, setTab] = useState<"login" | "signup" | "forgot">("login");
+    const [tab, setTab] = useState<"login" | "signup" | "forgot">(initialTab);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -65,6 +85,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const [fieldErrors, setFieldErrors] = useState<AuthFieldErrors>({});
     const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
     const [resendStatus, setResendStatus] = useState<"idle" | "sending" | "sent">("idle");
 
@@ -76,6 +97,19 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
 
+    useEffect(() => {
+        setTab(initialTab);
+    }, [initialTab]);
+
+    const clearFieldError = (field: keyof AuthFieldErrors) => {
+        setFieldErrors((prev) => {
+            if (!prev[field]) return prev;
+            const next = { ...prev };
+            delete next[field];
+            return next;
+        });
+    };
+
     const resetForm = () => {
         setEmail("");
         setPassword("");
@@ -83,6 +117,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
         setFullName("");
         setError(null);
         setSuccess(null);
+        setFieldErrors({});
         setShowPassword(false);
         setShowConfirmPassword(false);
         setUnconfirmedEmail(null);
@@ -111,10 +146,18 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         if (loading) return;
+
+        const errors = validateLoginForm(email, password);
+        setFieldErrors(errors);
+        if (hasFieldErrors(errors)) return;
+
         setLoading(true);
         setError(null);
         try {
-            const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+            const { data, error: authError } = await supabase.auth.signInWithPassword({
+                email: email.trim(),
+                password,
+            });
             if (authError) throw authError;
             if (!data.session) {
                 setError("Could not sign in. Please confirm your email.");
@@ -128,8 +171,10 @@ export default function LoginModal({ onClose }: LoginModalProps) {
             }
         } catch (err: any) {
             if (err.message?.toLowerCase().includes("email not confirmed")) {
-                setUnconfirmedEmail(email);
+                setUnconfirmedEmail(email.trim());
                 setError("Your email hasn't been confirmed. Check your inbox and click the confirmation link.");
+            } else if (err.message?.toLowerCase().includes("invalid login credentials")) {
+                setError("Invalid email or password. Please try again.");
             } else {
                 setError(err.message || "Failed to login");
             }
@@ -141,21 +186,26 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         if (loading) return;
-        if (password !== confirmPassword) {
-            setError("Passwords do not match.");
-            return;
-        }
+
+        const errors = validateSignupForm(fullName, email, password, confirmPassword);
+        setFieldErrors(errors);
+        if (hasFieldErrors(errors)) return;
+
         setLoading(true);
         setError(null);
         try {
             const { data, error: authError } = await supabase.auth.signUp({
-                email,
+                email: email.trim(),
                 password,
-                options: { data: { full_name: fullName } },
+                options: { data: { full_name: fullName.trim() } },
             });
             if (authError) throw authError;
             if (data.user) {
-                await supabase.from("profiles").insert({ id: data.user.id, full_name: fullName, role: "user" });
+                await supabase.from("profiles").insert({
+                    id: data.user.id,
+                    full_name: fullName.trim(),
+                    role: "user",
+                });
                 setSuccess("Account created! Check your email to confirm.");
             }
         } catch (err: any) {
@@ -193,11 +243,19 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         if (loading) return;
+
+        const emailError = validateEmailField(forgotEmail);
+        if (emailError) {
+            setFieldErrors({ email: emailError });
+            return;
+        }
+
         setLoading(true);
         setError(null);
+        setFieldErrors({});
         try {
             const { error: authError } = await supabase.auth.signInWithOtp({
-                email: forgotEmail,
+                email: forgotEmail.trim(),
                 options: { shouldCreateUser: false },
             });
             if (authError) throw authError;
@@ -216,11 +274,17 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         if (loading) return;
+        if (otpCode.length < 6) {
+            setFieldErrors({ password: "Please enter the 6-digit code." });
+            return;
+        }
+
         setLoading(true);
         setError(null);
+        setFieldErrors({});
         try {
             const { error: authError } = await supabase.auth.verifyOtp({
-                email: forgotEmail,
+                email: forgotEmail.trim(),
                 token: otpCode,
                 type: "email",
             });
@@ -236,14 +300,19 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault();
         if (loading) return;
-        if (newPassword !== confirmNewPassword) {
-            setError("Passwords do not match.");
-            return;
+
+        const errors: AuthFieldErrors = {};
+        const passwordError = validatePasswordField(newPassword, "New password");
+        if (passwordError) errors.password = passwordError;
+        if (!confirmNewPassword) {
+            errors.confirmPassword = "Please confirm your new password.";
+        } else if (newPassword !== confirmNewPassword) {
+            errors.confirmPassword = "Passwords do not match.";
         }
-        if (newPassword.length < 6) {
-            setError("Password must be at least 6 characters.");
-            return;
-        }
+
+        setFieldErrors(errors);
+        if (hasFieldErrors(errors)) return;
+
         setLoading(true);
         setError(null);
         try {
@@ -296,20 +365,20 @@ export default function LoginModal({ onClose }: LoginModalProps) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+                className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center sm:p-4"
                 style={{ backgroundColor: "rgba(10,20,8,0.65)", backdropFilter: "blur(8px)" }}
                 onClick={(e) => {
                     if (e.target === e.currentTarget) onClose();
                 }}
             >
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.96, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.96, y: 20 }}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 40 }}
                     transition={{ type: "spring", stiffness: 340, damping: 30 }}
-                    className="relative flex w-full max-w-[1074px] flex-col md:flex-row overflow-hidden rounded-[24px] md:rounded-[40px] bg-[#FCFAF4] shadow-2xl min-h-0 max-h-[92vh] md:max-h-[90vh] md:min-h-[720px]"
+                    className="relative flex w-full max-w-[1074px] flex-col md:flex-row overflow-hidden rounded-t-[20px] sm:rounded-[24px] md:rounded-[40px] bg-[#FCFAF4] shadow-2xl h-[100dvh] sm:h-auto sm:max-h-[92vh] md:max-h-[90vh] md:min-h-[720px]"
                 >
-                    {/* Left visual panel */}
+                    {/* Left visual panel — desktop only */}
                     <div className="relative hidden md:block w-[43%] max-w-[464px] shrink-0 overflow-hidden bg-[#1D3B29]">
                         <Image
                             src="/images/login-modal.png"
@@ -321,274 +390,292 @@ export default function LoginModal({ onClose }: LoginModalProps) {
                         />
                     </div>
 
-                    {/* Mobile hero strip */}
-                    <div className="relative md:hidden h-40 shrink-0 overflow-hidden bg-[#1D3B29]">
-                        <Image
-                            src="/images/login-modal.png"
-                            alt="V Stories"
-                            fill
-                            className="object-cover object-left"
-                            priority
-                        />
-                    </div>
-
                     {/* Right form panel */}
-                    <div className="relative flex flex-1 flex-col bg-[#FCFAF4] overflow-y-auto">
+                    <div className="relative flex flex-1 flex-col bg-[#FCFAF4] min-h-0 overflow-hidden">
                         <button
                             onClick={onClose}
-                            className="absolute top-5 right-5 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10"
+                            className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10 sm:top-5 sm:right-5"
                             aria-label="Close"
                         >
                             <X className="h-4 w-4 text-gray-500" />
                         </button>
 
-                        <div className="flex flex-1 flex-col justify-center px-6 py-10 sm:px-10 md:px-12 lg:px-14">
-                            <div className="mx-auto flex w-full max-w-[461px] flex-col gap-8">
-                                {tab === "forgot" && (
-                                    <button
-                                        type="button"
-                                        onClick={() => switchTab("login")}
-                                        className="flex w-fit items-center gap-1.5 text-sm text-black/60 transition-colors hover:text-black"
-                                    >
-                                        <ArrowLeft className="h-4 w-4" />
-                                        Back to sign in
-                                    </button>
-                                )}
-
-                                <div className="flex flex-col gap-2">
-                                    <h2
-                                        className="text-[28px] leading-[1.2] font-semibold text-black sm:text-[32px] sm:leading-[43px]"
-                                        style={{ fontFamily: "var(--font-playfair)" }}
-                                    >
-                                        {heading}
-                                    </h2>
-                                    <p className="text-base leading-[19px] text-black font-[family-name:var(--font-inter)]">
-                                        {subtitle}
-                                    </p>
-                                </div>
-
-                                {error && (
-                                    <div className="rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
-                                        {error}
-                                        {unconfirmedEmail && (
-                                            <button
-                                                type="button"
-                                                onClick={handleResendConfirmation}
-                                                disabled={resendStatus !== "idle"}
-                                                className="mt-2 block text-xs font-semibold underline underline-offset-2 disabled:opacity-60"
-                                            >
-                                                {resendStatus === "sending"
-                                                    ? "Sending..."
-                                                    : resendStatus === "sent"
-                                                      ? "Confirmation email sent!"
-                                                      : "Resend confirmation email"}
-                                            </button>
-                                        )}
-                                    </div>
-                                )}
-
-                                {success && (
-                                    <div className="rounded-lg border border-green-100 bg-green-50 px-4 py-3 text-sm text-green-700">
-                                        {success}
-                                    </div>
-                                )}
-
-                                <form
-                                    onSubmit={
-                                        tab === "login"
-                                            ? handleLogin
-                                            : tab === "signup"
-                                              ? handleSignup
-                                              : forgotStep === "email"
-                                                ? handleSendOtp
-                                                : forgotStep === "otp"
-                                                  ? handleVerifyOtp
-                                                  : handleResetPassword
-                                    }
-                                    className="flex flex-col gap-10"
-                                >
-                                    <div className="flex flex-col gap-8">
-                                        <div className="flex flex-col gap-8">
-                                            {tab === "signup" && (
-                                                <UnderlineInput
-                                                    placeholder="Full Name"
-                                                    value={fullName}
-                                                    onChange={setFullName}
-                                                    required
-                                                />
-                                            )}
-
-                                            {tab === "forgot" ? (
-                                                forgotStep === "email" ? (
-                                                    <UnderlineInput
-                                                        type="email"
-                                                        placeholder="Email"
-                                                        value={forgotEmail}
-                                                        onChange={setForgotEmail}
-                                                        required
-                                                    />
-                                                ) : forgotStep === "otp" ? (
-                                                    <UnderlineInput
-                                                        placeholder="6-Digit Code"
-                                                        value={otpCode}
-                                                        onChange={(v) => setOtpCode(v.replace(/\D/g, "").slice(0, 6))}
-                                                        required
-                                                        maxLength={6}
-                                                        className="tracking-[0.35em] text-center"
-                                                    />
-                                                ) : (
-                                                    <>
-                                                        <div className="relative">
-                                                            <UnderlineInput
-                                                                type={showNewPassword ? "text" : "password"}
-                                                                placeholder="New Password"
-                                                                value={newPassword}
-                                                                onChange={setNewPassword}
-                                                                required
-                                                            />
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => setShowNewPassword((p) => !p)}
-                                                                className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8F8F8F]"
-                                                                aria-label={showNewPassword ? "Hide password" : "Show password"}
-                                                            >
-                                                                {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                                            </button>
-                                                        </div>
-                                                        <div className="relative">
-                                                            <UnderlineInput
-                                                                type={showConfirmNewPassword ? "text" : "password"}
-                                                                placeholder="Confirm Password"
-                                                                value={confirmNewPassword}
-                                                                onChange={setConfirmNewPassword}
-                                                                required
-                                                            />
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => setShowConfirmNewPassword((p) => !p)}
-                                                                className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8F8F8F]"
-                                                                aria-label={showConfirmNewPassword ? "Hide password" : "Show password"}
-                                                            >
-                                                                {showConfirmNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                                            </button>
-                                                        </div>
-                                                    </>
-                                                )
-                                            ) : (
-                                                <>
-                                                    <UnderlineInput
-                                                        type="email"
-                                                        placeholder="Email"
-                                                        value={email}
-                                                        onChange={setEmail}
-                                                        required
-                                                    />
-
-                                                    <div className="flex flex-col gap-6">
-                                                        <div className="relative">
-                                                            <UnderlineInput
-                                                                type={showPassword ? "text" : "password"}
-                                                                placeholder="Password"
-                                                                value={password}
-                                                                onChange={setPassword}
-                                                                required
-                                                            />
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => setShowPassword((p) => !p)}
-                                                                className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8F8F8F]"
-                                                                aria-label={showPassword ? "Hide password" : "Show password"}
-                                                            >
-                                                                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                                            </button>
-                                                        </div>
-
-                                                        {tab === "login" && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => switchTab("forgot")}
-                                                                className="text-right text-base leading-[19px] text-black underline font-[family-name:var(--font-inter)]"
-                                                            >
-                                                                Forgot Password?
-                                                            </button>
-                                                        )}
-                                                    </div>
-
-                                                    {tab === "signup" && (
-                                                        <div className="relative">
-                                                            <UnderlineInput
-                                                                type={showConfirmPassword ? "text" : "password"}
-                                                                placeholder="Confirm Password"
-                                                                value={confirmPassword}
-                                                                onChange={setConfirmPassword}
-                                                                required
-                                                            />
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => setShowConfirmPassword((p) => !p)}
-                                                                className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8F8F8F]"
-                                                                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                                                            >
-                                                                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </>
-                                            )}
-                                        </div>
-
-                                        <button
-                                            type="submit"
-                                            disabled={
-                                                loading ||
-                                                (tab === "signup" && !!confirmPassword && confirmPassword !== password) ||
-                                                (tab === "forgot" && forgotStep === "otp" && otpCode.length < 6) ||
-                                                (tab === "forgot" && forgotStep === "reset" && newPassword !== confirmNewPassword)
-                                            }
-                                            className="flex h-12 w-full items-center justify-center rounded-lg px-2.5 text-base font-semibold transition-opacity disabled:opacity-60 font-[family-name:var(--font-poppins)]"
-                                            style={{ backgroundColor: "#1D3B29", color: "#F7EDE2" }}
-                                        >
-                                            {loading ? "Please wait..." : primaryLabel}
-                                        </button>
-                                    </div>
-                                </form>
-
-                                {tab !== "forgot" && (
-                                    <div className="flex flex-col items-center gap-6">
-                                        <div className="relative w-full">
-                                            <div className="absolute inset-x-0 top-1/2 h-px bg-black" />
-                                            <div className="relative mx-auto w-fit bg-[#FCFAF4] px-2.5">
-                                                <span className="text-xs leading-[15px] text-black font-[family-name:var(--font-inter)]">
-                                                    or continue with
-                                                </span>
-                                            </div>
-                                        </div>
-
+                        <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain min-h-0">
+                            <div className="flex flex-1 flex-col justify-start px-4 pb-6 pt-14 sm:justify-center sm:px-10 sm:py-10 md:px-12 lg:px-14">
+                                <div className="mx-auto flex w-full max-w-[461px] flex-col gap-5 sm:gap-8">
+                                    {tab === "forgot" && (
                                         <button
                                             type="button"
-                                            onClick={handleGoogle}
-                                            disabled={loading}
-                                            className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-[#8F8F8F] px-2.5 transition-colors hover:bg-gray-50 disabled:opacity-60"
-                                            style={{ backgroundColor: "#FFFFFF", color: "#000000" }}
+                                            onClick={() => switchTab("login")}
+                                            className="flex w-fit items-center gap-1.5 text-sm text-black/60 transition-colors hover:text-black"
                                         >
-                                            <GoogleIcon />
-                                            <span className="text-base leading-6 text-black font-[family-name:var(--font-poppins)]">
-                                                Login With Google
-                                            </span>
+                                            <ArrowLeft className="h-4 w-4" />
+                                            Back to sign in
                                         </button>
+                                    )}
 
-                                        <p className="text-center text-base leading-[19px] text-black font-[family-name:var(--font-inter)]">
-                                            {tab === "login" ? "Dont Have An Account? " : "Already Have An Account? "}
-                                            <button
-                                                type="button"
-                                                onClick={() => switchTab(tab === "login" ? "signup" : "login")}
-                                                className="underline"
-                                            >
-                                                {tab === "login" ? "Sign Up" : "Sign In"}
-                                            </button>
+                                    <div className="flex flex-col gap-1.5 sm:gap-2">
+                                        <h2
+                                            className="text-[22px] leading-tight font-semibold text-black sm:text-[28px] md:text-[32px] md:leading-[43px] pr-8"
+                                            style={{ fontFamily: "var(--font-playfair)" }}
+                                        >
+                                            {heading}
+                                        </h2>
+                                        <p className="text-sm leading-relaxed text-black sm:text-base sm:leading-[19px] font-[family-name:var(--font-inter)]">
+                                            {subtitle}
                                         </p>
                                     </div>
-                                )}
+
+                                    {error && (
+                                        <div className="rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
+                                            {error}
+                                            {unconfirmedEmail && (
+                                                <button
+                                                    type="button"
+                                                    onClick={handleResendConfirmation}
+                                                    disabled={resendStatus !== "idle"}
+                                                    className="mt-2 block text-xs font-semibold underline underline-offset-2 disabled:opacity-60"
+                                                >
+                                                    {resendStatus === "sending"
+                                                        ? "Sending..."
+                                                        : resendStatus === "sent"
+                                                          ? "Confirmation email sent!"
+                                                          : "Resend confirmation email"}
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {success && (
+                                        <div className="rounded-lg border border-green-100 bg-green-50 px-4 py-3 text-sm text-green-700">
+                                            {success}
+                                        </div>
+                                    )}
+
+                                    <form
+                                        noValidate
+                                        onSubmit={
+                                            tab === "login"
+                                                ? handleLogin
+                                                : tab === "signup"
+                                                  ? handleSignup
+                                                  : forgotStep === "email"
+                                                    ? handleSendOtp
+                                                    : forgotStep === "otp"
+                                                      ? handleVerifyOtp
+                                                      : handleResetPassword
+                                        }
+                                        className="flex flex-col gap-5 sm:gap-8"
+                                    >
+                                        <div className="flex flex-col gap-4 sm:gap-6">
+                                            <div className="flex flex-col gap-4 sm:gap-6">
+                                                {tab === "signup" && (
+                                                    <UnderlineInput
+                                                        placeholder="Full Name"
+                                                        value={fullName}
+                                                        onChange={(v) => {
+                                                            setFullName(v);
+                                                            clearFieldError("fullName");
+                                                        }}
+                                                        error={fieldErrors.fullName}
+                                                        autoComplete="name"
+                                                    />
+                                                )}
+
+                                                {tab === "forgot" ? (
+                                                    forgotStep === "email" ? (
+                                                        <UnderlineInput
+                                                            type="email"
+                                                            placeholder="Email"
+                                                            value={forgotEmail}
+                                                            onChange={(v) => {
+                                                                setForgotEmail(v);
+                                                                clearFieldError("email");
+                                                            }}
+                                                            error={fieldErrors.email}
+                                                            autoComplete="email"
+                                                        />
+                                                    ) : forgotStep === "otp" ? (
+                                                        <UnderlineInput
+                                                            placeholder="6-Digit Code"
+                                                            value={otpCode}
+                                                            onChange={(v) => {
+                                                                setOtpCode(v.replace(/\D/g, "").slice(0, 6));
+                                                                clearFieldError("password");
+                                                            }}
+                                                            maxLength={6}
+                                                            error={fieldErrors.password}
+                                                            className="tracking-[0.35em] text-center"
+                                                        />
+                                                    ) : (
+                                                        <>
+                                                            <div className="relative">
+                                                                <UnderlineInput
+                                                                    type={showNewPassword ? "text" : "password"}
+                                                                    placeholder="New Password"
+                                                                    value={newPassword}
+                                                                    onChange={(v) => {
+                                                                        setNewPassword(v);
+                                                                        clearFieldError("password");
+                                                                    }}
+                                                                    error={fieldErrors.password}
+                                                                    autoComplete="new-password"
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setShowNewPassword((p) => !p)}
+                                                                    className="absolute right-2 top-3 text-[#8F8F8F]"
+                                                                    aria-label={showNewPassword ? "Hide password" : "Show password"}
+                                                                >
+                                                                    {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                                </button>
+                                                            </div>
+                                                            <div className="relative">
+                                                                <UnderlineInput
+                                                                    type={showConfirmNewPassword ? "text" : "password"}
+                                                                    placeholder="Confirm Password"
+                                                                    value={confirmNewPassword}
+                                                                    onChange={(v) => {
+                                                                        setConfirmNewPassword(v);
+                                                                        clearFieldError("confirmPassword");
+                                                                    }}
+                                                                    error={fieldErrors.confirmPassword}
+                                                                    autoComplete="new-password"
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setShowConfirmNewPassword((p) => !p)}
+                                                                    className="absolute right-2 top-3 text-[#8F8F8F]"
+                                                                    aria-label={showConfirmNewPassword ? "Hide password" : "Show password"}
+                                                                >
+                                                                    {showConfirmNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                                </button>
+                                                            </div>
+                                                        </>
+                                                    )
+                                                ) : (
+                                                    <>
+                                                        <UnderlineInput
+                                                            type="email"
+                                                            placeholder="Email"
+                                                            value={email}
+                                                            onChange={(v) => {
+                                                                setEmail(v);
+                                                                clearFieldError("email");
+                                                            }}
+                                                            error={fieldErrors.email}
+                                                            autoComplete="email"
+                                                        />
+
+                                                        <div className="flex flex-col gap-4 sm:gap-6">
+                                                            <div className="relative">
+                                                                <UnderlineInput
+                                                                    type={showPassword ? "text" : "password"}
+                                                                    placeholder="Password"
+                                                                    value={password}
+                                                                    onChange={(v) => {
+                                                                        setPassword(v);
+                                                                        clearFieldError("password");
+                                                                    }}
+                                                                    error={fieldErrors.password}
+                                                                    autoComplete={tab === "signup" ? "new-password" : "current-password"}
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setShowPassword((p) => !p)}
+                                                                    className="absolute right-2 top-3 text-[#8F8F8F]"
+                                                                    aria-label={showPassword ? "Hide password" : "Show password"}
+                                                                >
+                                                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                                </button>
+                                                            </div>
+
+                                                            {tab === "login" && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => switchTab("forgot")}
+                                                                    className="text-right text-sm leading-[19px] text-black underline sm:text-base font-[family-name:var(--font-inter)]"
+                                                                >
+                                                                    Forgot Password?
+                                                                </button>
+                                                            )}
+                                                        </div>
+
+                                                        {tab === "signup" && (
+                                                            <div className="relative">
+                                                                <UnderlineInput
+                                                                    type={showConfirmPassword ? "text" : "password"}
+                                                                    placeholder="Confirm Password"
+                                                                    value={confirmPassword}
+                                                                    onChange={(v) => {
+                                                                        setConfirmPassword(v);
+                                                                        clearFieldError("confirmPassword");
+                                                                    }}
+                                                                    error={fieldErrors.confirmPassword}
+                                                                    autoComplete="new-password"
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setShowConfirmPassword((p) => !p)}
+                                                                    className="absolute right-2 top-3 text-[#8F8F8F]"
+                                                                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                                                                >
+                                                                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+
+                                            <button
+                                                type="submit"
+                                                disabled={loading}
+                                                className="flex h-11 sm:h-12 w-full items-center justify-center rounded-lg px-2.5 text-sm sm:text-base font-semibold transition-opacity disabled:opacity-60 font-[family-name:var(--font-poppins)]"
+                                                style={{ backgroundColor: "#1D3B29", color: "#F7EDE2" }}
+                                            >
+                                                {loading ? "Please wait..." : primaryLabel}
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    {tab !== "forgot" && (
+                                        <div className="flex flex-col items-center gap-4 sm:gap-6 pb-2">
+                                            <div className="relative w-full">
+                                                <div className="absolute inset-x-0 top-1/2 h-px bg-black" />
+                                                <div className="relative mx-auto w-fit bg-[#FCFAF4] px-2.5">
+                                                    <span className="text-xs leading-[15px] text-black font-[family-name:var(--font-inter)]">
+                                                        or continue with
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                onClick={handleGoogle}
+                                                disabled={loading}
+                                                className="flex h-11 sm:h-12 w-full items-center justify-center gap-3 rounded-xl border border-[#8F8F8F] px-2.5 transition-colors hover:bg-gray-50 disabled:opacity-60"
+                                                style={{ backgroundColor: "#FFFFFF", color: "#000000" }}
+                                            >
+                                                <GoogleIcon />
+                                                <span className="text-sm sm:text-base leading-6 text-black font-[family-name:var(--font-poppins)]">
+                                                    {tab === "signup" ? "Sign Up With Google" : "Login With Google"}
+                                                </span>
+                                            </button>
+
+                                            <p className="text-center text-sm leading-[19px] text-black sm:text-base font-[family-name:var(--font-inter)]">
+                                                {tab === "login" ? "Dont Have An Account? " : "Already Have An Account? "}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => switchTab(tab === "login" ? "signup" : "login")}
+                                                    className="underline"
+                                                >
+                                                    {tab === "login" ? "Sign Up" : "Sign In"}
+                                                </button>
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

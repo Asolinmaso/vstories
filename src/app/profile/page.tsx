@@ -1,63 +1,145 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { Pencil, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import StatCards from "@/components/profile/StatCards";
-import RecentOrders from "@/components/profile/RecentOrders";
-import Sidebar from "@/components/profile/Sidebar"; // Import Sidebar for mobile view if needed
+import { supabase } from "@/lib/supabase-browser";
+import { AddressService } from "@/lib/services/address.service";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
-    const { profile } = useAuth();
-    const router = useRouter();
+    const { user, profile } = useAuth();
+    const [phone, setPhone] = useState<string>("—");
+    const [loadingPhone, setLoadingPhone] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editName, setEditName] = useState("");
+    const [saving, setSaving] = useState(false);
 
-    // Greeting logic
-    const hour = new Date().getHours();
-    const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
+    const fullName = profile?.full_name || "User";
+    const initials = fullName
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+
+    useEffect(() => {
+        async function loadPhone() {
+            try {
+                const addresses = await AddressService.getAddresses();
+                const defaultAddr =
+                    addresses.find((a) => a.is_default) || addresses[0];
+                if (defaultAddr?.phone) {
+                    setPhone(defaultAddr.phone);
+                }
+            } catch {
+                // keep placeholder
+            } finally {
+                setLoadingPhone(false);
+            }
+        }
+        loadPhone();
+    }, []);
+
+    useEffect(() => {
+        setEditName(fullName);
+    }, [fullName]);
+
+    async function handleSave() {
+        if (!user || !editName.trim()) return;
+        setSaving(true);
+        try {
+            const { error } = await supabase
+                .from("profiles")
+                .update({ full_name: editName.trim() })
+                .eq("id", user.id);
+
+            if (error) throw error;
+            toast.success("Profile updated");
+            setIsEditing(false);
+            window.location.reload();
+        } catch {
+            toast.error("Failed to update profile");
+        } finally {
+            setSaving(false);
+        }
+    }
 
     return (
-        <div className="space-y-8">
-            {/* Mobile Sidebar - Only visible on small screens */}
-            <div className="lg:hidden mb-8">
-                <Sidebar />
+        <div className="rounded-[24px] border border-[#C6C6C6] bg-[#F4F0EC] p-6">
+            <div className="mb-6 flex items-center justify-between">
+                <h2 className="font-inter text-xl lg:text-2xl font-semibold text-[#2E2E2E]">
+                    My Profile
+                </h2>
+                <button
+                    type="button"
+                    onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
+                    disabled={saving}
+                    className="flex h-9 w-9 items-center justify-center rounded-full text-[#2E2E2E] transition-colors hover:bg-white/60"
+                    aria-label={isEditing ? "Save profile" : "Edit profile"}
+                >
+                    {saving ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                        <Pencil className="h-5 w-5" strokeWidth={1.5} />
+                    )}
+                </button>
             </div>
 
-            {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <p className="text-[var(--text-muted)] font-medium mb-1">{greeting},</p>
-                    <h1 className="text-3xl md:text-4xl font-heading font-bold text-[var(--primary)]">
-                        {profile?.full_name?.split(' ')[0] || "User"}
-                    </h1>
+            <div className="flex flex-col sm:flex-row sm:items-start gap-6">
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[#1D3B29] font-inter text-2xl font-semibold text-[#F4F0EC]">
+                    {initials}
                 </div>
-                <div className="text-right hidden md:block">
-                    <p className="text-sm text-[var(--text-muted)]">Member since {new Date().getFullYear()}</p>
-                </div>
-            </div>
 
-            {/* Stats Row */}
-            <StatCards />
+                <div className="flex-1 space-y-4 font-inter text-base text-[#2E2E2E]">
+                    <div>
+                        <p className="font-semibold">Name</p>
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                value={editName}
+                                onChange={(e) => setEditName(e.target.value)}
+                                className="mt-1 w-full max-w-md rounded-lg border border-[#C6C6C6] bg-white px-3 py-2 outline-none focus:border-[#1D3B29]"
+                            />
+                        ) : (
+                            <p className="mt-1">{fullName}</p>
+                        )}
+                    </div>
 
-            {/* Middle Row: Orders */}
-            <div className="w-full">
-                <RecentOrders />
-            </div>
+                    <div>
+                        <p className="font-semibold">Contact</p>
+                        <p className="mt-1">
+                            {loadingPhone ? "Loading..." : phone}
+                        </p>
+                    </div>
 
-            {/* Trust / Promo Banner */}
-            <div className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] rounded-3xl p-8 relative overflow-hidden shadow-2xl shadow-[var(--primary)]/20 dark-section">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
-                <div className="relative z-10 text-white max-w-xl">
-                    {/* Inline styles to guarantee visibility */}
-                    <h3 className="text-xl font-bold font-heading mb-2 text-white" style={{ color: '#ffffff' }}>Exclusive Member Benefits</h3>
-                    <p className="text-white/90 mb-6" style={{ color: 'rgba(255,255,255,0.9)' }}>
-                        You have unlocked free shipping on all orders over ₹999. Use code <span className="font-bold text-[var(--gold)]">VSTORY10</span> for 10% off your next purchase.
-                    </p>
-                    <button
-                        onClick={() => router.push('/shop')}
-                        className="px-6 py-2 bg-white text-[var(--primary)] rounded-full text-sm font-bold hover:bg-[var(--gold)] hover:text-white transition-colors"
-                        style={{ backgroundColor: '#ffffff', color: '#1D3515' }}
-                    >
-                        Browse Premium Collection
-                    </button>
+                    <div>
+                        <p className="font-semibold">E-mail</p>
+                        <p className="mt-1 break-all">{user?.email || "—"}</p>
+                    </div>
+
+                    {isEditing && (
+                        <div className="flex gap-3 pt-2">
+                            <button
+                                type="button"
+                                onClick={handleSave}
+                                disabled={saving}
+                                className="rounded-[8px] bg-[#1D3B29] px-5 py-2.5 font-inter text-sm font-medium text-[#F7EDE2] hover:bg-[#2A4F38] disabled:opacity-60"
+                            >
+                                Save Changes
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setIsEditing(false);
+                                    setEditName(fullName);
+                                }}
+                                className="rounded-[8px] border border-[#C6C6C6] bg-white px-5 py-2.5 font-inter text-sm font-medium text-[#2E2E2E] hover:bg-[#FCFAF4]"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

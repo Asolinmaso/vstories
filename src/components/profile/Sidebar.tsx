@@ -2,111 +2,86 @@
 
 import { useAuth } from "@/context/AuthContext";
 import {
-    LayoutDashboard,
+    User,
     ShoppingBag,
-    Heart,
     MapPin,
     Settings,
     LogOut,
-    Shield
+    Shield,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const menuItems = [
-    { icon: LayoutDashboard, label: "Overview", href: "/profile", active: true },
-    { icon: ShoppingBag, label: "My Orders", href: "/profile/orders", active: false },
-    { icon: Heart, label: "Wishlist", href: "/profile/wishlist", active: false },
-    { icon: MapPin, label: "Addresses", href: "/profile/addresses", active: false },
+    { icon: User, label: "My Profile", href: "/profile" },
+    { icon: ShoppingBag, label: "My Orders", href: "/profile/orders" },
+    { icon: MapPin, label: "Addresses", href: "/profile/addresses" },
+    { icon: Settings, label: "Settings", href: "/profile/settings" },
 ];
 
+function isActive(pathname: string, href: string) {
+    if (href === "/profile") return pathname === "/profile";
+    return pathname.startsWith(href);
+}
+
 export default function Sidebar() {
-    const { user, profile, signOut, isAdmin } = useAuth();
+    const { signOut, isAdmin } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
 
     return (
-        <div className="space-y-6">
-            {/* Profile Card */}
-            <div className="bg-white/60 backdrop-blur-md rounded-3xl p-6 border border-[var(--primary)]/5 shadow-sm">
-                <div className="flex flex-col items-center text-center">
-                    <div className="relative mb-4 group">
-                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--primary-dark)] to-[var(--primary)] p-1 shadow-lg">
-                            <div className="w-full h-full rounded-full bg-[#f8f5f0] flex items-center justify-center text-3xl font-heading text-[var(--primary)]">
-                                {profile?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
-                            </div>
-                        </div>
-                        <div className="absolute bottom-1 right-1 w-6 h-6 bg-green-500 border-4 border-[#faf9f6] rounded-full"></div>
-                    </div>
-
-                    <h2 className="text-xl font-bold text-gray-900 mb-1">
-                        {profile?.full_name || "Valued Customer"}
-                    </h2>
-                    <p className="text-sm text-[var(--text-muted)] mb-4">{user?.email}</p>
-
-                    <span className="px-4 py-1.5 bg-[var(--gold)]/10 text-[var(--highlight-dark)] text-xs font-bold uppercase tracking-wider rounded-full flex items-center gap-1">
-                        <Shield className="w-3 h-3" />
-                        {profile?.role === 'admin' ? 'Administrator' : 'Gold Member'}
-                    </span>
-                </div>
-            </div>
-
-            {/* Navigation */}
-            <nav className="bg-white/60 backdrop-blur-md rounded-3xl p-4 border border-[var(--primary)]/5 shadow-sm">
-                <ul className="space-y-1">
-                    {menuItems.map((item) => (
-                        <li key={item.label}>
-                            <Link
-                                href={item.href}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${item.active
-                                        ? "bg-[var(--primary)] text-white shadow-md shadow-[var(--primary)]/20"
-                                        : "text-[var(--text-secondary)] hover:bg-[var(--primary)]/5 hover:text-[var(--primary)]"
+        <div className="flex flex-col gap-4">
+            <nav className="rounded-[24px] bg-[#1D3B29] p-6">
+                <ul className="flex flex-col gap-4">
+                    {menuItems.map((item) => {
+                        const active = isActive(pathname, item.href);
+                        return (
+                            <li key={item.label}>
+                                <Link
+                                    href={item.href}
+                                    className={`flex items-center gap-4 rounded-[16px] px-6 py-3 font-inter text-base transition-colors ${
+                                        active
+                                            ? "bg-white font-semibold text-[#1D3B29]"
+                                            : "font-normal text-[#F4F0EC] hover:bg-white/10"
                                     }`}
-                                style={item.active ? { color: 'white', backgroundColor: 'var(--primary)' } : {}}
-                            >
-                                <item.icon className={`w-5 h-5 ${item.active ? "text-white" : ""}`} style={item.active ? { color: 'white' } : {}} />
-                                <span className={`font-medium ${item.active ? "text-white" : ""}`} style={item.active ? { color: 'white' } : {}}>{item.label}</span>
-                            </Link>
-                        </li>
-                    ))}
-
-                    <div className="my-2 border-t border-[var(--primary)]/5"></div>
-
-                    <li>
-                        <Link
-                            href="/profile/settings"
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--primary)]/5 hover:text-[var(--primary)] transition-all"
-                        >
-                            <Settings className="w-5 h-5" />
-                            <span className="font-medium">Settings</span>
-                        </Link>
-                    </li>
+                                >
+                                    <item.icon
+                                        className={`h-5 w-5 shrink-0 ${
+                                            active ? "text-[#1D3B29]" : "text-[#F4F0EC]"
+                                        }`}
+                                        strokeWidth={1.5}
+                                    />
+                                    <span>{item.label}</span>
+                                </Link>
+                            </li>
+                        );
+                    })}
 
                     <li>
                         <button
+                            type="button"
                             onClick={() => signOut()}
-                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all font-medium"
+                            className="flex w-full items-center gap-4 rounded-[16px] px-6 py-3 font-inter text-base font-normal text-[#F4F0EC] transition-colors hover:bg-white/10"
                         >
-                            <LogOut className="w-5 h-5" />
+                            <LogOut className="h-5 w-5 shrink-0 text-[#F7EDE2]" strokeWidth={1.5} />
                             <span>Sign Out</span>
                         </button>
                     </li>
                 </ul>
             </nav>
 
-            {/* Admin Link */}
             {isAdmin && (
-                <div
-                    onClick={() => router.push('/admin')}
-                    className="cursor-pointer bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] rounded-3xl p-6 text-white shadow-lg relative overflow-hidden group"
+                <button
+                    type="button"
+                    onClick={() => router.push("/admin")}
+                    className="w-full rounded-[16px] border border-[#E8BF72]/30 bg-[#1D3B29] p-4 text-left text-[#F7EDE2] transition-opacity hover:opacity-90"
                 >
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mt-8 group-hover:scale-150 transition-transform duration-500"></div>
-                    <div className="relative z-10 flex items-center gap-3 mb-2">
-                        <Shield className="w-5 h-5 text-[var(--gold)]" />
-                        <span className="text-xs font-bold uppercase tracking-wider text-[var(--gold)]">Admin Access</span>
+                    <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#E8BF72]">
+                        <Shield className="h-4 w-4" />
+                        Admin Access
                     </div>
-                    {/* Explicit white color style to override any global/theme issues */}
-                    <h3 className="font-heading font-bold text-lg text-white" style={{ color: '#ffffff' }}>Store Dashboard</h3>
-                </div>
+                    <span className="font-playfair text-lg font-semibold">Store Dashboard</span>
+                </button>
             )}
         </div>
     );

@@ -191,6 +191,6 @@ export async function GET(request: Request) {
         console.log(`[Auth Callback] Existing user signed in: ${user.email}`);
     }
 
-    // Redirect to the originally requested page (default: /profile)
+    // Redirect to the originally requested page (default: home)
     return NextResponse.redirect(`${origin}${safeNext}`);
 }

@@ -1,44 +1,26 @@
-import { Wallet, Package, Heart, MapPin } from "lucide-react";
+import { Package, Heart, MapPin } from "lucide-react";
 
 const stats = [
-    {
-        label: "Total Orders",
-        value: "0",
-        icon: Package,
-        color: "text-blue-600",
-        bg: "bg-blue-50"
-    },
-    {
-        label: "Total Wishlist",
-        value: "0",
-        icon: Heart,
-        color: "text-pink-600",
-        bg: "bg-pink-50"
-    },
-    {
-        label: "Saved Places",
-        value: "1",
-        icon: MapPin,
-        color: "text-purple-600",
-        bg: "bg-purple-50"
-    }
+    { label: "Total Orders", value: "0", icon: Package },
+    { label: "Wishlist Items", value: "0", icon: Heart },
+    { label: "Saved Addresses", value: "0", icon: MapPin },
 ];
 
 export default function StatCards() {
     return (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {stats.map((stat) => (
                 <div
                     key={stat.label}
-                    className="bg-white/60 backdrop-blur-md p-5 rounded-2xl border border-[var(--primary)]/5 shadow-sm hover:shadow-md transition-all hover:bg-white group"
+                    className="rounded-xl border border-[#1D3B29]/10 bg-white p-5 shadow-sm"
                 >
-                    <div className={`${stat.bg} w-10 h-10 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                        <stat.icon className={`w-5 h-5 ${stat.color}`} />
+                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-[#F3EEE9]">
+                        <stat.icon className="h-5 w-5 text-[var(--primary)]" />
                     </div>
-                    <p className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-wider mb-1">
+                    <p className="font-inter text-xs font-medium uppercase tracking-wide text-[var(--text-muted)]">
                         {stat.label}
                     </p>
-                    <p className="text-2xl font-bold text-[var(--primary)]">
+                    <p className="mt-1 font-playfair text-2xl font-semibold text-[var(--primary)]">
                         {stat.value}
                     </p>
                 </div>

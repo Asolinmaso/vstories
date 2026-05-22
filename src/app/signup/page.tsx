@@ -17,11 +17,11 @@ export default function SignupPage() {
     useEffect(() => {
         if (loading) return;
         if (user) {
-            router.replace("/profile");
+            router.replace("/");
             return;
         }
-        router.replace("/");
-        const t = setTimeout(() => open(), 100);
+        router.replace("/?signup=1");
+        const t = setTimeout(() => open("signup"), 100);
         return () => clearTimeout(t);
     }, [user, loading, router, open]);
 

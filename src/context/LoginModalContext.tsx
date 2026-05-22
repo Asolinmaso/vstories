@@ -5,8 +5,10 @@ import { useAuth } from "@/context/AuthContext";
 import { usePathname } from "next/navigation";
 import LoginModal from "@/components/ui/LoginModal";
 
+type AuthTab = "login" | "signup";
+
 interface LoginModalContextType {
-    open: () => void;
+    open: (tab?: AuthTab) => void;
     close: () => void;
 }
 
@@ -18,14 +20,26 @@ export function useLoginModal() {
 
 export function LoginModalProvider({ children }: { children: ReactNode }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [initialTab, setInitialTab] = useState<AuthTab>("login");
     const { user } = useAuth();
     const pathname = usePathname();
 
-    // Open modal when ?login=1 is present (e.g. checkout redirect)
+    const open = (tab: AuthTab = "login") => {
+        setInitialTab(tab);
+        setIsOpen(true);
+    };
+
+    const close = () => setIsOpen(false);
+
+    // Open modal from URL params (?login=1 or ?signup=1)
     useEffect(() => {
         if (user || typeof window === "undefined") return;
         const params = new URLSearchParams(window.location.search);
         if (params.get("login") === "1") {
+            setInitialTab("login");
+            setIsOpen(true);
+        } else if (params.get("signup") === "1") {
+            setInitialTab("signup");
             setIsOpen(true);
         }
     }, [user, pathname]);
@@ -38,12 +52,13 @@ export function LoginModalProvider({ children }: { children: ReactNode }) {
         if (isAuthPage || isAdmin) return;
         if (typeof window !== "undefined") {
             const params = new URLSearchParams(window.location.search);
-            if (params.get("login") === "1") return;
+            if (params.get("login") === "1" || params.get("signup") === "1") return;
         }
 
         const seen = localStorage.getItem("vstories_login_prompt");
         if (!seen) {
             const timer = setTimeout(() => {
+                setInitialTab("login");
                 setIsOpen(true);
                 localStorage.setItem("vstories_login_prompt", "1");
             }, 2000);
@@ -52,10 +67,9 @@ export function LoginModalProvider({ children }: { children: ReactNode }) {
     }, [user, pathname]);
 
     return (
-        <LoginModalContext.Provider value={{ open: () => setIsOpen(true), close: () => setIsOpen(false) }}>
+        <LoginModalContext.Provider value={{ open, close }}>
             {children}
-            {isOpen && <LoginModal onClose={() => setIsOpen(false)} />}
+            {isOpen && <LoginModal onClose={close} initialTab={initialTab} />}
         </LoginModalContext.Provider>
     );
 }
-

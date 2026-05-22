@@ -9,7 +9,6 @@ import { getWebsiteConfig } from "@/lib/services/website.service";
 import { Toaster } from "sonner";
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import SessionProvider from "@/components/providers/SessionProvider";
 
 export const revalidate = 60;
 
@@ -125,8 +124,7 @@ export default async function RootLayout({
       <body
         className={`${firaSans.variable} ${peachi.variable} ${inter.variable} ${playfair.variable} ${poppins.variable} antialiased bg-[var(--background)]`}
       >
-        <SessionProvider>
-          <AuthProvider>
+        <AuthProvider>
             <ClientLayout announcement={announcementConfig}>
               {children}
             </ClientLayout>
@@ -135,7 +133,6 @@ export default async function RootLayout({
             <Analytics />
             <SpeedInsights />
           </AuthProvider>
-        </SessionProvider>
       </body>
     </html>
   );

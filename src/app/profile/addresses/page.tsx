@@ -126,8 +126,26 @@ export default function AddressesPage() {
     }
 
     return (
-        <div className="space-y-6">
-            {/* ... (header) ... */}
+        <div className="rounded-[24px] border border-[#C6C6C6] bg-[#F4F0EC] p-6 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h2 className="font-inter text-xl lg:text-2xl font-semibold text-[#2E2E2E]">
+                    Addresses
+                </h2>
+                {addresses.length > 0 && (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            resetForm();
+                            setEditingId(null);
+                            setIsFormOpen(true);
+                        }}
+                        className="inline-flex items-center gap-2 rounded-[8px] bg-[#1D3B29] px-5 py-2.5 font-inter text-sm font-medium text-[#F7EDE2] hover:bg-[#2A4F38]"
+                    >
+                        <Plus className="h-4 w-4" />
+                        Add Address
+                    </button>
+                )}
+            </div>
 
             {/* Address Form Modal/Overlay */}
             {isFormOpen && (
@@ -266,21 +284,21 @@ export default function AddressesPage() {
 
             <div className="grid md:grid-cols-2 gap-6">
                 {addresses.length === 0 ? (
-                    <div className="col-span-2 text-center py-12 bg-white rounded-3xl border border-dashed border-gray-300">
-                        <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">No addresses saved yet</h3>
-                        <p className="text-gray-700 mb-6 font-medium">Add an address for faster checkout.</p>
+                    <div className="col-span-2 text-center py-12 bg-white rounded-[24px] border border-dashed border-[#C6C6C6]">
+                        <MapPin className="w-12 h-12 text-[#1D3B29]/40 mx-auto mb-4" />
+                        <h3 className="font-inter text-lg font-semibold text-[#2E2E2E] mb-2">No addresses saved yet</h3>
+                        <p className="font-inter text-[#2E2E2E]/70 mb-6">Add an address for faster checkout.</p>
                         <button
+                            type="button"
                             onClick={() => setIsFormOpen(true)}
-                            className="bg-[var(--primary)] text-white px-6 py-2 rounded-full text-sm font-bold hover:bg-[var(--primary-dark)] transition-all"
-                            style={{ backgroundColor: 'var(--primary)', color: 'white' }}
+                            className="rounded-[8px] bg-[#1D3B29] px-6 py-2.5 font-inter text-sm font-medium text-[#F7EDE2] hover:bg-[#2A4F38]"
                         >
                             Add Address
                         </button>
                     </div>
                 ) : (
                     addresses.map((addr) => (
-                        <div key={addr.id} className={`bg-white p-6 rounded-3xl border ${addr.is_default ? 'border-[var(--primary)] shadow-md' : 'border-gray-200 shadow-sm'} relative group transition-all hover:shadow-[var(--primary)]/5`}>
+                        <div key={addr.id} className={`bg-white p-6 rounded-[24px] border ${addr.is_default ? 'border-[#1D3B29] shadow-sm' : 'border-[#C6C6C6]/40'} relative group transition-all`}>
                             {/* ... Content ... */}
                             <div className="flex items-start gap-4 mb-4">
                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${addr.is_default ? 'bg-[var(--primary)]/10 text-[var(--primary)]' : 'bg-gray-100 text-gray-600'}`}>

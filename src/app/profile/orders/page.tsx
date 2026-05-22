@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Package, ChevronRight, Search, Clock, CheckCircle2, Truck, XCircle, Loader2 } from "lucide-react";
+import { ShoppingBag, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,9 +11,12 @@ interface Order {
     created_at: string;
     amount: number;
     status: string;
-    items: any[];
-    shipping_address: any;
+    items: { name: string; image: string; quantity: number }[];
+    shipping_address: { name: string };
 }
+
+const ACTIVE_STATUSES = ["pending", "processing", "shipped"];
+const PAST_STATUSES = ["delivered", "cancelled"];
 
 const statusColors: Record<string, string> = {
     pending: "bg-yellow-100 text-yellow-700 border-yellow-200",
@@ -27,7 +30,7 @@ export default function MyOrdersPage() {
     const router = useRouter();
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [activeTab, setActiveTab] = useState<"recent" | "past">("recent");
 
     useEffect(() => {
         fetchOrders();
@@ -47,113 +50,134 @@ export default function MyOrdersPage() {
         }
     };
 
-    const filteredOrders = orders.filter(order => 
-        order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    const filteredOrders = orders.filter((order) =>
+        activeTab === "recent"
+            ? ACTIVE_STATUSES.includes(order.status)
+            : PAST_STATUSES.includes(order.status)
     );
 
     if (loading) {
         return (
-            <div className="min-h-[400px] flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-[var(--primary)]" />
+            <div className="min-h-[287px] flex items-center justify-center rounded-[24px] border border-[#C6C6C6] bg-[#F4F0EC]">
+                <Loader2 className="w-8 h-8 animate-spin text-[#1D3B29]" />
             </div>
         );
     }
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h1 className="text-3xl font-bold text-[var(--primary)]" style={{ fontFamily: "var(--font-peachi)" }}>My Orders</h1>
-                
-                <div className="relative w-full sm:w-64">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder="Search orders..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 bg-white border border-gray-100 rounded-xl focus:ring-2 focus:ring-[var(--primary)]/10 outline-none text-sm shadow-sm"
-                    />
-                </div>
+        <div className="rounded-[24px] border border-[#C6C6C6] bg-[#F4F0EC] p-6">
+            <div className="mb-6 flex gap-6 border-b border-[#2E2E2E]/20 pb-4">
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("recent")}
+                    className={`font-inter text-base transition-colors ${
+                        activeTab === "recent"
+                            ? "font-semibold text-[#2E2E2E]"
+                            : "font-normal text-[#2E2E2E]/60 hover:text-[#2E2E2E]"
+                    }`}
+                >
+                    Recent Orders
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setActiveTab("past")}
+                    className={`font-inter text-base transition-colors ${
+                        activeTab === "past"
+                            ? "font-semibold text-[#2E2E2E]"
+                            : "font-normal text-[#2E2E2E]/60 hover:text-[#2E2E2E]"
+                    }`}
+                >
+                    Past Orders
+                </button>
             </div>
 
             {filteredOrders.length === 0 ? (
-                <div className="bg-white rounded-[2.5rem] p-12 text-center flex flex-col items-center justify-center min-h-[400px] border border-gray-100 shadow-sm">
-                    <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                        <Package className="w-10 h-10 text-gray-300" />
+                <div className="rounded-[24px] bg-white px-6 py-12 text-center flex flex-col items-center justify-center min-h-[220px]">
+                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#F4F0EC]">
+                        <ShoppingBag className="h-8 w-8 text-[#1D3B29]" strokeWidth={1.5} />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">No orders found</h3>
-                    <p className="text-gray-500 max-w-sm mx-auto mb-8 text-sm">
-                        {searchQuery ? "No orders match your search criteria." : "You haven't placed any orders yet. Start your journey with our premium collection."}
+                    <h3 className="font-inter text-lg font-semibold text-[#2E2E2E] mb-2">
+                        {activeTab === "recent" ? "No Active Orders" : "No Past Orders"}
+                    </h3>
+                    <p className="font-inter text-sm text-[#2E2E2E]/70 max-w-sm mx-auto mb-6">
+                        {activeTab === "recent"
+                            ? "You don't have any orders in progress. Start shopping to see your orders here."
+                            : "Your completed and cancelled orders will appear here."}
                     </p>
-                    {!searchQuery && (
+                    {activeTab === "recent" && (
                         <button
-                            onClick={() => router.push('/shop')}
-                            className="btn-primary px-10 py-3 shadow-lg shadow-[var(--primary)]/20"
+                            type="button"
+                            onClick={() => router.push("/shop")}
+                            className="rounded-[8px] bg-[#1D3B29] px-6 py-3 font-inter text-base font-medium text-[#F7EDE2] hover:bg-[#2A4F38] transition-colors"
                         >
                             Start Shopping
                         </button>
                     )}
                 </div>
             ) : (
-                <div className="space-y-6">
+                <div className="space-y-4">
                     {filteredOrders.map((order) => (
-                        <div 
-                            key={order.id} 
-                            className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                        <div
+                            key={order.id}
+                            className="rounded-[24px] bg-white border border-[#C6C6C6]/40 overflow-hidden"
                         >
-                            {/* Order Header */}
-                            <div className="bg-gray-50/50 px-6 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
-                                <div className="flex gap-6">
+                            <div className="bg-[#FCFAF4] px-5 py-4 border-b border-[#C6C6C6]/40 flex flex-wrap items-center justify-between gap-3">
+                                <div className="flex flex-wrap gap-5">
                                     <div>
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Order Placed</p>
-                                        <p className="text-sm font-semibold text-gray-900">{new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#2E2E2E]/50 mb-0.5">
+                                            Order Placed
+                                        </p>
+                                        <p className="text-sm font-semibold text-[#2E2E2E]">
+                                            {new Date(order.created_at).toLocaleDateString("en-IN", {
+                                                day: "numeric",
+                                                month: "short",
+                                                year: "numeric",
+                                            })}
+                                        </p>
                                     </div>
                                     <div>
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Total</p>
-                                        <p className="text-sm font-bold text-[var(--primary)]">₹{order.amount}</p>
-                                    </div>
-                                    <div className="hidden sm:block">
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Ship To</p>
-                                        <p className="text-sm font-semibold text-gray-900 truncate max-w-[150px]">{order.shipping_address.name}</p>
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#2E2E2E]/50 mb-0.5">
+                                            Total
+                                        </p>
+                                        <p className="text-sm font-bold text-[#1D3B29]">₹{order.amount}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${statusColors[order.status] || "bg-gray-100"}`}>
-                                        {order.status}
-                                    </div>
-                                    <p className="text-xs font-mono text-gray-400">#{order.id.slice(0, 8)}</p>
+                                <div
+                                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                                        statusColors[order.status] || "bg-gray-100"
+                                    }`}
+                                >
+                                    {order.status}
                                 </div>
                             </div>
 
-                            {/* Order Content */}
-                            <div className="p-6">
-                                <div className="flex flex-col md:flex-row gap-6 justify-between items-start">
-                                    <div className="flex-1 space-y-4">
-                                        {order.items.map((item: any, idx: number) => (
-                                            <div key={idx} className="flex gap-4">
-                                                <div className="w-20 h-20 rounded-2xl bg-gray-50 flex-shrink-0 relative border border-gray-100 overflow-hidden">
-                                                    <Image src={item.image} alt={item.name} fill className="object-cover" />
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="font-bold text-gray-900 mb-1 truncate">{item.name}</p>
-                                                    <p className="text-xs text-gray-500 mb-2">Qty: {item.quantity}</p>
-                                                    <button className="text-xs font-bold text-[var(--highlight)] hover:underline">Buy it again</button>
-                                                </div>
-                                            </div>
-                                        ))}
+                            <div className="p-5">
+                                {order.items.map((item, idx) => (
+                                    <div key={idx} className="flex gap-4 mb-4 last:mb-0">
+                                        <div className="relative h-16 w-16 shrink-0 rounded-xl bg-[#F4F0EC] overflow-hidden border border-[#C6C6C6]/40">
+                                            <Image
+                                                src={item.image}
+                                                alt={item.name}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="font-inter font-semibold text-[#2E2E2E] truncate">
+                                                {item.name}
+                                            </p>
+                                            <p className="font-inter text-xs text-[#2E2E2E]/60">
+                                                Qty: {item.quantity}
+                                            </p>
+                                        </div>
                                     </div>
-                                    
-                                    <div className="w-full md:w-auto flex flex-col gap-3 pt-4 md:pt-0">
-                                        <button className="btn-primary py-2.5 px-6 text-sm">Track Package</button>
-                                        <Link 
-                                            href={`/profile/orders/${order.id}`}
-                                            className="w-full text-center py-2.5 px-6 rounded-xl border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
-                                        >
-                                            View Details
-                                        </Link>
-                                    </div>
-                                </div>
+                                ))}
+                                <Link
+                                    href={`/profile/orders/${order.id}`}
+                                    className="mt-4 inline-flex rounded-[8px] border border-[#C6C6C6] px-5 py-2.5 font-inter text-sm font-medium text-[#2E2E2E] hover:bg-[#FCFAF4] transition-colors"
+                                >
+                                    View Details
+                                </Link>
                             </div>
                         </div>
                     ))}

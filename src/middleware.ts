@@ -10,6 +10,12 @@ export async function middleware(request: NextRequest) {
 
     // Skip middleware for static files, images, and internal Next.js routes
     const { pathname } = request.nextUrl;
+
+    // Legacy route — profile dashboard replaced the old account page
+    if (pathname.startsWith('/account')) {
+        return NextResponse.redirect(new URL('/profile', request.url));
+    }
+
     if (
         pathname.startsWith('/_next') ||
         pathname.startsWith('/api/auth') || // Let auth routes pass through
@@ -65,7 +71,7 @@ export async function middleware(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
 
     // Protect user routes
-    const isUserRoute = pathname.startsWith('/profile') || pathname.startsWith('/account') || pathname.startsWith('/checkout') || pathname.startsWith('/order-success');
+    const isUserRoute = pathname.startsWith('/profile') || pathname.startsWith('/checkout') || pathname.startsWith('/order-success');
     if (isUserRoute && !user) {
         const redirectUrl = new URL('/', request.url);
         redirectUrl.searchParams.set('login', '1');

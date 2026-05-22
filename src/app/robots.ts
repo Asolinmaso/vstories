@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
             {
                 userAgent: '*',
                 allow: '/',
-                disallow: ['/admin/', '/api/', '/profile/', '/account/'],
+                disallow: ['/admin/', '/api/', '/profile/'],
             },
         ],
         sitemap: 'https://vstories.in/sitemap.xml',
