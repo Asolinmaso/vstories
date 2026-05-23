@@ -190,7 +190,7 @@ export default function Navbar({ announcement }: NavbarProps) {
                                                 <div className="py-2">
                                                     {link.dropdown.map((sublink) => (
                                                         <Link
-                                                            key={sublink.label}
+                                                            key={sublink.href}
                                                             href={sublink.href}
                                                             className="block px-6 py-3 text-sm font-medium text-gray-700 hover:bg-[var(--background-warm)] hover:text-[var(--primary)] transition-colors"
                                                         >

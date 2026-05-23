@@ -84,7 +84,7 @@ export default function MobileMenu({
                                             {link.dropdown && (
                                                 <ul className="pl-4 space-y-2 mb-4 border-l-2 border-[var(--primary)]/10">
                                                     {link.dropdown.map((sublink) => (
-                                                        <li key={sublink.label}>
+                                                        <li key={sublink.href}>
                                                             <Link
                                                                 href={sublink.href}
                                                                 className="block py-2 text-base font-medium text-black/60 hover:text-[var(--primary)] transition-colors"

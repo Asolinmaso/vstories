@@ -16,6 +16,18 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/', request.url));
     }
 
+    // ── OAuth code interception ──────────────────────────────────────────────
+    // Supabase may land on the site root (or any page) with ?code= when the
+    // /auth/callback URL isn't whitelisted. Catch it here and forward properly.
+    const code = request.nextUrl.searchParams.get('code');
+    if (code && pathname !== '/auth/callback') {
+        const callbackUrl = new URL('/auth/callback', request.url);
+        callbackUrl.searchParams.set('code', code);
+        const next = request.nextUrl.searchParams.get('next');
+        if (next) callbackUrl.searchParams.set('next', next);
+        return NextResponse.redirect(callbackUrl);
+    }
+
     if (
         pathname.startsWith('/_next') ||
         pathname.startsWith('/api/auth') || // Let auth routes pass through
