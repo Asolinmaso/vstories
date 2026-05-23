@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ShoppingBag, Eye } from "lucide-react";
 import { Product } from "@/lib/services/product.service";
 import { useCartStore } from "@/lib/store";
@@ -17,6 +18,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
     const addItem = useCartStore((state) => state.addItem);
+    const router = useRouter();
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -26,17 +28,25 @@ export default function ProductCard({ product }: ProductCardProps) {
             name: product.name,
             price: product.price,
             image: product.images[0],
-            // Default size/variant if needed, or prompt user. For card add-to-cart, we often just add base product
-            // But since our cart expects size-specific IDs, this might be tricky.
-            // Let's assume default size if available or just the product item. 
-            // The cart store logic might need to be robust.  
-            // For now, let's just pass what we have.
             size: product.sizes?.[0]?.label,
         });
 
         toast.success("Added to Cart", {
             description: `${product.name} has been added to your cart.`
         });
+    };
+
+    const handleBuyNow = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        addItem({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.images[0],
+            size: product.sizes?.[0]?.label,
+        });
+        router.push("/checkout");
     };
 
     const discount = product.original_price
@@ -157,7 +167,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                                         </span>
                                     )}
                                 </div>
-                                
+
                                 <div className="flex items-center gap-1 bg-[#F4EEE2] px-2 py-0.5 rounded-md">
                                     <span className="text-[#E8BF72]">★</span>
                                     <span className="text-sm font-semibold text-[var(--text-primary)]">{product.rating || "4.8"}</span>
@@ -174,8 +184,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                                     Add to cart
                                 </button>
                                 <button
-                                    onClick={() => {/* handle buy now */}}
-                                    className="py-2.5 bg-[var(--primary)] text-[var(--secondary-light)] text-sm font-medium rounded-lg hover:bg-[var(--primary-dark)] transition-all"
+                                    onClick={handleBuyNow}
+                                    className="py-2.5 bg-[var(--primary)] text-white text-sm font-medium rounded-lg hover:bg-[var(--primary-dark)] transition-all"
                                 >
                                     Buy Now
                                 </button>

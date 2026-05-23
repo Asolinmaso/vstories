@@ -1,27 +1,81 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Leaf, Star, ShieldCheck, ArrowRight, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { X, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { supabase } from "@/lib/supabase-browser";
-
+import {
+    AuthFieldErrors,
+    hasFieldErrors,
+    validateEmailField,
+    validateLoginForm,
+    validatePasswordField,
+    validateSignupForm,
+} from "@/lib/auth-validation";
 
 interface LoginModalProps {
     onClose: () => void;
+    initialTab?: "login" | "signup";
 }
 
-const benefits = [
-    { icon: <Leaf className="w-4 h-4" />, text: "Track your herbal orders" },
-    { icon: <Star className="w-4 h-4" />, text: "Exclusive member discounts" },
-    { icon: <ShieldCheck className="w-4 h-4" />, text: "Save addresses & wishlist" },
-];
+function UnderlineInput({
+    type = "text",
+    placeholder,
+    value,
+    onChange,
+    required,
+    maxLength,
+    className = "",
+    error,
+    autoComplete,
+}: {
+    type?: string;
+    placeholder: string;
+    value: string;
+    onChange: (v: string) => void;
+    required?: boolean;
+    maxLength?: number;
+    className?: string;
+    error?: string;
+    autoComplete?: string;
+}) {
+    return (
+        <div className="w-full">
+            <input
+                type={type}
+                placeholder={placeholder}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                required={required}
+                maxLength={maxLength}
+                autoComplete={autoComplete}
+                aria-invalid={!!error}
+                className={`w-full bg-transparent border-0 border-b px-2.5 py-2.5 text-base text-black placeholder:text-[#8F8F8F] outline-none font-[family-name:var(--font-poppins)] ${
+                    error ? "border-red-400" : "border-[#8F8F8F]"
+                } ${className}`}
+            />
+            {error && <p className="mt-1.5 text-xs text-red-600 font-[family-name:var(--font-inter)]">{error}</p>}
+        </div>
+    );
+}
 
-export default function LoginModal({ onClose }: LoginModalProps) {
+function GoogleIcon() {
+    return (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M19.6 10.2273C19.6 9.51818 19.5364 8.83636 19.4182 8.18182H10V12.05H15.3818C15.15 13.3 14.4455 14.3591 13.3864 15.0682V17.5773H16.6182C18.5091 15.8364 19.6 13.2727 19.6 10.2273Z" fill="#4285F4" />
+            <path d="M10 20C12.7 20 14.9636 19.1045 16.6182 17.5773L13.3864 15.0682C12.4909 15.6682 11.3455 16.0227 10 16.0227C7.39545 16.0227 5.19091 14.2636 4.40455 11.9H1.06364V14.4909C2.70909 17.7591 6.09091 20 10 20Z" fill="#34A853" />
+            <path d="M4.40455 11.9C4.20455 11.3 4.09091 10.6591 4.09091 10C4.09091 9.34091 4.20455 8.7 4.40455 8.1V5.50909H1.06364C0.386364 6.85909 0 8.38636 0 10C0 11.6136 0.386364 13.1409 1.06364 14.4909L4.40455 11.9Z" fill="#FBBC05" />
+            <path d="M10 3.97727C11.3455 3.97727 12.4909 4.33182 13.3864 4.93182L16.0182 2.3C14.9591 1.34091 12.7 0.454545 10 0.454545C6.09091 0.454545 2.70909 2.69545 1.06364 5.96364L4.40455 8.55455C5.19091 6.19091 7.39545 4.43182 10 4.43182V3.97727Z" fill="#EA4335" />
+        </svg>
+    );
+}
+
+export default function LoginModal({ onClose, initialTab = "login" }: LoginModalProps) {
     const router = useRouter();
-    const [tab, setTab] = useState<"login" | "signup" | "forgot">("login");
+    const [tab, setTab] = useState<"login" | "signup" | "forgot">(initialTab);
 
-    // Shared form state
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -31,10 +85,10 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const [fieldErrors, setFieldErrors] = useState<AuthFieldErrors>({});
     const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
     const [resendStatus, setResendStatus] = useState<"idle" | "sending" | "sent">("idle");
 
-    // Forgot password state
     const [forgotStep, setForgotStep] = useState<"email" | "otp" | "reset">("email");
     const [forgotEmail, setForgotEmail] = useState("");
     const [otpCode, setOtpCode] = useState("");
@@ -43,16 +97,44 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
 
-    const resetForm = () => {
-        setEmail(""); setPassword(""); setConfirmPassword(""); setFullName("");
-        setError(null); setSuccess(null); setShowPassword(false); setShowConfirmPassword(false);
-        setUnconfirmedEmail(null); setResendStatus("idle");
-        setForgotStep("email"); setForgotEmail(""); setOtpCode("");
-        setNewPassword(""); setConfirmNewPassword("");
-        setShowNewPassword(false); setShowConfirmNewPassword(false);
+    useEffect(() => {
+        setTab(initialTab);
+    }, [initialTab]);
+
+    const clearFieldError = (field: keyof AuthFieldErrors) => {
+        setFieldErrors((prev) => {
+            if (!prev[field]) return prev;
+            const next = { ...prev };
+            delete next[field];
+            return next;
+        });
     };
 
-    const switchTab = (t: "login" | "signup" | "forgot") => { setTab(t); resetForm(); };
+    const resetForm = () => {
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setFullName("");
+        setError(null);
+        setSuccess(null);
+        setFieldErrors({});
+        setShowPassword(false);
+        setShowConfirmPassword(false);
+        setUnconfirmedEmail(null);
+        setResendStatus("idle");
+        setForgotStep("email");
+        setForgotEmail("");
+        setOtpCode("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+        setShowNewPassword(false);
+        setShowConfirmNewPassword(false);
+    };
+
+    const switchTab = (t: "login" | "signup" | "forgot") => {
+        setTab(t);
+        resetForm();
+    };
 
     const handleResendConfirmation = async () => {
         if (!unconfirmedEmail || resendStatus !== "idle") return;
@@ -61,21 +143,38 @@ export default function LoginModal({ onClose }: LoginModalProps) {
         setResendStatus("sent");
     };
 
-    // ── Login ──
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         if (loading) return;
-        setLoading(true); setError(null);
+
+        const errors = validateLoginForm(email, password);
+        setFieldErrors(errors);
+        if (hasFieldErrors(errors)) return;
+
+        setLoading(true);
+        setError(null);
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) throw error;
-            if (!data.session) { setError("Could not sign in. Please confirm your email."); return; }
+            const { data, error: authError } = await supabase.auth.signInWithPassword({
+                email: email.trim(),
+                password,
+            });
+            if (authError) throw authError;
+            if (!data.session) {
+                setError("Could not sign in. Please confirm your email.");
+                return;
+            }
             onClose();
             router.refresh();
+            const redirect = new URLSearchParams(window.location.search).get("redirect");
+            if (redirect && redirect.startsWith("/") && !redirect.startsWith("//")) {
+                router.push(redirect);
+            }
         } catch (err: any) {
             if (err.message?.toLowerCase().includes("email not confirmed")) {
-                setUnconfirmedEmail(email);
+                setUnconfirmedEmail(email.trim());
                 setError("Your email hasn't been confirmed. Check your inbox and click the confirmation link.");
+            } else if (err.message?.toLowerCase().includes("invalid login credentials")) {
+                setError("Invalid email or password. Please try again.");
             } else {
                 setError(err.message || "Failed to login");
             }
@@ -84,23 +183,29 @@ export default function LoginModal({ onClose }: LoginModalProps) {
         }
     };
 
-    // ── Signup ──
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         if (loading) return;
-        if (password !== confirmPassword) {
-            setError("Passwords do not match.");
-            return;
-        }
-        setLoading(true); setError(null);
+
+        const errors = validateSignupForm(fullName, email, password, confirmPassword);
+        setFieldErrors(errors);
+        if (hasFieldErrors(errors)) return;
+
+        setLoading(true);
+        setError(null);
         try {
             const { data, error: authError } = await supabase.auth.signUp({
-                email, password,
-                options: { data: { full_name: fullName } },
+                email: email.trim(),
+                password,
+                options: { data: { full_name: fullName.trim() } },
             });
             if (authError) throw authError;
             if (data.user) {
-                await supabase.from("profiles").insert({ id: data.user.id, full_name: fullName, role: "user" });
+                await supabase.from("profiles").insert({
+                    id: data.user.id,
+                    full_name: fullName.trim(),
+                    role: "user",
+                });
                 setSuccess("Account created! Check your email to confirm.");
             }
         } catch (err: any) {
@@ -110,38 +215,50 @@ export default function LoginModal({ onClose }: LoginModalProps) {
         }
     };
 
-    // ── Google ──
     const handleGoogle = async () => {
         try {
             setLoading(true);
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
+            const redirect = new URLSearchParams(window.location.search).get("redirect");
+            const safeRedirect =
+                redirect && redirect.startsWith("/") && !redirect.startsWith("//")
+                    ? redirect
+                    : window.location.pathname;
+            const { error: authError } = await supabase.auth.signInWithOAuth({
+                provider: "google",
                 options: {
-                    redirectTo: `${window.location.origin}/auth/callback?next=/`,
+                    redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeRedirect)}`,
                     queryParams: {
-                        access_type: 'offline',
-                        prompt: 'consent',
+                        access_type: "offline",
+                        prompt: "consent",
                     },
                 },
             });
-            if (error) throw error;
+            if (authError) throw authError;
         } catch (err: any) {
             setLoading(false);
             setError(err.message || "Failed to sign in with Google");
         }
     };
 
-    // ── Forgot: Step 1 — send OTP ──
     const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         if (loading) return;
-        setLoading(true); setError(null);
+
+        const emailError = validateEmailField(forgotEmail);
+        if (emailError) {
+            setFieldErrors({ email: emailError });
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+        setFieldErrors({});
         try {
-            const { error } = await supabase.auth.signInWithOtp({
-                email: forgotEmail,
+            const { error: authError } = await supabase.auth.signInWithOtp({
+                email: forgotEmail.trim(),
                 options: { shouldCreateUser: false },
             });
-            if (error) throw error;
+            if (authError) throw authError;
             setForgotStep("otp");
         } catch (err: any) {
             if (err.message?.toLowerCase().includes("user not found") || err.message?.toLowerCase().includes("no user")) {
@@ -154,44 +271,55 @@ export default function LoginModal({ onClose }: LoginModalProps) {
         }
     };
 
-    // ── Forgot: Step 2 — verify OTP ──
     const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         if (loading) return;
-        setLoading(true); setError(null);
+        if (otpCode.length < 6) {
+            setFieldErrors({ password: "Please enter the 6-digit code." });
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+        setFieldErrors({});
         try {
-            const { error } = await supabase.auth.verifyOtp({
-                email: forgotEmail,
+            const { error: authError } = await supabase.auth.verifyOtp({
+                email: forgotEmail.trim(),
                 token: otpCode,
                 type: "email",
             });
-            if (error) throw error;
+            if (authError) throw authError;
             setForgotStep("reset");
-        } catch (err: any) {
+        } catch {
             setError("Invalid or expired code. Please check and try again.");
         } finally {
             setLoading(false);
         }
     };
 
-    // ── Forgot: Step 3 — reset password ──
     const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault();
         if (loading) return;
-        if (newPassword !== confirmNewPassword) {
-            setError("Passwords do not match.");
-            return;
+
+        const errors: AuthFieldErrors = {};
+        const passwordError = validatePasswordField(newPassword, "New password");
+        if (passwordError) errors.password = passwordError;
+        if (!confirmNewPassword) {
+            errors.confirmPassword = "Please confirm your new password.";
+        } else if (newPassword !== confirmNewPassword) {
+            errors.confirmPassword = "Passwords do not match.";
         }
-        if (newPassword.length < 6) {
-            setError("Password must be at least 6 characters.");
-            return;
-        }
-        setLoading(true); setError(null);
+
+        setFieldErrors(errors);
+        if (hasFieldErrors(errors)) return;
+
+        setLoading(true);
+        setError(null);
         try {
-            const { error } = await supabase.auth.updateUser({ password: newPassword });
-            if (error) throw error;
+            const { error: authError } = await supabase.auth.updateUser({ password: newPassword });
+            if (authError) throw authError;
             setSuccess("Password updated successfully!");
-            setTimeout(() => { switchTab("login"); }, 1500);
+            setTimeout(() => switchTab("login"), 1500);
         } catch (err: any) {
             setError(err.message || "Failed to update password");
         } finally {
@@ -199,11 +327,36 @@ export default function LoginModal({ onClose }: LoginModalProps) {
         }
     };
 
-    const leftPanelText = {
-        login: { title: "Good to see\nyou again.", sub: "Sign in to access your orders, wishlist and exclusive member offers." },
-        signup: { title: "Start your\nherbal journey.", sub: "Join thousands who've switched to nature-first skincare & haircare." },
-        forgot: { title: "Reset your\npassword.", sub: "We'll send a one-time code to verify your identity before you set a new password." },
-    };
+    const welcomeName = email.includes("@")
+        ? email.split("@")[0].charAt(0).toUpperCase() + email.split("@")[0].slice(1)
+        : "";
+
+    const heading =
+        tab === "forgot"
+            ? "Reset Your Password"
+            : tab === "signup"
+              ? "Create Your Account"
+              : welcomeName
+                ? `Welcome Back ${welcomeName}!`
+                : "Welcome Back!";
+
+    const subtitle =
+        tab === "forgot"
+            ? "Enter your email to receive a verification code."
+            : tab === "signup"
+              ? "Create your account to continue."
+              : "Enter Your Credentials To Continue.";
+
+    const primaryLabel =
+        tab === "forgot"
+            ? forgotStep === "email"
+                ? "Send OTP"
+                : forgotStep === "otp"
+                  ? "Verify Code"
+                  : "Update Password"
+            : tab === "signup"
+              ? "Create Account"
+              : "Continue";
 
     return (
         <AnimatePresence>
@@ -212,389 +365,318 @@ export default function LoginModal({ onClose }: LoginModalProps) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="fixed inset-0 z-[200] flex items-center justify-center p-4"
-                style={{ backgroundColor: "rgba(10,20,8,0.7)", backdropFilter: "blur(8px)" }}
-                onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+                className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center sm:p-4"
+                style={{ backgroundColor: "rgba(10,20,8,0.65)", backdropFilter: "blur(8px)" }}
+                onClick={(e) => {
+                    if (e.target === e.currentTarget) onClose();
+                }}
             >
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 24 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 24 }}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 40 }}
                     transition={{ type: "spring", stiffness: 340, damping: 30 }}
-                    className="relative w-full max-w-[820px] rounded-3xl overflow-hidden shadow-2xl flex"
-                    style={{ minHeight: 520 }}
+                    className="relative flex w-full max-w-[1074px] flex-col md:flex-row overflow-hidden rounded-t-[20px] sm:rounded-[24px] md:rounded-[40px] bg-[#FCFAF4] shadow-2xl h-[100dvh] sm:h-auto sm:max-h-[92vh] md:max-h-[90vh] md:min-h-[720px]"
                 >
-                    {/* ── Left panel ── */}
-                    <div
-                        className="hidden md:flex flex-col justify-between w-[42%] flex-shrink-0 p-10 relative overflow-hidden"
-                        style={{ background: "linear-gradient(160deg, #1D3515 0%, #2a4a1f 60%, #3A5D20 100%)" }}
-                    >
-                        <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full opacity-10"
-                            style={{ background: "radial-gradient(circle, #D4AF37, transparent)" }} />
-                        <div className="absolute -bottom-20 -right-10 w-64 h-64 rounded-full opacity-10"
-                            style={{ background: "radial-gradient(circle, #D4AF37, transparent)" }} />
-
-                        <div>
-                            <div className="flex items-center gap-2 mb-8">
-                                <img src="/images/logo.png" alt="V Stories" className="w-10 h-10 rounded-full" />
-                                <span className="text-white font-semibold tracking-wide text-lg">V Stories</span>
-                            </div>
-                            <h2 className="text-3xl font-medium leading-snug mb-3 whitespace-pre-line"
-                                style={{ fontFamily: "var(--font-peachi)", color: "#ffffff", textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>
-                                {leftPanelText[tab].title}
-                            </h2>
-                            <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.85)" }}>
-                                {leftPanelText[tab].sub}
-                            </p>
-                        </div>
-
-                        <div className="space-y-3">
-                            {benefits.map((b, i) => (
-                                <div key={i} className="flex items-center gap-3">
-                                    <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-                                        style={{ background: "rgba(212,175,55,0.18)", color: "#D4AF37" }}>
-                                        {b.icon}
-                                    </div>
-                                    <span className="text-sm" style={{ color: "rgba(255,255,255,0.9)" }}>{b.text}</span>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="mt-6 p-4 rounded-2xl" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}>
-                            <div className="flex gap-0.5 mb-2">
-                                {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 fill-[#D4AF37] text-[#D4AF37]" />)}
-                            </div>
-                            <p className="text-xs leading-relaxed italic" style={{ color: "rgba(255,255,255,0.85)" }}>
-                                "My hair transformed in 3 weeks. V Stories is the real deal."
-                            </p>
-                            <p className="text-xs mt-1.5" style={{ color: "rgba(255,255,255,0.6)" }}>— Priya R., Chennai</p>
-                        </div>
+                    {/* Left visual panel — desktop only */}
+                    <div className="relative hidden md:block w-[43%] max-w-[464px] shrink-0 overflow-hidden bg-[#1D3B29]">
+                        <Image
+                            src="/images/login-modal.png"
+                            alt="V Stories herbal login"
+                            width={1074}
+                            height={720}
+                            className="absolute left-0 top-0 h-full w-[1074px] max-w-none object-cover object-left"
+                            priority
+                        />
                     </div>
 
-                    {/* ── Right panel ── */}
-                    <div className="flex-1 bg-white flex flex-col">
-                        <button onClick={onClose}
-                            className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-                            style={{ background: "rgba(0,0,0,0.06)" }}
-                            aria-label="Close">
-                            <X className="w-4 h-4 text-gray-500" />
+                    {/* Right form panel */}
+                    <div className="relative flex flex-1 flex-col bg-[#FCFAF4] min-h-0 overflow-hidden">
+                        <button
+                            onClick={onClose}
+                            className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10 sm:top-5 sm:right-5"
+                            aria-label="Close"
+                        >
+                            <X className="h-4 w-4 text-gray-500" />
                         </button>
 
-                        <div className="flex-1 flex flex-col justify-center px-8 py-10 md:px-10">
-
-                            {/* ═══════════════════════════════════════
-                                FORGOT PASSWORD FLOW
-                            ═══════════════════════════════════════ */}
-                            {tab === "forgot" && (
-                                <>
-                                    <button onClick={() => switchTab("login")}
-                                        className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-700 transition-colors mb-6 w-fit">
-                                        <ArrowLeft className="w-3.5 h-3.5" /> Back to sign in
-                                    </button>
-
-                                    {/* Step indicators */}
-                                    <div className="flex items-center gap-2 mb-6">
-                                        {(["email", "otp", "reset"] as const).map((s, i) => (
-                                            <div key={s} className="flex items-center gap-2">
-                                                <div className="flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold transition-all"
-                                                    style={{
-                                                        background: forgotStep === s ? "#1D3515" : (["email", "otp", "reset"].indexOf(forgotStep) > i ? "#3A5D20" : "#e5e7eb"),
-                                                        color: forgotStep === s || ["email", "otp", "reset"].indexOf(forgotStep) > i ? "#fff" : "#9ca3af"
-                                                    }}>
-                                                    {["email", "otp", "reset"].indexOf(forgotStep) > i ? "✓" : i + 1}
-                                                </div>
-                                                {i < 2 && <div className="w-8 h-px" style={{ background: ["email", "otp", "reset"].indexOf(forgotStep) > i ? "#3A5D20" : "#e5e7eb" }} />}
-                                            </div>
-                                        ))}
-                                        <span className="text-xs text-gray-400 ml-1">
-                                            {forgotStep === "email" ? "Enter email" : forgotStep === "otp" ? "Verify OTP" : "New password"}
-                                        </span>
-                                    </div>
-
-                                    {/* Alerts */}
-                                    {error && (
-                                        <div className="flex items-start gap-2 bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl mb-4 text-sm">
-                                            <span className="mt-0.5">⚠</span> {error}
-                                        </div>
-                                    )}
-                                    {success && (
-                                        <div className="flex items-start gap-2 bg-green-50 border border-green-100 text-green-700 px-4 py-3 rounded-xl mb-4 text-sm">
-                                            <span className="mt-0.5">✓</span> {success}
-                                        </div>
-                                    )}
-
-                                    {/* Step 1: Email */}
-                                    {forgotStep === "email" && (
-                                        <>
-                                            <h3 className="text-2xl font-semibold text-gray-900 mb-1">Forgot password?</h3>
-                                            <p className="text-sm text-gray-400 mb-6">Enter your email and we'll send a 6-digit code</p>
-                                            <form onSubmit={handleSendOtp} className="space-y-4">
-                                                <div>
-                                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Email</label>
-                                                    <input type="email" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} required
-                                                        className="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all"
-                                                        style={{ borderColor: "#e5e7eb" }}
-                                                        onFocus={e => e.currentTarget.style.borderColor = "#1D3515"}
-                                                        onBlur={e => e.currentTarget.style.borderColor = "#e5e7eb"}
-                                                        placeholder="you@example.com" />
-                                                </div>
-                                                <button type="submit" disabled={loading}
-                                                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white transition-all"
-                                                    style={{ background: loading ? "#6b7280" : "linear-gradient(135deg, #1D3515 0%, #3A5D20 100%)", boxShadow: loading ? "none" : "0 4px 16px rgba(29,53,21,0.35)" }}>
-                                                    {loading ? "Sending code..." : <><span>Send OTP</span><ArrowRight className="w-4 h-4" /></>}
-                                                </button>
-                                            </form>
-                                        </>
-                                    )}
-
-                                    {/* Step 2: OTP */}
-                                    {forgotStep === "otp" && (
-                                        <>
-                                            <h3 className="text-2xl font-semibold text-gray-900 mb-1">Check your email</h3>
-                                            <p className="text-sm text-gray-400 mb-1">
-                                                We sent a 6-digit code to <span className="font-medium text-gray-600">{forgotEmail}</span>
-                                            </p>
-                                            <p className="text-xs text-gray-400 mb-6">Check your spam folder if you don't see it</p>
-                                            <form onSubmit={handleVerifyOtp} className="space-y-4">
-                                                <div>
-                                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">6-Digit Code</label>
-                                                    <input
-                                                        type="text"
-                                                        value={otpCode}
-                                                        onChange={e => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                                                        required
-                                                        maxLength={6}
-                                                        className="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all tracking-[0.4em] font-mono text-center text-lg"
-                                                        style={{ borderColor: "#e5e7eb" }}
-                                                        onFocus={e => e.currentTarget.style.borderColor = "#1D3515"}
-                                                        onBlur={e => e.currentTarget.style.borderColor = "#e5e7eb"}
-                                                        placeholder="000000" />
-                                                </div>
-                                                <button type="submit" disabled={loading || otpCode.length < 6}
-                                                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-60"
-                                                    style={{ background: loading ? "#6b7280" : "linear-gradient(135deg, #1D3515 0%, #3A5D20 100%)", boxShadow: "0 4px 16px rgba(29,53,21,0.35)" }}>
-                                                    {loading ? "Verifying..." : <><span>Verify Code</span><ArrowRight className="w-4 h-4" /></>}
-                                                </button>
-                                            </form>
-                                            <button type="button" onClick={() => { setForgotStep("email"); setError(null); setOtpCode(""); }}
-                                                className="mt-3 text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600 w-full text-center">
-                                                Didn't receive it? Go back and resend
-                                            </button>
-                                        </>
-                                    )}
-
-                                    {/* Step 3: New password */}
-                                    {forgotStep === "reset" && (
-                                        <>
-                                            <h3 className="text-2xl font-semibold text-gray-900 mb-1">Set new password</h3>
-                                            <p className="text-sm text-gray-400 mb-6">Choose a strong password for your account</p>
-                                            <form onSubmit={handleResetPassword} className="space-y-4">
-                                                <div>
-                                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">New Password</label>
-                                                    <div className="relative">
-                                                        <input type={showNewPassword ? "text" : "password"} value={newPassword} onChange={e => setNewPassword(e.target.value)} required minLength={6}
-                                                            className="w-full px-4 py-3 pr-11 rounded-xl border text-sm outline-none transition-all"
-                                                            style={{ borderColor: "#e5e7eb" }}
-                                                            onFocus={e => e.currentTarget.style.borderColor = "#1D3515"}
-                                                            onBlur={e => e.currentTarget.style.borderColor = "#e5e7eb"}
-                                                            placeholder="Min. 6 characters" />
-                                                        <button type="button" onClick={() => setShowNewPassword(p => !p)}
-                                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                                                            {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Confirm New Password</label>
-                                                    <div className="relative">
-                                                        <input type={showConfirmNewPassword ? "text" : "password"} value={confirmNewPassword} onChange={e => setConfirmNewPassword(e.target.value)} required
-                                                            className="w-full px-4 py-3 pr-11 rounded-xl border text-sm outline-none transition-all"
-                                                            style={{ borderColor: confirmNewPassword && confirmNewPassword !== newPassword ? "#ef4444" : "#e5e7eb" }}
-                                                            onFocus={e => e.currentTarget.style.borderColor = confirmNewPassword !== newPassword ? "#ef4444" : "#1D3515"}
-                                                            onBlur={e => e.currentTarget.style.borderColor = confirmNewPassword && confirmNewPassword !== newPassword ? "#ef4444" : "#e5e7eb"}
-                                                            placeholder="Repeat password" />
-                                                        <button type="button" onClick={() => setShowConfirmNewPassword(p => !p)}
-                                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                                                            {showConfirmNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                                        </button>
-                                                    </div>
-                                                    {confirmNewPassword && confirmNewPassword !== newPassword && (
-                                                        <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
-                                                    )}
-                                                </div>
-                                                <button type="submit" disabled={loading || newPassword !== confirmNewPassword}
-                                                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-60"
-                                                    style={{ background: loading ? "#6b7280" : "linear-gradient(135deg, #1D3515 0%, #3A5D20 100%)", boxShadow: "0 4px 16px rgba(29,53,21,0.35)" }}>
-                                                    {loading ? "Updating..." : <><span>Update Password</span><ArrowRight className="w-4 h-4" /></>}
-                                                </button>
-                                            </form>
-                                        </>
-                                    )}
-                                </>
-                            )}
-
-                            {/* ═══════════════════════════════════════
-                                LOGIN / SIGNUP FLOW
-                            ═══════════════════════════════════════ */}
-                            {tab !== "forgot" && (
-                                <>
-                                    {/* Tab switcher */}
-                                    <div className="flex gap-1 p-1 rounded-xl mb-8 w-fit"
-                                        style={{ background: "#f3f0eb" }}>
-                                        {(["login", "signup"] as const).map(t => (
-                                            <button key={t} onClick={() => switchTab(t)}
-                                                className="px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
-                                                style={tab === t
-                                                    ? { background: "#1D3515", color: "#fff", boxShadow: "0 2px 8px rgba(29,53,21,0.25)" }
-                                                    : { color: "#6b7280" }}>
-                                                {t === "login" ? "Sign In" : "Sign Up"}
-                                            </button>
-                                        ))}
-                                    </div>
-
-                                    <h3 className="text-2xl font-semibold text-gray-900 mb-1">
-                                        {tab === "login" ? "Welcome back" : "Create account"}
-                                    </h3>
-                                    <p className="text-sm text-gray-400 mb-6">
-                                        {tab === "login" ? "Enter your credentials to continue" : "It's free and takes 30 seconds"}
-                                    </p>
-
-                                    {/* Alerts */}
-                                    {error && (
-                                        <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl mb-4 text-sm">
-                                            <div className="flex items-start gap-2">
-                                                <span className="mt-0.5">⚠</span> {error}
-                                            </div>
-                                            {unconfirmedEmail && (
-                                                <button type="button" onClick={handleResendConfirmation} disabled={resendStatus !== "idle"}
-                                                    className="mt-2 text-xs font-semibold underline underline-offset-2 disabled:opacity-60">
-                                                    {resendStatus === "sending" ? "Sending..." : resendStatus === "sent" ? "✓ Confirmation email sent!" : "Resend confirmation email →"}
-                                                </button>
-                                            )}
-                                        </div>
-                                    )}
-                                    {success && (
-                                        <div className="flex items-start gap-2 bg-green-50 border border-green-100 text-green-700 px-4 py-3 rounded-xl mb-4 text-sm">
-                                            <span className="mt-0.5">✓</span> {success}
-                                        </div>
-                                    )}
-
-                                    {/* Google */}
-                                    <button onClick={handleGoogle}
-                                        className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl border text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all mb-5"
-                                        style={{ borderColor: "#e5e7eb" }}>
-                                        <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
-                                        Continue with Google
-                                    </button>
-
-                                    <div className="flex items-center gap-3 mb-5">
-                                        <div className="flex-1 h-px bg-gray-100" />
-                                        <span className="text-xs text-gray-400">or with email</span>
-                                        <div className="flex-1 h-px bg-gray-100" />
-                                    </div>
-
-                                    {/* Form */}
-                                    <form onSubmit={tab === "login" ? handleLogin : handleSignup} className="space-y-4">
-                                        {tab === "signup" && (
-                                            <div>
-                                                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Full Name</label>
-                                                <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} required
-                                                    className="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all"
-                                                    style={{ borderColor: "#e5e7eb" }}
-                                                    onFocus={e => e.currentTarget.style.borderColor = "#1D3515"}
-                                                    onBlur={e => e.currentTarget.style.borderColor = "#e5e7eb"}
-                                                    placeholder="Your full name" />
-                                            </div>
-                                        )}
-                                        <div>
-                                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Email</label>
-                                            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
-                                                className="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all"
-                                                style={{ borderColor: "#e5e7eb" }}
-                                                onFocus={e => e.currentTarget.style.borderColor = "#1D3515"}
-                                                onBlur={e => e.currentTarget.style.borderColor = "#e5e7eb"}
-                                                placeholder="you@example.com" />
-                                        </div>
-                                        <div>
-                                            <div className="flex items-center justify-between mb-1.5">
-                                                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Password</label>
-                                                {tab === "login" && (
-                                                    <button type="button" onClick={() => switchTab("forgot")}
-                                                        className="text-xs font-medium hover:underline"
-                                                        style={{ color: "#1D3515" }}>
-                                                        Forgot password?
-                                                    </button>
-                                                )}
-                                            </div>
-                                            <div className="relative">
-                                                <input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} required
-                                                    className="w-full px-4 py-3 pr-11 rounded-xl border text-sm outline-none transition-all"
-                                                    style={{ borderColor: "#e5e7eb" }}
-                                                    onFocus={e => e.currentTarget.style.borderColor = "#1D3515"}
-                                                    onBlur={e => e.currentTarget.style.borderColor = "#e5e7eb"}
-                                                    placeholder="••••••••" />
-                                                <button type="button" onClick={() => setShowPassword(p => !p)}
-                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {/* Confirm password — signup only */}
-                                        {tab === "signup" && (
-                                            <div>
-                                                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Confirm Password</label>
-                                                <div className="relative">
-                                                    <input type={showConfirmPassword ? "text" : "password"} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required
-                                                        className="w-full px-4 py-3 pr-11 rounded-xl border text-sm outline-none transition-all"
-                                                        style={{ borderColor: confirmPassword && confirmPassword !== password ? "#ef4444" : "#e5e7eb" }}
-                                                        onFocus={e => e.currentTarget.style.borderColor = confirmPassword !== password ? "#ef4444" : "#1D3515"}
-                                                        onBlur={e => e.currentTarget.style.borderColor = confirmPassword && confirmPassword !== password ? "#ef4444" : "#e5e7eb"}
-                                                        placeholder="Repeat password" />
-                                                    <button type="button" onClick={() => setShowConfirmPassword(p => !p)}
-                                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                                                        {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                                    </button>
-                                                </div>
-                                                {confirmPassword && confirmPassword !== password && (
-                                                    <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        <button type="submit" disabled={loading || (tab === "signup" && !!confirmPassword && confirmPassword !== password)}
-                                            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white transition-all mt-2 disabled:opacity-60"
-                                            style={{
-                                                background: loading ? "#6b7280" : "linear-gradient(135deg, #1D3515 0%, #3A5D20 100%)",
-                                                boxShadow: loading ? "none" : "0 4px 16px rgba(29,53,21,0.35)"
-                                            }}>
-                                            {loading ? (
-                                                <span className="flex items-center gap-2">
-                                                    <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                                                    </svg>
-                                                    {tab === "login" ? "Signing in..." : "Creating account..."}
-                                                </span>
-                                            ) : (
-                                                <>
-                                                    {tab === "login" ? "Sign In" : "Create Account"}
-                                                    <ArrowRight className="w-4 h-4" />
-                                                </>
-                                            )}
+                        <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain min-h-0">
+                            <div className="flex flex-1 flex-col justify-start px-4 pb-6 pt-14 sm:justify-center sm:px-10 sm:py-10 md:px-12 lg:px-14">
+                                <div className="mx-auto flex w-full max-w-[461px] flex-col gap-5 sm:gap-8">
+                                    {tab === "forgot" && (
+                                        <button
+                                            type="button"
+                                            onClick={() => switchTab("login")}
+                                            className="flex w-fit items-center gap-1.5 text-sm text-black/60 transition-colors hover:text-black"
+                                        >
+                                            <ArrowLeft className="h-4 w-4" />
+                                            Back to sign in
                                         </button>
+                                    )}
+
+                                    <div className="flex flex-col gap-1.5 sm:gap-2">
+                                        <h2
+                                            className="text-[22px] leading-tight font-semibold text-black sm:text-[28px] md:text-[32px] md:leading-[43px] pr-8"
+                                            style={{ fontFamily: "var(--font-playfair)" }}
+                                        >
+                                            {heading}
+                                        </h2>
+                                        <p className="text-sm leading-relaxed text-black sm:text-base sm:leading-[19px] font-[family-name:var(--font-inter)]">
+                                            {subtitle}
+                                        </p>
+                                    </div>
+
+                                    {error && (
+                                        <div className="rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
+                                            {error}
+                                            {unconfirmedEmail && (
+                                                <button
+                                                    type="button"
+                                                    onClick={handleResendConfirmation}
+                                                    disabled={resendStatus !== "idle"}
+                                                    className="mt-2 block text-xs font-semibold underline underline-offset-2 disabled:opacity-60"
+                                                >
+                                                    {resendStatus === "sending"
+                                                        ? "Sending..."
+                                                        : resendStatus === "sent"
+                                                          ? "Confirmation email sent!"
+                                                          : "Resend confirmation email"}
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {success && (
+                                        <div className="rounded-lg border border-green-100 bg-green-50 px-4 py-3 text-sm text-green-700">
+                                            {success}
+                                        </div>
+                                    )}
+
+                                    <form
+                                        noValidate
+                                        onSubmit={
+                                            tab === "login"
+                                                ? handleLogin
+                                                : tab === "signup"
+                                                  ? handleSignup
+                                                  : forgotStep === "email"
+                                                    ? handleSendOtp
+                                                    : forgotStep === "otp"
+                                                      ? handleVerifyOtp
+                                                      : handleResetPassword
+                                        }
+                                        className="flex flex-col gap-5 sm:gap-8"
+                                    >
+                                        <div className="flex flex-col gap-4 sm:gap-6">
+                                            <div className="flex flex-col gap-4 sm:gap-6">
+                                                {tab === "signup" && (
+                                                    <UnderlineInput
+                                                        placeholder="Full Name"
+                                                        value={fullName}
+                                                        onChange={(v) => {
+                                                            setFullName(v);
+                                                            clearFieldError("fullName");
+                                                        }}
+                                                        error={fieldErrors.fullName}
+                                                        autoComplete="name"
+                                                    />
+                                                )}
+
+                                                {tab === "forgot" ? (
+                                                    forgotStep === "email" ? (
+                                                        <UnderlineInput
+                                                            type="email"
+                                                            placeholder="Email"
+                                                            value={forgotEmail}
+                                                            onChange={(v) => {
+                                                                setForgotEmail(v);
+                                                                clearFieldError("email");
+                                                            }}
+                                                            error={fieldErrors.email}
+                                                            autoComplete="email"
+                                                        />
+                                                    ) : forgotStep === "otp" ? (
+                                                        <UnderlineInput
+                                                            placeholder="6-Digit Code"
+                                                            value={otpCode}
+                                                            onChange={(v) => {
+                                                                setOtpCode(v.replace(/\D/g, "").slice(0, 6));
+                                                                clearFieldError("password");
+                                                            }}
+                                                            maxLength={6}
+                                                            error={fieldErrors.password}
+                                                            className="tracking-[0.35em] text-center"
+                                                        />
+                                                    ) : (
+                                                        <>
+                                                            <div className="relative">
+                                                                <UnderlineInput
+                                                                    type={showNewPassword ? "text" : "password"}
+                                                                    placeholder="New Password"
+                                                                    value={newPassword}
+                                                                    onChange={(v) => {
+                                                                        setNewPassword(v);
+                                                                        clearFieldError("password");
+                                                                    }}
+                                                                    error={fieldErrors.password}
+                                                                    autoComplete="new-password"
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setShowNewPassword((p) => !p)}
+                                                                    className="absolute right-2 top-3 text-[#8F8F8F]"
+                                                                    aria-label={showNewPassword ? "Hide password" : "Show password"}
+                                                                >
+                                                                    {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                                </button>
+                                                            </div>
+                                                            <div className="relative">
+                                                                <UnderlineInput
+                                                                    type={showConfirmNewPassword ? "text" : "password"}
+                                                                    placeholder="Confirm Password"
+                                                                    value={confirmNewPassword}
+                                                                    onChange={(v) => {
+                                                                        setConfirmNewPassword(v);
+                                                                        clearFieldError("confirmPassword");
+                                                                    }}
+                                                                    error={fieldErrors.confirmPassword}
+                                                                    autoComplete="new-password"
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setShowConfirmNewPassword((p) => !p)}
+                                                                    className="absolute right-2 top-3 text-[#8F8F8F]"
+                                                                    aria-label={showConfirmNewPassword ? "Hide password" : "Show password"}
+                                                                >
+                                                                    {showConfirmNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                                </button>
+                                                            </div>
+                                                        </>
+                                                    )
+                                                ) : (
+                                                    <>
+                                                        <UnderlineInput
+                                                            type="email"
+                                                            placeholder="Email"
+                                                            value={email}
+                                                            onChange={(v) => {
+                                                                setEmail(v);
+                                                                clearFieldError("email");
+                                                            }}
+                                                            error={fieldErrors.email}
+                                                            autoComplete="email"
+                                                        />
+
+                                                        <div className="flex flex-col gap-4 sm:gap-6">
+                                                            <div className="relative">
+                                                                <UnderlineInput
+                                                                    type={showPassword ? "text" : "password"}
+                                                                    placeholder="Password"
+                                                                    value={password}
+                                                                    onChange={(v) => {
+                                                                        setPassword(v);
+                                                                        clearFieldError("password");
+                                                                    }}
+                                                                    error={fieldErrors.password}
+                                                                    autoComplete={tab === "signup" ? "new-password" : "current-password"}
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setShowPassword((p) => !p)}
+                                                                    className="absolute right-2 top-3 text-[#8F8F8F]"
+                                                                    aria-label={showPassword ? "Hide password" : "Show password"}
+                                                                >
+                                                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                                </button>
+                                                            </div>
+
+                                                            {tab === "login" && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => switchTab("forgot")}
+                                                                    className="text-right text-sm leading-[19px] text-black underline sm:text-base font-[family-name:var(--font-inter)]"
+                                                                >
+                                                                    Forgot Password?
+                                                                </button>
+                                                            )}
+                                                        </div>
+
+                                                        {tab === "signup" && (
+                                                            <div className="relative">
+                                                                <UnderlineInput
+                                                                    type={showConfirmPassword ? "text" : "password"}
+                                                                    placeholder="Confirm Password"
+                                                                    value={confirmPassword}
+                                                                    onChange={(v) => {
+                                                                        setConfirmPassword(v);
+                                                                        clearFieldError("confirmPassword");
+                                                                    }}
+                                                                    error={fieldErrors.confirmPassword}
+                                                                    autoComplete="new-password"
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setShowConfirmPassword((p) => !p)}
+                                                                    className="absolute right-2 top-3 text-[#8F8F8F]"
+                                                                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                                                                >
+                                                                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+
+                                            <button
+                                                type="submit"
+                                                disabled={loading}
+                                                className="flex h-11 sm:h-12 w-full items-center justify-center rounded-lg px-2.5 text-sm sm:text-base font-semibold transition-opacity disabled:opacity-60 font-[family-name:var(--font-poppins)]"
+                                                style={{ backgroundColor: "#1D3B29", color: "#F7EDE2" }}
+                                            >
+                                                {loading ? "Please wait..." : primaryLabel}
+                                            </button>
+                                        </div>
                                     </form>
 
-                                    <p className="text-center text-xs text-gray-400 mt-5">
-                                        {tab === "login" ? "Don't have an account? " : "Already have an account? "}
-                                        <button onClick={() => switchTab(tab === "login" ? "signup" : "login")}
-                                            className="font-semibold underline underline-offset-2"
-                                            style={{ color: "#1D3515" }}>
-                                            {tab === "login" ? "Sign up free" : "Sign in"}
-                                        </button>
-                                    </p>
-                                </>
-                            )}
+                                    {tab !== "forgot" && (
+                                        <div className="flex flex-col items-center gap-4 sm:gap-6 pb-2">
+                                            <div className="relative w-full">
+                                                <div className="absolute inset-x-0 top-1/2 h-px bg-black" />
+                                                <div className="relative mx-auto w-fit bg-[#FCFAF4] px-2.5">
+                                                    <span className="text-xs leading-[15px] text-black font-[family-name:var(--font-inter)]">
+                                                        or continue with
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                onClick={handleGoogle}
+                                                disabled={loading}
+                                                className="flex h-11 sm:h-12 w-full items-center justify-center gap-3 rounded-xl border border-[#8F8F8F] px-2.5 transition-colors hover:bg-gray-50 disabled:opacity-60"
+                                                style={{ backgroundColor: "#FFFFFF", color: "#000000" }}
+                                            >
+                                                <GoogleIcon />
+                                                <span className="text-sm sm:text-base leading-6 text-black font-[family-name:var(--font-poppins)]">
+                                                    {tab === "signup" ? "Sign Up With Google" : "Login With Google"}
+                                                </span>
+                                            </button>
+
+                                            <p className="text-center text-sm leading-[19px] text-black sm:text-base font-[family-name:var(--font-inter)]">
+                                                {tab === "login" ? "Dont Have An Account? " : "Already Have An Account? "}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => switchTab(tab === "login" ? "signup" : "login")}
+                                                    className="underline"
+                                                >
+                                                    {tab === "login" ? "Sign Up" : "Sign In"}
+                                                </button>
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </motion.div>

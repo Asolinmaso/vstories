@@ -33,7 +33,7 @@ export default function CheckoutPage() {
 
     useEffect(() => {
         if (!user) {
-            router.push("/login?redirect=/checkout");
+            router.push("/?login=1&redirect=/checkout");
             return;
         }
         if (items.length === 0) {
@@ -69,12 +69,15 @@ export default function CheckoutPage() {
                 body: JSON.stringify({
                     amount: total,
                     currency: "INR",
+                    shippingFee,
+                    discount,
                     items: items.map(item => ({
                         id: item.id,
                         name: item.name,
                         price: item.price,
                         quantity: item.quantity,
                         image: item.image,
+                        size: item.size,
                     })),
                     shippingAddress: selectedAddress,
                     paymentMethod,
@@ -88,8 +91,9 @@ export default function CheckoutPage() {
             }
 
             if (paymentMethod === "cod") {
-                clearCart();
-                router.push(`/order-success?orderId=${data.orderId}`);
+                await clearCart();
+                router.push(`/order-success?orderId=${data.dbOrderId || data.orderId}`);
+                setLoading(false);
                 return;
             }
 
@@ -117,7 +121,7 @@ export default function CheckoutPage() {
                         const verifyData = await verifyResponse.json();
 
                         if (verifyResponse.ok && verifyData.success) {
-                            clearCart();
+                            await clearCart();
                             router.push(`/order-success?orderId=${verifyData.orderId}`);
                         } else {
                             throw new Error(verifyData.error || "Payment verification failed");

@@ -10,6 +10,12 @@ export async function middleware(request: NextRequest) {
 
     // Skip middleware for static files, images, and internal Next.js routes
     const { pathname } = request.nextUrl;
+
+    // Legacy route — redirect old account/profile links to home
+    if (pathname.startsWith('/account') || pathname.startsWith('/profile')) {
+        return NextResponse.redirect(new URL('/', request.url));
+    }
+
     if (
         pathname.startsWith('/_next') ||
         pathname.startsWith('/api/auth') || // Let auth routes pass through
@@ -67,7 +73,10 @@ export async function middleware(request: NextRequest) {
     // Protect user routes
     const isUserRoute = pathname.startsWith('/checkout') || pathname.startsWith('/order-success');
     if (isUserRoute && !user) {
-        return NextResponse.redirect(new URL('/', request.url));
+        const redirectUrl = new URL('/', request.url);
+        redirectUrl.searchParams.set('login', '1');
+        redirectUrl.searchParams.set('redirect', pathname);
+        return NextResponse.redirect(redirectUrl);
     }
 
     // Protect admin routes

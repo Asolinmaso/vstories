@@ -1,126 +1,138 @@
 "use client";
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/effect-fade";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import { useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-interface HeroCarouselProps {
-    images?: string[];
-}
+const slides = [
+  {
+    id: "hero-banner",
+    image: "/images/home/hero-banner.png",
+    alt: "Vstories Hibiscus Shampoo",
+  },
+  {
+    id: "hero-4",
+    image: "/images/home/hero4.png",
+    alt: "Vstories Herbal Hair Oil",
+  },
+  {
+    id: "hero-3",
+    image: "/images/home/hero3.png",
+    alt: "Vstories skincare collection",
+  },
+  {
+    id: "hero-2",
+    image: "/images/home/hero2.png",
+    alt: "Vstories natural products",
+  },
+  {
+    id: "hero-1",
+    image: "/images/home/hero1.png",
+    alt: "Vstories herbal care",
+  },
+];
 
-export default function HeroCarousel({ images = [] }: HeroCarouselProps) {
-    const defaultSlides = [
-        {
-            id: 1,
-            image: "/images/category-hair.png", // Using available images as placeholder
-            title: "Discover Nature's Secret",
-            subtitle: "Premium Herbal Hair Care",
-            cta: "Shop Hair Care",
-            link: "/shop/hair",
-        },
-        {
-            id: 2,
-            image: "/images/category-face.png",
-            title: "Radiant Skin Awaits",
-            subtitle: "100% Natural Skincare",
-            cta: "Shop Skincare",
-            link: "/shop/face",
-        },
-        {
-            id: 3,
-            image: "/images/category-best.png",
-            title: "Our Best Sellers",
-            subtitle: "Loved by Thousands",
-            cta: "View Bestsellers",
-            link: "/shop/bestsellers",
-        },
-    ];
+export default function HeroCarousel() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeSlide = slides[activeIndex];
 
-    const slides = images.length > 0
-        ? images.map((img, idx) => ({
-            id: idx,
-            image: img,
-            title: "", // For user uploaded banners, text is usually in the image
-            subtitle: "",
-            cta: "Shop Now",
-            link: "/shop",
-        }))
-        : defaultSlides;
+  return (
+    <section className="relative w-full overflow-hidden bg-[#F4EEE2]">
+      <div className="relative w-full h-[420px] sm:h-[560px] lg:h-[764px]">
+        {/* Full-width background image — Figma Rectangle 23 */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeSlide.id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={activeSlide.image}
+              alt={activeSlide.alt}
+              fill
+              className="object-cover object-right"
+              priority={activeIndex === 0}
+              sizes="100vw"
+            />
+          </motion.div>
+        </AnimatePresence>
 
-    return (
-        <section className="relative w-full bg-[var(--background)] px-1 md:px-1 pt-2 md:pt-4 pb-2">
-            <div className="relative h-[28vh] md:h-[80vh] w-full overflow-hidden rounded-[2.5rem] md:rounded-[4rem] shadow-md border border-white/20">
-                <Swiper
-                    modules={[Autoplay, EffectFade, Pagination]}
-                    effect="fade"
-                    speed={1000}
-                    autoplay={{
-                        delay: 5000,
-                        disableOnInteraction: false,
-                    }}
-                    pagination={{
-                        clickable: true,
-                    }}
-                    className="h-full w-full"
+        {/* Text overlay — left side over empty banner space */}
+        <div className="relative z-10 flex h-full items-center">
+          <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-[100px]">
+            <div className="max-w-[628px] pt-6 sm:pt-10 lg:pt-[100px] pb-24 sm:pb-28 lg:pb-[120px]">
+              <motion.h1
+                key={`title-${activeIndex}`}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="font-playfair font-semibold text-black text-[28px] leading-[1.15] sm:text-4xl md:text-5xl lg:text-[64px] lg:leading-[85px] max-w-[543px]"
+              >
+                Nature&apos;s Goodness Clinically Crafted
+              </motion.h1>
+
+              <motion.p
+                key={`desc-${activeIndex}`}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+                className="mt-4 sm:mt-5 font-inter font-normal text-black text-sm sm:text-base lg:text-2xl lg:leading-[29px] max-w-[628px]"
+              >
+                Clean, effective &amp; honest skincare and haircare enriched with
+                natural ingredients &amp; powerful herbs for real, visible results.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+                className="mt-5 sm:mt-6"
+              >
+                <Link
+                  href="/shop"
+                  className="inline-flex h-[43px] min-w-[179px] items-center justify-center rounded-[8px] px-6 font-inter text-base font-medium transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: "#1D3B29", color: "#F7EDE2" }}
                 >
-                    {slides.map((slide, idx) => (
-                        <SwiperSlide key={slide.id} className="relative h-full w-full">
-                            {/* Background Image */}
-                            <div className="absolute inset-0 h-full w-full">
-                                <Image
-                                    src={slide.image}
-                                    alt={slide.title}
-                                    fill
-                                    className="object-cover object-center"
-                                    priority={idx === 0}
-                                    sizes="100vw"
-                                />
-                                {/* Overlay - lighter for better visibility of products */}
-                                <div className="absolute inset-0 bg-black/10" />
-                            </div>
+                  Explore Products
+                </Link>
+              </motion.div>
 
-                            {/* Link overlay for entire slide */}
-                            <Link href={slide.link} className="absolute inset-0 z-20">
-                                <span className="sr-only">{slide.title || "Shop Now"}</span>
-                            </Link>
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
+              {/* Thumbnail navigation */}
+              <div className="mt-6 sm:mt-7 flex items-end gap-3 sm:gap-4">
+                {slides.map((slide, index) => (
+                  <button
+                    key={slide.id}
+                    type="button"
+                    onClick={() => setActiveIndex(index)}
+                    aria-label={`Show slide ${index + 1}`}
+                    aria-current={index === activeIndex ? "true" : undefined}
+                    className={`relative h-[42px] w-[42px] sm:h-[55px] sm:w-[55px] shrink-0 overflow-hidden rounded-[8px] sm:rounded-[10px] border transition-all ${
+                      index === activeIndex
+                        ? "border-[#1A3026] border-2 shadow-md -translate-y-0.5"
+                        : "border-[#1A3026] border-[1.5px] opacity-90 hover:opacity-100"
+                    }`}
+                  >
+                    <Image
+                      src={slide.image}
+                      alt=""
+                      fill
+                      className="object-cover object-right"
+                      sizes="55px"
+                    />
+                    {index === activeIndex && (
+                      <span className="absolute -bottom-2 left-1/2 h-[3px] w-5 sm:w-8 -translate-x-1/2 rounded-full bg-[#1A3026]" />
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
-
-            {/* Custom Styles for Swiper Pagination */}
-            <style jsx global>{`
-        .swiper-pagination {
-          position: absolute;
-          bottom: 2rem !important;
-          right: 3rem !important;
-          left: auto !important;
-          width: auto !important;
-          display: flex;
-          gap: 0.5rem;
-          z-index: 30;
-        }
-        .swiper-pagination-bullet {
-          width: 8px !important;
-          height: 8px !important;
-          background: rgba(255, 255, 255, 0.6) !important;
-          opacity: 1 !important;
-          border-radius: 999px !important;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-          margin: 0 !important;
-        }
-        .swiper-pagination-bullet-active {
-          width: 24px !important;
-          background: white !important;
-        }
-      `}</style>
-        </section>
-    );
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

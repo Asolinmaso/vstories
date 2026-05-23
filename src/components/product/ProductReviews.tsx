@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Star, CheckCircle } from "lucide-react";
+import { Star, CheckCircle, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface FeedbackEntry {
@@ -15,6 +15,7 @@ interface FeedbackEntry {
 interface ProductReviewsProps {
     productId: string;
     productName: string;
+    onReviewAdded?: (rating: number) => void;
 }
 
 function timeAgo(dateStr: string) {
@@ -31,7 +32,7 @@ function timeAgo(dateStr: string) {
 
 const PAGE_SIZE = 10;
 
-export default function ProductReviews({ productId, productName }: ProductReviewsProps) {
+export default function ProductReviews({ productId, productName, onReviewAdded }: ProductReviewsProps) {
     const [reviews, setReviews] = useState<FeedbackEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [isWritingReview, setIsWritingReview] = useState(false);
@@ -41,7 +42,7 @@ export default function ProductReviews({ productId, productName }: ProductReview
     const [page, setPage] = useState(1);
 
     useEffect(() => {
-        fetch(`/api/feedback?product_id=${productId}`)
+        fetch(`/api/feedback?product_id=${productId}&t=${Date.now()}`)
             .then(res => res.json())
             .then(data => setReviews(data.feedback || []))
             .finally(() => setLoading(false));
@@ -81,11 +82,13 @@ export default function ProductReviews({ productId, productName }: ProductReview
                 message: newReview.comment,
                 created_at: new Date().toISOString(),
             };
+            const ratingSubmitted = newReview.rating;
             setReviews(prev => [optimistic, ...prev]);
             setPage(1);
             setSubmitted(true);
             setIsWritingReview(false);
             setNewReview({ rating: 5, comment: "", name: "", email: "" });
+            if (onReviewAdded) onReviewAdded(ratingSubmitted);
         } catch {
             alert('Failed to submit review. Please try again.');
         } finally {
@@ -94,190 +97,193 @@ export default function ProductReviews({ productId, productName }: ProductReview
     };
 
     return (
-        <section className="py-12 bg-[var(--background)]">
+        <section className="py-12 bg-transparent">
             <div className="container-premium">
-                <div className="mb-10 text-center">
+                <div className="max-w-[900px] mx-auto">
                     <h2
-                        className="text-2xl md:text-3xl font-semibold text-[var(--primary)] mb-4"
+                        className="text-[28px] text-[var(--primary)] mb-6"
                         style={{ fontFamily: "var(--font-peachi)" }}
                     >
                         Customer Reviews
                     </h2>
-                    {reviews.length > 0 && averageRating > 0 && (
-                        <div className="flex items-center justify-center gap-2 mb-2">
-                            <div className="flex text-[var(--highlight)]">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                    <Star
-                                        key={star}
-                                        className={`w-5 h-5 ${star <= Math.round(averageRating) ? "fill-current" : ""}`}
-                                    />
-                                ))}
-                            </div>
-                            <span className="text-lg font-medium text-[var(--primary)]">
-                                {averageRating.toFixed(1)}
-                            </span>
-                            <span className="text-[var(--text-muted)]">
-                                ({reviews.length} {reviews.length === 1 ? "review" : "reviews"})
-                            </span>
-                        </div>
-                    )}
-                </div>
 
-                <div className="max-w-4xl mx-auto">
-                    {/* Write Review Button */}
-                    <div className="mb-8 text-center">
-                        {submitted ? (
-                            <div className="flex items-center justify-center gap-2 text-[var(--secondary)] font-medium">
-                                <CheckCircle className="w-5 h-5" />
-                                Thank you for your review!
-                            </div>
-                        ) : (
-                            <button
-                                onClick={() => setIsWritingReview(!isWritingReview)}
-                                className={isWritingReview
-                                    ? "px-6 py-2 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors"
-                                    : "btn-primary px-8 py-3 flex items-center gap-2 mx-auto"
-                                }
-                            >
-                                {!isWritingReview && (
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                    </svg>
-                                )}
-                                {isWritingReview ? "Cancel" : "Write a Review"}
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Write Review Form */}
-                    {isWritingReview && (
-                        <motion.form
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            onSubmit={handleSubmit}
-                            className="bg-white p-6 rounded-xl shadow-sm mb-10 border border-[var(--primary)]/10"
-                        >
-                            <h3 className="text-lg font-semibold text-[var(--primary)] mb-4">
-                                Share your experience with {productName}
-                            </h3>
-                            <div className="space-y-4">
-                                <div className="grid sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-[var(--primary)] mb-1">Name *</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={newReview.name}
-                                            onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
-                                            className="w-full px-4 py-2 border border-[var(--primary)]/20 rounded-lg focus:outline-none focus:border-[var(--highlight)]"
-                                            placeholder="Your name"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-[var(--primary)] mb-1">Email *</label>
-                                        <input
-                                            type="email"
-                                            required
-                                            value={newReview.email}
-                                            onChange={(e) => setNewReview({ ...newReview, email: e.target.value })}
-                                            className="w-full px-4 py-2 border border-[var(--primary)]/20 rounded-lg focus:outline-none focus:border-[var(--highlight)]"
-                                            placeholder="your@email.com"
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-[var(--primary)] mb-2">Rating *</label>
-                                    <div className="flex gap-1 text-[var(--highlight)]">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+                        {reviews.length > 0 && averageRating > 0 ? (
+                            <div className="flex items-end gap-3">
+                                <span className="text-[40px] font-bold text-[var(--primary)] leading-none tracking-tight">{averageRating.toFixed(1)}</span>
+                                <div className="flex flex-col pb-1">
+                                    <div className="flex text-[#E6B93D] gap-0.5 mb-1">
                                         {[1, 2, 3, 4, 5].map((star) => (
-                                            <button
+                                            <Star
                                                 key={star}
-                                                type="button"
-                                                onClick={() => setNewReview({ ...newReview, rating: star })}
-                                                className="focus:outline-none transition-transform hover:scale-110"
-                                            >
-                                                <Star className={`w-7 h-7 transition-colors ${star <= newReview.rating ? "fill-[var(--secondary)] text-[var(--secondary)]" : "fill-none text-gray-300"}`} />
-                                            </button>
+                                                className={`w-[14px] h-[14px] ${star <= Math.round(averageRating) ? "fill-current" : ""}`}
+                                            />
                                         ))}
                                     </div>
+                                    <span className="text-[13px] text-[var(--primary)] font-medium opacity-80">
+                                        ({reviews.length} {reviews.length === 1 ? "Review" : "Reviews"})
+                                    </span>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-[var(--primary)] mb-1">Review *</label>
-                                    <textarea
-                                        required
-                                        rows={4}
-                                        value={newReview.comment}
-                                        onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
-                                        className="w-full px-4 py-2 border border-[var(--primary)]/20 rounded-lg focus:outline-none focus:border-[var(--highlight)] resize-none"
-                                        placeholder="Tell us what you liked or didn't like..."
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    disabled={submitting}
-                                    className="btn-primary w-full"
-                                >
-                                    {submitting ? "Submitting..." : "Submit Review"}
-                                </button>
                             </div>
-                        </motion.form>
+                        ) : (
+                            <div className="text-[var(--primary)] opacity-70">No reviews yet.</div>
+                        )}
+
+                        <div>
+                            {submitted ? (
+                                <div className="flex items-center gap-2 text-[#4A785A] font-medium">
+                                    <CheckCircle className="w-5 h-5" />
+                                    Thank you!
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={() => setIsWritingReview(true)}
+                                    className="bg-[var(--primary)] text-white px-6 py-2 rounded text-[14px] font-medium transition-opacity hover:opacity-90"
+                                    style={{ backgroundColor: 'var(--primary)' }}
+                                >
+                                    Write A Review
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Write Review Modal */}
+                    {isWritingReview && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 p-4 backdrop-blur-sm">
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="bg-[#F8F6EF] w-full max-w-[500px] rounded-[20px] p-8 shadow-2xl relative"
+                            >
+                                <button
+                                    type="button"
+                                    onClick={() => setIsWritingReview(false)}
+                                    className="absolute top-6 right-6 text-[var(--primary)] hover:opacity-70 transition-opacity"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+
+                                <h3 className="text-2xl text-[var(--primary)] mb-8" style={{ fontFamily: "var(--font-peachi)" }}>
+                                    Write A Review
+                                </h3>
+
+                                <form onSubmit={handleSubmit} className="space-y-6">
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div>
+                                            <input
+                                                type="text"
+                                                required
+                                                value={newReview.name}
+                                                onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                                                className="w-full py-2 border-b border-[var(--primary)]/30 bg-transparent focus:outline-none focus:border-[var(--primary)] text-[var(--primary)] placeholder-[var(--primary)] placeholder-opacity-60 text-[14px]"
+                                                placeholder="Name"
+                                            />
+                                        </div>
+                                        <div>
+                                            <input
+                                                type="email"
+                                                required
+                                                value={newReview.email}
+                                                onChange={(e) => setNewReview({ ...newReview, email: e.target.value })}
+                                                className="w-full py-2 border-b border-[var(--primary)]/30 bg-transparent focus:outline-none focus:border-[var(--primary)] text-[var(--primary)] placeholder-[var(--primary)] placeholder-opacity-60 text-[14px]"
+                                                placeholder="Email"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-4 pt-2">
+                                        <label className="text-[14px] text-[var(--primary)] placeholder-opacity-60">Rating</label>
+                                        <div className="flex gap-1">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <button
+                                                    key={star}
+                                                    type="button"
+                                                    onClick={() => setNewReview({ ...newReview, rating: star })}
+                                                    className="focus:outline-none transition-transform hover:scale-110"
+                                                >
+                                                    <Star className={`w-[18px] h-[18px] transition-colors ${star <= newReview.rating ? "fill-[var(--primary)] text-[var(--primary)]" : "fill-transparent text-[var(--primary)] opacity-40 stroke-[1.5]"}`} />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-2">
+                                        <textarea
+                                            required
+                                            rows={2}
+                                            value={newReview.comment}
+                                            onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                                            className="w-full py-2 border-b border-[var(--primary)]/30 bg-transparent focus:outline-none focus:border-[var(--primary)] text-[var(--primary)] placeholder-[var(--primary)] placeholder-opacity-60 resize-none text-[14px]"
+                                            placeholder="Message"
+                                        />
+                                    </div>
+
+                                    <div className="flex justify-end pt-4">
+                                        <button
+                                            type="submit"
+                                            disabled={submitting}
+                                            className="bg-[var(--primary)] text-white px-8 py-2 rounded text-[14px] font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+                                            style={{ backgroundColor: 'var(--primary)' }}
+                                        >
+                                            {submitting ? "Submitting..." : "Submit"}
+                                        </button>
+                                    </div>
+                                </form>
+                            </motion.div>
+                        </div>
                     )}
 
                     {/* Reviews List */}
                     {loading ? (
-                        <div className="text-center py-10 text-[var(--text-muted)]">Loading reviews...</div>
+                        <div className="text-center py-10 text-[var(--primary)] opacity-70">Loading reviews...</div>
                     ) : reviews.length === 0 ? (
-                        <div className="text-center py-10 text-[var(--text-muted)]">
+                        <div className="text-center py-10 text-[var(--primary)] opacity-70">
                             No reviews yet. Be the first to share your experience!
                         </div>
                     ) : (
-                        <div className="space-y-6">
-                            {paginatedReviews.map((review) => (
+                        <div className="border border-[var(--primary)]/20 rounded-[10px] overflow-hidden bg-[#FBF9F4]">
+                            {paginatedReviews.map((review, idx) => (
                                 <div
                                     key={review.id}
-                                    className="bg-white p-6 rounded-xl shadow-sm border border-[var(--primary)]/5"
+                                    className={`p-6 flex flex-col sm:flex-row sm:items-start gap-4 ${idx !== paginatedReviews.length - 1 ? 'border-b border-[var(--primary)]/20' : ''}`}
                                 >
-                                    <div className="flex justify-between items-start mb-2">
-                                        <div>
-                                            <span className="font-semibold text-[var(--primary)]">{review.name}</span>
-                                            {review.rating && (
-                                                <div className="flex text-[var(--highlight)] text-sm mt-1">
-                                                    {[1, 2, 3, 4, 5].map((star) => (
-                                                        <Star
-                                                            key={star}
-                                                            className={`w-3.5 h-3.5 ${star <= review.rating! ? "fill-[var(--highlight)] text-[var(--highlight)]" : "fill-none text-gray-300"}`}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                        <span className="text-xs text-[var(--text-muted)]">
-                                            {timeAgo(review.created_at)}
+                                    <div className="flex flex-col gap-2 min-w-[200px]">
+                                        <span className="font-semibold text-[14px] text-[var(--primary)] flex items-center gap-2">
+                                            <span className="w-5 h-5 rounded-full bg-[var(--primary)]/10 flex items-center justify-center text-[10px] text-[var(--primary)]">
+                                                {review.name.charAt(0).toUpperCase()}
+                                            </span>
+                                            {review.name}
                                         </span>
+                                        {review.rating && (
+                                            <div className="flex text-[#E6B93D] gap-0.5">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <Star
+                                                        key={star}
+                                                        className={`w-3 h-3 ${star <= review.rating! ? "fill-current" : "fill-none opacity-30 stroke-current"}`}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
-                                    <p className="text-[var(--text-secondary)] leading-relaxed">{review.message}</p>
+                                    <div className="flex-1">
+                                        <p className="text-[13px] text-[var(--primary)] opacity-90 leading-relaxed font-medium">
+                                            {review.message}
+                                        </p>
+                                    </div>
                                 </div>
                             ))}
-
+                            
                             {/* Pagination */}
                             {totalPages > 1 && (
-                                <div className="flex items-center justify-center gap-2 pt-4">
-                                    <button
-                                        onClick={() => setPage(p => Math.max(1, p - 1))}
-                                        disabled={page === 1}
-                                        className="px-4 py-2 text-sm rounded-lg border border-[var(--primary)]/20 text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                                    >
-                                        ← Prev
-                                    </button>
-                                    <span className="text-sm text-[var(--text-muted)] px-2">
-                                        {page} / {totalPages}
-                                    </span>
+                                <div className="p-4 border-t border-[var(--primary)]/20 flex justify-center bg-white/50">
                                     <button
                                         onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                                         disabled={page === totalPages}
-                                        className="px-4 py-2 text-sm rounded-lg border border-[var(--primary)]/20 text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                        className="bg-[var(--primary)] text-white px-6 py-2 rounded text-[13px] font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+                                        style={{ backgroundColor: 'var(--primary)' }}
                                     >
-                                        Next →
+                                        Load More Reviews
                                     </button>
                                 </div>
                             )}

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createRazorpayOrder } from '@/lib/razorpay';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { createClient } from '@supabase/supabase-js';
+import { sendEmail, getOrderConfirmationHTML } from '@/lib/email-order';
 
 // Admin client for DB writes — bypasses RLS and works reliably in API routes
 const supabaseAdmin = createClient(
@@ -23,7 +24,15 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { amount, currency = 'INR', items, shippingAddress } = body;
+    const {
+      amount,
+      currency = 'INR',
+      items,
+      shippingAddress,
+      paymentMethod = 'razorpay',
+      shippingFee = 0,
+      discount = 0,
+    } = body;
 
     // Validate amount
     if (!amount || amount <= 0) {
@@ -40,19 +49,77 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Shipping address is required' }, { status: 400 });
     }
 
-    // Verify amount matches items (prevent client-side tampering)
-    const calculatedAmount = items.reduce((total: number, item: any) => {
+    // Verify amount matches items + shipping - discount (prevent client-side tampering)
+    const subtotal = items.reduce((total: number, item: any) => {
       return total + (item.price * item.quantity);
     }, 0);
 
-    if (Math.abs(calculatedAmount - amount) > 1) {
+    const expectedTotal = subtotal + Number(shippingFee || 0) - Number(discount || 0);
+
+    if (Math.abs(expectedTotal - amount) > 1) {
       return NextResponse.json(
         { error: 'Amount mismatch - possible tampering detected' },
         { status: 400 }
       );
     }
 
-    // Create Razorpay order
+    const orderPayload = {
+      user_id: user.id,
+      amount,
+      currency,
+      status: paymentMethod === 'cod' ? 'confirmed' : 'pending',
+      items,
+      shipping_address: shippingAddress,
+      created_at: new Date().toISOString(),
+    };
+
+    // Cash on Delivery — skip Razorpay, create order directly
+    if (paymentMethod === 'cod') {
+      const { data: order, error: dbError } = await supabaseAdmin
+        .from('orders')
+        .insert({
+          ...orderPayload,
+          razorpay_order_id: null,
+        })
+        .select()
+        .single();
+
+      if (dbError) {
+        console.error('Database error creating COD order:', JSON.stringify(dbError));
+        const msg = process.env.NODE_ENV === 'development'
+          ? `DB error: ${dbError.message} (code: ${dbError.code})`
+          : 'Failed to save order — please try again';
+        return NextResponse.json({ error: msg }, { status: 500 });
+      }
+
+      for (const item of items) {
+        await supabaseAdmin.rpc('decrement_stock', {
+          product_id: item.id,
+          quantity: item.quantity,
+        });
+      }
+
+      await supabaseAdmin.from('cart_items').delete().eq('user_id', user.id);
+
+      try {
+        await sendEmail({
+          to: user.email!,
+          subject: `Order Confirmation - ${order.id}`,
+          html: getOrderConfirmationHTML(order, user),
+        });
+      } catch (emailError) {
+        console.error('Failed to send COD confirmation email:', emailError);
+      }
+
+      return NextResponse.json({
+        success: true,
+        orderId: order.id,
+        dbOrderId: order.id,
+        paymentMethod: 'cod',
+      });
+    }
+
+    // Create Razorpay order for online payment
     const result = await createRazorpayOrder(amount, currency);
 
     if (!result.success || !result.order) {
@@ -67,21 +134,14 @@ export async function POST(request: Request) {
     const { data: order, error: dbError } = await supabaseAdmin
       .from('orders')
       .insert({
-        user_id: user.id,
+        ...orderPayload,
         razorpay_order_id: result.order.id,
-        amount,
-        currency,
-        status: 'pending',
-        items,
-        shipping_address: shippingAddress,
-        created_at: new Date().toISOString(),
       })
       .select()
       .single();
 
     if (dbError) {
       console.error('Database error creating order:', JSON.stringify(dbError));
-      // Surface the actual DB error in dev for easier debugging
       const msg = process.env.NODE_ENV === 'development'
         ? `DB error: ${dbError.message} (code: ${dbError.code})`
         : 'Failed to save order — please try again';

@@ -13,16 +13,13 @@ interface FeaturedBestsellersProps {
 
 function LeafIcon({ flipped = false }: { flipped?: boolean }) {
   return (
-    <div
-      className="w-6 h-6"
-      style={{
-        background: flipped ? "" : "#1A3E25",
-        transform: flipped ? "matrix(-0.95, -0.32, -0.32, 0.95, 0, 0)" : "rotate(-18.46deg)",
-      }}
-    >
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="#1A3E25" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2.67806 0.393273C3.33698 0.746016 3.86524 1.26031 4.27352 1.86988C4.93665 2.86007 5.32531 4.08777 5.64054 5.36694C6.27084 7.92543 6.64437 10.715 7.77326 12.1466C8.83291 13.4904 10.0172 14.1032 11.144 14.2227C11.6287 14.2742 12.107 14.2325 12.5642 14.1104C12.5917 10.6285 11.032 6.71738 8.37049 4.61054C11.4761 6.14733 13.7451 9.27599 14.257 13.1784L13.89 13.4892C14.0091 13.4058 14.1242 13.3167 14.2348 13.2224C15.98 11.7396 16.8379 8.81822 14.9913 5.57157C14.1428 4.07991 12.3091 2.18967 9.91609 1.04988C7.84587 0.0639353 5.3733 -0.379387 2.67804 0.393385L2.67806 0.393273Z"/>
-      </svg>
+    <div className="relative w-6 h-6">
+      <Image
+        src={flipped ? "/images/icons/leafright.png" : "/images/icons/leafleft.png"}
+        alt="Leaf"
+        fill
+        className="object-contain"
+      />
     </div>
   );
 }
@@ -30,59 +27,87 @@ function LeafIcon({ flipped = false }: { flipped?: boolean }) {
 function StarIcon() {
   return (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="#E8BF72" xmlns="http://www.w3.org/2000/svg">
-      <path d="M14 0L17.0623 9.44286H26.9656L19.2016 15.2857L22.2639 24.7286L14.5 18.8857L6.73607 24.7286L9.79837 15.2857L2.03444 9.44286H12.0377L14 0Z"/>
+      <path d="M14 0L17.0623 9.44286H26.9656L19.2016 15.2857L22.2639 24.7286L14.5 18.8857L6.73607 24.7286L9.79837 15.2857L2.03444 9.44286H12.0377L14 0Z" />
     </svg>
   );
 }
 
-const fallbackProducts = [
+const fallbackProducts: Product[] = [
   {
     id: "1",
     name: "Prophetic-Face Serum",
     price: 250,
     original_price: 280,
-    image_url: "/images/products/prophetic-face-serum.png",
+    images: ["/images/products/serum.png"],
     rating: 4.8,
-    review_count: 120,
+    reviews_count: 120,
     slug: "prophetic-face-serum",
     is_bestseller: true,
-    badge: "Best seller",
+    description: "A lightweight, day-use herbal formula.",
+    short_description: "",
+    category_id: "skin",
+    stock: 100,
+    is_new: false,
+    tags: [],
+    ingredients: [],
+    how_to_use: "",
   },
   {
     id: "2",
     name: "Herbal Facepack",
     price: 180,
     original_price: 200,
-    image_url: "/images/products/herbal-face-pack.png",
+    images: ["/images/products/facepack.png"],
     rating: 4.8,
-    review_count: 120,
+    reviews_count: 120,
     slug: "herbal-facepack",
     is_bestseller: true,
-    badge: "Best seller",
+    description: "A gentle yet powerful herbal blend.",
+    short_description: "",
+    category_id: "skin",
+    stock: 100,
+    is_new: false,
+    tags: [],
+    ingredients: [],
+    how_to_use: "",
   },
   {
     id: "3",
     name: "Hibiscus Shampoo",
     price: 250,
     original_price: 280,
-    image_url: "/images/products/hibiscus-shampoo.png",
+    images: ["/images/products/shampoo.png"],
     rating: 4.8,
-    review_count: 120,
+    reviews_count: 120,
     slug: "hibiscus-shampoo",
     is_bestseller: false,
-    badge: "Most Loved",
+    description: "A gentle cleanser enriched with hibiscus.",
+    short_description: "",
+    category_id: "hair",
+    stock: 100,
+    is_new: false,
+    tags: [],
+    ingredients: [],
+    how_to_use: "",
   },
   {
     id: "4",
     name: "V Herbal Hair Oil",
     price: 230,
     original_price: 250,
-    image_url: "/images/products/herbal-hair-oil.jpg",
+    images: ["/images/products/hari oil.png"],
     rating: 4.8,
-    review_count: 120,
+    reviews_count: 120,
     slug: "v-herbal-hair-oil",
     is_bestseller: false,
-    badge: "New Launch",
+    description: "Nourishing herbal hair oil.",
+    short_description: "",
+    category_id: "hair",
+    stock: 100,
+    is_new: false,
+    tags: [],
+    ingredients: [],
+    how_to_use: "",
   },
 ];
 
@@ -100,23 +125,11 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
   };
 
   return (
-    <div
-      className="flex flex-col justify-center items-start gap-6"
-      style={{ width: "292px" }}
-    >
+    <div className="flex flex-col justify-center items-start gap-6 w-full max-w-[292px] mx-auto">
       {/* Image box */}
-      <div
-        className="relative"
-        style={{
-          width: "292px",
-          height: "303px",
-          background: "#EAEAEA",
-          borderRadius: "8px",
-          overflow: "hidden",
-        }}
-      >
+      <div className="relative w-full aspect-[292/303] lg:w-[292px] lg:h-[303px] bg-[#EAEAEA] rounded-lg overflow-hidden">
         <Image
-          src={product.image_url || "/images/products/prophetic-face-serum.png"}
+          src={product.images?.[0] || "/images/products/prophetic-face-serum.png"}
           alt={product.name}
           fill
           className="object-cover"
@@ -141,16 +154,13 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
       </div>
 
       {/* Info */}
-      <div className="flex flex-col gap-3" style={{ width: "292px" }}>
-        <h3
-          className="font-inter font-semibold text-[#2E2E2E]"
-          style={{ fontSize: "24px", lineHeight: "29px" }}
-        >
+      <div className="flex flex-col gap-3 w-full">
+        <h3 className="font-inter font-semibold text-[#2E2E2E] text-lg lg:text-2xl lg:leading-[29px]">
           {product.name}
         </h3>
 
         {/* Price + Rating row */}
-        <div className="flex items-center justify-between" style={{ width: "292px" }}>
+        <div className="flex flex-wrap items-center justify-between gap-2 w-full">
           <div className="flex items-center gap-2">
             <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: "24px", lineHeight: "29px" }}>
               ₹{product.price}
@@ -167,7 +177,7 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
               {product.rating || 4.8}
             </span>
             <span className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: "16px", lineHeight: "19px" }}>
-              ({product.review_count || 120})
+              ({product.reviews_count || product.review_count || 120})
             </span>
           </div>
         </div>
@@ -175,11 +185,12 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
         {/* Shop Now Button */}
         <button
           onClick={handleShop}
-          className="font-inter font-medium text-[#F7EDE2] hover:opacity-90 transition-all flex items-center justify-center"
+          className="font-inter font-medium hover:opacity-90 transition-all flex items-center justify-center"
           style={{
             width: "127px",
             height: "43px",
             background: "#1A3E25",
+            color: "#F7EDE2",
             borderRadius: "8px",
             fontSize: "16px",
             lineHeight: "19px",
@@ -193,14 +204,11 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
 }
 
 export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsellersProps) {
-  const bestsellerProducts = dbProducts.filter((p) => p.is_bestseller).slice(0, 4);
-  const displayProducts = bestsellerProducts.length > 0
-    ? bestsellerProducts.map((p, i) => ({ ...p, badge: i < 2 ? "Best seller" : i === 2 ? "Most Loved" : "New Launch" }))
-    : fallbackProducts;
+  const displayProducts = fallbackProducts.map((p, i) => ({ ...p, badge: i < 2 ? "Best seller" : i === 2 ? "Most Loved" : "New Launch" }));
 
   return (
-    <section className="py-20" style={{ background: "#FCFAF4" }}>
-      <div className="w-full max-w-[1440px] mx-auto px-[100px]">
+    <section className="py-12 lg:py-20" style={{ background: "#FCFAF4" }}>
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-12">
           <motion.div
@@ -209,22 +217,14 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
             viewport={{ once: true }}
             className="flex items-end gap-6 mb-4"
           >
-            <div style={{ transform: "rotate(-18.46deg)" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="#1A3E25" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2.67806 0.393273C3.33698 0.746016 3.86524 1.26031 4.27352 1.86988C4.93665 2.86007 5.32531 4.08777 5.64054 5.36694C6.27084 7.92543 6.64437 10.715 7.77326 12.1466C8.83291 13.4904 10.0172 14.1032 11.144 14.2227C11.6287 14.2742 12.107 14.2325 12.5642 14.1104C12.5917 10.6285 11.032 6.71738 8.37049 4.61054C11.4761 6.14733 13.7451 9.27599 14.257 13.1784L13.89 13.4892C14.0091 13.4058 14.1242 13.3167 14.2348 13.2224C15.98 11.7396 16.8379 8.81822 14.9913 5.57157C14.1428 4.07991 12.3091 2.18967 9.91609 1.04988C7.84587 0.0639353 5.3733 -0.379387 2.67804 0.393385L2.67806 0.393273Z"/>
-              </svg>
-            </div>
+            <LeafIcon />
             <span
               className="font-playfair font-normal text-[#2E2E2E]"
               style={{ fontSize: "24px", lineHeight: "32px" }}
             >
               Our Bestsellers
             </span>
-            <div style={{ transform: "matrix(-0.95, -0.32, -0.32, 0.95, 0, 0)" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="#1A3E25" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2.67806 0.393273C3.33698 0.746016 3.86524 1.26031 4.27352 1.86988C4.93665 2.86007 5.32531 4.08777 5.64054 5.36694C6.27084 7.92543 6.64437 10.715 7.77326 12.1466C8.83291 13.4904 10.0172 14.1032 11.144 14.2227C11.6287 14.2742 12.107 14.2325 12.5642 14.1104C12.5917 10.6285 11.032 6.71738 8.37049 4.61054C11.4761 6.14733 13.7451 9.27599 14.257 13.1784L13.89 13.4892C14.0091 13.4058 14.1242 13.3167 14.2348 13.2224C15.98 11.7396 16.8379 8.81822 14.9913 5.57157C14.1428 4.07991 12.3091 2.18967 9.91609 1.04988C7.84587 0.0639353 5.3733 -0.379387 2.67804 0.393385L2.67806 0.393273Z"/>
-              </svg>
-            </div>
+            <LeafIcon flipped />
           </motion.div>
 
           <motion.h2
@@ -232,8 +232,7 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#2E2E2E]"
-            style={{ fontSize: "48px", lineHeight: "64px" }}
+            className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px]"
           >
             Real Ingredients, Real Results
           </motion.h2>
@@ -243,11 +242,26 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-2"
-            style={{ fontSize: "24px", lineHeight: "29px", maxWidth: "671px" }}
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 mb-8 text-base sm:text-lg lg:text-2xl lg:leading-[29px] max-w-[671px]"
           >
             Handpicked by thousands of happy customers across India
           </motion.p>
+
+          <Link
+            href="/shop"
+            className="font-inter font-medium inline-flex items-center justify-center hover:opacity-90 transition-all"
+            style={{
+              width: "162px",
+              height: "43px",
+              background: "#1D3B29",
+              color: "#F7EDE2",
+              borderRadius: "8px",
+              fontSize: "16px",
+              lineHeight: "19px",
+            }}
+          >
+            View All
+          </Link>
         </div>
 
         {/* Products Grid - 4 columns */}
@@ -265,23 +279,6 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
           ))}
         </div>
 
-        {/* View All Button */}
-        <div className="flex justify-center mt-12">
-          <Link
-            href="/shop"
-            className="font-inter font-medium text-[#F7EDE2] inline-flex items-center justify-center hover:opacity-90 transition-all"
-            style={{
-              width: "162px",
-              height: "43px",
-              background: "#1D3B29",
-              borderRadius: "8px",
-              fontSize: "16px",
-              lineHeight: "19px",
-            }}
-          >
-            View All
-          </Link>
-        </div>
       </div>
     </section>
   );

@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 
 /**
  * /login route — opens the login modal on the current page.
- * If already authenticated, goes directly to home.
+ * If already authenticated, goes to redirect param or home.
  */
 export default function LoginPage() {
     const router = useRouter();
@@ -16,18 +16,26 @@ export default function LoginPage() {
 
     useEffect(() => {
         if (loading) return;
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get("redirect");
+
         if (user) {
-            router.replace("/");
+            if (redirect && redirect.startsWith("/") && !redirect.startsWith("//")) {
+                router.replace(redirect);
+            } else {
+                router.replace("/");
+            }
             return;
         }
-        // Go back (or home) and open modal
-        router.replace("/");
-        // Small delay so the home page mounts and the modal context is ready
+
+        const target = redirect && redirect.startsWith("/") && !redirect.startsWith("//")
+            ? `/?login=1&redirect=${encodeURIComponent(redirect)}`
+            : "/?login=1";
+        router.replace(target);
         const t = setTimeout(() => open(), 100);
         return () => clearTimeout(t);
     }, [user, loading, router, open]);
 
-    // Show nothing while redirecting
     return (
         <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
             <div className="w-10 h-10 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />

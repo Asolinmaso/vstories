@@ -18,12 +18,35 @@ interface CartStore {
     items: CartItem[];
     userId: string | null;
     addItem: (item: Omit<CartItem, "quantity">) => Promise<void>;
-    removeItem: (id: string) => Promise<void>;
-    updateQuantity: (id: string, quantity: number) => Promise<void>;
-    clearCart: () => void;
+    removeItem: (itemKey: string) => Promise<void>;
+    updateQuantity: (itemKey: string, quantity: number) => Promise<void>;
+    clearCart: () => Promise<void>;
     getTotal: () => number;
     setUserId: (id: string | null) => void;
     syncCart: () => Promise<void>;
+}
+
+export function getCartItemKey(item: Pick<CartItem, "id" | "size" | "cartItemId">): string {
+    return item.cartItemId || `${item.id}::${item.size || "default"}`;
+}
+
+function findCartItem(items: CartItem[], itemKey: string): CartItem | undefined {
+    return items.find(
+        (item) =>
+            item.cartItemId === itemKey || getCartItemKey(item) === itemKey
+    );
+}
+
+function mapRemoteCartItem(ri: any): CartItem {
+    return {
+        id: ri.product_id,
+        name: ri.product?.name || "Unknown Product",
+        price: ri.product?.price || 0,
+        quantity: ri.quantity,
+        image: ri.product?.images?.[0] || "",
+        size: ri.size_label || undefined,
+        cartItemId: ri.id,
+    };
 }
 
 export const useCartStore = create<CartStore>()(
@@ -35,45 +58,59 @@ export const useCartStore = create<CartStore>()(
             setUserId: (id) => set({ userId: id }),
 
             syncCart: async () => {
-                const { userId, items } = get();
+                const { userId, items: localItems } = get();
                 if (!userId) return;
 
-                // Fetch remote cart
+                // Push guest/local items to Supabase before fetching remote cart
+                for (const item of localItems) {
+                    const { data, error } = await supabase
+                        .from("cart_items")
+                        .upsert(
+                            {
+                                user_id: userId,
+                                product_id: item.id,
+                                size_label: item.size || null,
+                                quantity: item.quantity,
+                            },
+                            {
+                                onConflict: "user_id, product_id, size_label",
+                                ignoreDuplicates: false,
+                            }
+                        )
+                        .select("id")
+                        .single();
+
+                    if (!error && data?.id) {
+                        set((state) => ({
+                            items: state.items.map((i) =>
+                                i.id === item.id && i.size === item.size
+                                    ? { ...i, cartItemId: data.id }
+                                    : i
+                            ),
+                        }));
+                    }
+                }
+
                 const { data: remoteItems } = await supabase
                     .from("cart_items")
                     .select("id, product_id, quantity, size_label, product:products(name, price, images)")
                     .eq("user_id", userId);
 
                 if (remoteItems && remoteItems.length > 0) {
-                    // Transform remote to CartItem with cartItemId
-                    const mappedRemote: CartItem[] = remoteItems.map((ri: any) => ({
-                        id: ri.product_id,
-                        name: ri.product?.name || "Unknown Product",
-                        price: ri.product?.price || 0,
-                        quantity: ri.quantity,
-                        image: ri.product?.images?.[0] || "",
-                        size: ri.size_label,
-                        cartItemId: ri.id, // Store the cart_items.id
-                    }));
-
-                    set({ items: mappedRemote });
+                    set({ items: remoteItems.map(mapRemoteCartItem) });
                 }
             },
 
             addItem: async (item) => {
-                // Generate a unique key for this product+size combination
-                const itemKey = `${item.id}-${item.size || 'default'}`;
-                
-                // Optimistic Update
                 set((state) => {
-                    const existingItem = state.items.find((i) => 
-                        i.id === item.id && i.size === item.size
+                    const existingItem = state.items.find(
+                        (i) => i.id === item.id && i.size === item.size
                     );
                     if (existingItem) {
                         return {
                             items: state.items.map((i) =>
-                                (i.id === item.id && i.size === item.size) 
-                                    ? { ...i, quantity: i.quantity + 1 } 
+                                i.id === item.id && i.size === item.size
+                                    ? { ...i, quantity: i.quantity + 1 }
                                     : i
                             ),
                         };
@@ -81,30 +118,33 @@ export const useCartStore = create<CartStore>()(
                     return { items: [...state.items, { ...item, quantity: 1 }] };
                 });
 
-                // Supabase Sync
                 const { userId, items } = get();
                 if (userId) {
-                    const currentItem = items.find(i => i.id === item.id && i.size === item.size);
+                    const currentItem = items.find(
+                        (i) => i.id === item.id && i.size === item.size
+                    );
                     if (currentItem) {
                         const { data } = await supabase
                             .from("cart_items")
-                            .upsert({
-                                user_id: userId,
-                                product_id: item.id,
-                                size_label: item.size || null,
-                                quantity: currentItem.quantity
-                            }, { 
-                                onConflict: 'user_id, product_id, size_label',
-                                ignoreDuplicates: false 
-                            })
-                            .select('id')
+                            .upsert(
+                                {
+                                    user_id: userId,
+                                    product_id: item.id,
+                                    size_label: item.size || null,
+                                    quantity: currentItem.quantity,
+                                },
+                                {
+                                    onConflict: "user_id, product_id, size_label",
+                                    ignoreDuplicates: false,
+                                }
+                            )
+                            .select("id")
                             .single();
-                        
-                        // Update cartItemId in local state
+
                         if (data) {
                             set((state) => ({
                                 items: state.items.map((i) =>
-                                    (i.id === item.id && i.size === item.size)
+                                    i.id === item.id && i.size === item.size
                                         ? { ...i, cartItemId: data.id }
                                         : i
                                 ),
@@ -114,40 +154,52 @@ export const useCartStore = create<CartStore>()(
                 }
             },
 
-            removeItem: async (cartItemId) => {
-                set((state) => ({
-                    items: state.items.filter((i) => i.cartItemId !== cartItemId),
-                }));
+            removeItem: async (itemKey) => {
+                const itemToRemove = findCartItem(get().items, itemKey);
 
-                const { userId } = get();
-                if (userId && cartItemId) {
-                    await supabase
-                        .from("cart_items")
-                        .delete()
-                        .eq("id", cartItemId);
-                }
-            },
-
-            updateQuantity: async (cartItemId, quantity) => {
-                const safeQuantity = Math.max(1, quantity);
-                
                 set((state) => ({
-                    items: state.items.map((i) =>
-                        i.cartItemId === cartItemId ? { ...i, quantity: safeQuantity } : i
+                    items: state.items.filter(
+                        (i) => getCartItemKey(i) !== itemKey && i.cartItemId !== itemKey
                     ),
                 }));
 
                 const { userId } = get();
-                if (userId && cartItemId) {
+                if (userId && itemToRemove?.cartItemId) {
                     await supabase
                         .from("cart_items")
-                        .update({ quantity: safeQuantity })
-                        .eq("id", cartItemId);
+                        .delete()
+                        .eq("id", itemToRemove.cartItemId);
                 }
             },
 
-            clearCart: () => {
+            updateQuantity: async (itemKey, quantity) => {
+                const safeQuantity = Math.max(1, quantity);
+                const targetItem = findCartItem(get().items, itemKey);
+
+                set((state) => ({
+                    items: state.items.map((i) =>
+                        getCartItemKey(i) === itemKey || i.cartItemId === itemKey
+                            ? { ...i, quantity: safeQuantity }
+                            : i
+                    ),
+                }));
+
+                const { userId } = get();
+                if (userId && targetItem?.cartItemId) {
+                    await supabase
+                        .from("cart_items")
+                        .update({ quantity: safeQuantity })
+                        .eq("id", targetItem.cartItemId);
+                }
+            },
+
+            clearCart: async () => {
+                const { userId } = get();
                 set({ items: [] });
+
+                if (userId) {
+                    await supabase.from("cart_items").delete().eq("user_id", userId);
+                }
             },
 
             getTotal: () => {
