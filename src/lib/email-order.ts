@@ -70,9 +70,9 @@ export function getOrderConfirmationHTML(order: any, user: any) {
                 </div>
 
                 <div style="margin-top: 30px; text-align: center;">
-                    <a href="https://vstories.in/profile/orders" 
+                    <a href="https://vstories.in/shop" 
                        style="display: inline-block; background: #1D3515; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold;">
-                        Track Your Order
+                        Continue Shopping
                     </a>
                 </div>
 

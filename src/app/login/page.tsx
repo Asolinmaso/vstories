@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 
 /**
  * /login route — opens the login modal on the current page.
- * If already authenticated, goes directly to /profile.
+ * If already authenticated, goes directly to home.
  */
 export default function LoginPage() {
     const router = useRouter();
@@ -17,7 +17,7 @@ export default function LoginPage() {
     useEffect(() => {
         if (loading) return;
         if (user) {
-            router.replace("/profile");
+            router.replace("/");
             return;
         }
         // Go back (or home) and open modal

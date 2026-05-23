@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import ShopContent from "./ShopContent";
 import { getProducts } from "@/lib/services/product.service";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 export const metadata: Metadata = {
     title: "Shop All Products",
@@ -9,8 +10,22 @@ export const metadata: Metadata = {
         "Browse our complete collection of herbal hair care and skincare products. 100% natural, chemical-free formulas.",
 };
 
+export interface ShopCategory {
+    id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    image?: string;
+}
+
 export default async function ShopPage() {
-    const products = await getProducts();
+    const supabase = await createSupabaseServerClient();
+    const [products, { data: categoriesData }] = await Promise.all([
+        getProducts(),
+        supabase.from("categories").select("id, name, slug, description, image").order("name"),
+    ]);
+
+    const categories: ShopCategory[] = categoriesData || [];
 
     return (
         <Suspense
@@ -20,7 +35,7 @@ export default async function ShopPage() {
                 </div>
             }
         >
-            <ShopContent initialProducts={products} />
+            <ShopContent initialProducts={products} initialCategories={categories} />
         </Suspense>
     );
 }

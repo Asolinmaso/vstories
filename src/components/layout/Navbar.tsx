@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { Search, User, ShoppingBag, Menu } from "lucide-react";
+import { Search, User, ShoppingBag, Menu, LogOut } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { useAuth } from "@/context/AuthContext";
 import { useLoginModal } from "@/context/LoginModalContext";
@@ -14,18 +14,25 @@ import { useLoginModal } from "@/context/LoginModalContext";
 const MobileMenu = dynamic(() => import("./MobileMenu"), { ssr: false });
 const CartDrawer = dynamic(() => import("./CartDrawer"), { ssr: false });
 
-const navLinks = [
+interface NavCategory {
+    id: string;
+    name: string;
+    slug: string;
+}
+
+interface NavLink {
+    href: string;
+    label: string;
+    dropdown?: { href: string; label: string }[];
+}
+
+const staticNavLinks: NavLink[] = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About Us" },
     {
         href: "/shop",
         label: "Products",
-        dropdown: [
-            { href: "/shop/skin", label: "Skin Care" },
-            { href: "/shop/hair", label: "Hair Care" },
-            { href: "/shop/combos", label: "Combo / Gift Packs" },
-            { href: "/shop/samples", label: "Sample Packs" },
-        ]
+        dropdown: [] // will be populated dynamically
     },
     { href: "/contact", label: "Contact Us" },
     { href: "/blog", label: "Blog" },
@@ -39,7 +46,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ announcement }: NavbarProps) {
-    const { user } = useAuth();
+    const { user, signOut } = useAuth();
     const { open: openLoginModal } = useLoginModal();
     const router = useRouter();
     const pathname = usePathname();
@@ -48,8 +55,36 @@ export default function Navbar({ announcement }: NavbarProps) {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    const [navLinks, setNavLinks] = useState<NavLink[]>(staticNavLinks);
     const cartItems = useCartStore((state) => state.items);
     const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    // Fetch categories dynamically for the Products dropdown
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await fetch("/api/categories");
+                if (!res.ok) return;
+                const cats: NavCategory[] = await res.json();
+                if (cats && cats.length > 0) {
+                    const dropdown = cats.map((cat) => ({
+                        href: `/shop/${cat.slug}`,
+                        label: cat.name,
+                    }));
+                    setNavLinks((prev) =>
+                        prev.map((link) =>
+                            link.label === "Products"
+                                ? { ...link, dropdown }
+                                : link
+                        )
+                    );
+                }
+            } catch (err) {
+                console.error("Failed to fetch categories for nav:", err);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -145,7 +180,7 @@ export default function Navbar({ announcement }: NavbarProps) {
                                         }`}
                                     >
                                         <span className={link.label === "Products" ? "w-[68px]" : ""}>{link.label}</span>
-                                        {link.dropdown && (
+                                        {link.dropdown && link.dropdown.length > 0 && (
                                             <div className="w-[12px] h-[6px] flex items-center justify-center">
                                                 <svg className={`w-3 h-3 transition-transform duration-300 ${activeDropdown === link.label ? 'rotate-0' : 'rotate-180'}`} viewBox="0 0 12 6" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M1 1L6 5L11 1" /></svg>
                                             </div>
@@ -153,7 +188,7 @@ export default function Navbar({ announcement }: NavbarProps) {
                                     </Link>
 
                                     {/* Dropdown Menu */}
-                                    {link.dropdown && (
+                                    {link.dropdown && link.dropdown.length > 0 && (
                                         <motion.div
                                             initial={{ opacity: 0, y: 10, pointerEvents: "none" }}
                                             animate={{
@@ -201,13 +236,13 @@ export default function Navbar({ announcement }: NavbarProps) {
 
                             {user ? (
                                 <div className="flex items-center gap-[32px]">
-                                    <Link
-                                        href="/profile"
+                                    <button
+                                        onClick={signOut}
                                         className="p-2 text-black hover:scale-110 transition-transform relative"
-                                        aria-label="Profile"
+                                        aria-label="Logout"
                                     >
-                                        <User className="w-6 h-6" />
-                                    </Link>
+                                        <LogOut className="w-6 h-6" />
+                                    </button>
 
                                     <button
                                         className="relative p-2 text-black hover:scale-110 transition-transform"

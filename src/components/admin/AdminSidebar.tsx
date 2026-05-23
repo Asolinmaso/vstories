@@ -10,13 +10,15 @@ import {
     Settings,
     LogOut,
     ShoppingBag,
-    X
+    X,
+    Layers
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/products", label: "Products", icon: Package },
+    { href: "/admin/categories", label: "Categories", icon: Layers },
     { href: "/admin/users", label: "Users", icon: Users },
     { href: "/admin/coupons", label: "Coupons", icon: Tag },
     { href: "/admin/settings", label: "Web Config", icon: Settings },

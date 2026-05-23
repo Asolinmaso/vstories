@@ -2,17 +2,23 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Filter, ChevronDown, Check, X } from "lucide-react";
-import { categories } from "@/lib/products";
+import { Filter, ChevronDown, X } from "lucide-react";
 import ProductCard from "@/components/ui/ProductCard";
 import { Product } from "@/lib/services/product.service";
-
-type SortOption = "featured" | "price-asc" | "price-desc" | "name";
+import { ShopCategory } from "./page";
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-export default function ShopContent({ initialProducts }: { initialProducts: Product[] }) {
+type SortOption = "featured" | "price-asc" | "price-desc" | "name";
+
+export default function ShopContent({
+    initialProducts,
+    initialCategories,
+}: {
+    initialProducts: Product[];
+    initialCategories: ShopCategory[];
+}) {
     const searchParams = useSearchParams();
     const searchQuery = searchParams.get("search")?.toLowerCase() || "";
 
@@ -34,7 +40,13 @@ export default function ShopContent({ initialProducts }: { initialProducts: Prod
             // 2. Category Filter
             if (!selectedCategory) return true;
             if (selectedCategory === "bestseller") return product.is_bestseller;
-            return product.category_id === selectedCategory || product.category_id === categories.find(c => c.slug === selectedCategory)?.id;
+
+            // Match by category_id — try by slug match on the categories list
+            const matchedCat = initialCategories.find((c) => c.slug === selectedCategory);
+            if (matchedCat) {
+                return product.category_id === matchedCat.id;
+            }
+            return product.category_id === selectedCategory;
         })
         .sort((a, b) => {
             switch (sortBy) {
@@ -56,13 +68,21 @@ export default function ShopContent({ initialProducts }: { initialProducts: Prod
         { value: "name", label: "Name: A to Z" },
     ];
 
+    const selectedCategoryName =
+        selectedCategory === "bestseller"
+            ? "Bestsellers"
+            : initialCategories.find((c) => c.slug === selectedCategory)?.name;
+
     return (
         <div className="bg-[var(--background)] min-h-screen">
             {/* Page Header */}
             <header className="py-12 md:py-20 bg-white border-b border-gray-100">
                 <div className="container-premium text-center">
-                    <h1 className="text-4xl md:text-6xl font-bold text-[var(--primary)] mb-4" style={{ fontFamily: "var(--font-peachi)" }}>
-                        {selectedCategory ? (selectedCategory === "bestseller" ? "Bestsellers" : categories.find(c => c.slug === selectedCategory)?.name) : "Our Collection"}
+                    <h1
+                        className="text-4xl md:text-6xl font-bold text-[var(--primary)] mb-4"
+                        style={{ fontFamily: "var(--font-peachi)" }}
+                    >
+                        {selectedCategoryName ?? "Our Collection"}
                     </h1>
                     <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
                         Discover our premium range of 100% natural, chemical-free herbal solutions for your daily care.
@@ -73,11 +93,13 @@ export default function ShopContent({ initialProducts }: { initialProducts: Prod
             <section className="py-12 md:py-16">
                 <div className="container-premium">
                     <div className="flex flex-col lg:flex-row gap-12">
-                        
+
                         {/* Desktop Sidebar Filters */}
                         <aside className="hidden lg:block w-64 flex-shrink-0 space-y-10">
                             <div>
-                                <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--primary)] mb-6">Categories</h3>
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--primary)] mb-6">
+                                    Categories
+                                </h3>
                                 <ul className="space-y-4">
                                     <li>
                                         <button
@@ -88,13 +110,15 @@ export default function ShopContent({ initialProducts }: { initialProducts: Prod
                                             All Products
                                         </button>
                                     </li>
-                                    {categories.map((category) => (
+                                    {initialCategories.map((category) => (
                                         <li key={category.id}>
                                             <button
                                                 onClick={() => setSelectedCategory(category.slug)}
                                                 className={`text-sm transition-all hover:translate-x-1 flex items-center gap-2 ${selectedCategory === category.slug ? "text-[var(--highlight)] font-bold" : "text-gray-500"}`}
                                             >
-                                                {selectedCategory === category.slug && <div className="w-1.5 h-1.5 rounded-full bg-[var(--highlight)]" />}
+                                                {selectedCategory === category.slug && (
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--highlight)]" />
+                                                )}
                                                 {category.name}
                                             </button>
                                         </li>
@@ -104,7 +128,9 @@ export default function ShopContent({ initialProducts }: { initialProducts: Prod
                                             onClick={() => setSelectedCategory("bestseller")}
                                             className={`text-sm transition-all hover:translate-x-1 flex items-center gap-2 ${selectedCategory === "bestseller" ? "text-[var(--highlight)] font-bold" : "text-gray-500"}`}
                                         >
-                                            {selectedCategory === "bestseller" && <div className="w-1.5 h-1.5 rounded-full bg-[var(--highlight)]" />}
+                                            {selectedCategory === "bestseller" && (
+                                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--highlight)]" />
+                                            )}
                                             Bestsellers
                                         </button>
                                     </li>
@@ -115,7 +141,9 @@ export default function ShopContent({ initialProducts }: { initialProducts: Prod
                                 <div className="bg-[var(--primary)] p-6 rounded-3xl text-white">
                                     <h4 className="font-heading text-xl mb-2">Need Help?</h4>
                                     <p className="text-xs text-white/70 mb-4">Our herbal experts are here to guide you.</p>
-                                    <Link href="/contact" className="text-xs font-bold text-[var(--highlight)] hover:underline">Chat with us →</Link>
+                                    <Link href="/contact" className="text-xs font-bold text-[var(--highlight)] hover:underline">
+                                        Chat with us →
+                                    </Link>
                                 </div>
                             </div>
                         </aside>
@@ -138,7 +166,9 @@ export default function ShopContent({ initialProducts }: { initialProducts: Prod
                                 </p>
 
                                 <div className="flex items-center gap-4">
-                                    <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest text-gray-400">Sort by</span>
+                                    <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest text-gray-400">
+                                        Sort by
+                                    </span>
                                     <div className="relative">
                                         <select
                                             value={sortBy}
@@ -179,7 +209,9 @@ export default function ShopContent({ initialProducts }: { initialProducts: Prod
                                         <Filter className="w-10 h-10 text-gray-300" />
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900 mb-2">No products found</h3>
-                                    <p className="text-gray-500 mb-8">Try adjusting your filters to find what you're looking for.</p>
+                                    <p className="text-gray-500 mb-8">
+                                        Try adjusting your filters to find what you&apos;re looking for.
+                                    </p>
                                     <button
                                         onClick={() => setSelectedCategory(null)}
                                         className="btn-primary px-8 py-3"
@@ -193,91 +225,93 @@ export default function ShopContent({ initialProducts }: { initialProducts: Prod
                 </div>
             </section>
 
-            {/* Filter Drawer */}
-            {isMobileFilterOpen && (
-                <div className="fixed inset-0 z-50">
-                    <div
-                        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                        onClick={() => setIsMobileFilterOpen(false)}
-                    />
-                    <motion.div
-                        initial={{ x: "-100%" }}
-                        animate={{ x: 0 }}
-                        exit={{ x: "-100%" }}
-                        transition={{ type: "spring", damping: 25 }}
-                        className="absolute left-0 top-0 bottom-0 w-[320px] bg-[var(--background)] p-6 shadow-2xl overflow-y-auto"
-                    >
-                        <div className="flex items-center justify-between mb-8">
-                            <h3
-                                className="text-xl font-semibold text-[var(--primary)]"
-                                style={{ fontFamily: "var(--font-peachi)" }}
-                            >
-                                Filter Products
-                            </h3>
-                            <button
-                                onClick={() => setIsMobileFilterOpen(false)}
-                                className="p-2 text-[var(--primary)] hover:bg-[var(--primary)]/5 rounded-full transition-colors"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-                        </div>
+            {/* Mobile Filter Drawer */}
+            <AnimatePresence>
+                {isMobileFilterOpen && (
+                    <div className="fixed inset-0 z-50">
+                        <div
+                            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                            onClick={() => setIsMobileFilterOpen(false)}
+                        />
+                        <motion.div
+                            initial={{ x: "-100%" }}
+                            animate={{ x: 0 }}
+                            exit={{ x: "-100%" }}
+                            transition={{ type: "spring", damping: 25 }}
+                            className="absolute left-0 top-0 bottom-0 w-[320px] bg-[var(--background)] p-6 shadow-2xl overflow-y-auto"
+                        >
+                            <div className="flex items-center justify-between mb-8">
+                                <h3
+                                    className="text-xl font-semibold text-[var(--primary)]"
+                                    style={{ fontFamily: "var(--font-peachi)" }}
+                                >
+                                    Filter Products
+                                </h3>
+                                <button
+                                    onClick={() => setIsMobileFilterOpen(false)}
+                                    className="p-2 text-[var(--primary)] hover:bg-[var(--primary)]/5 rounded-full transition-colors"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
 
-                        <div className="space-y-8">
-                            <div>
-                                <h4 className="text-sm font-bold uppercase tracking-wider text-[var(--primary)] mb-4">
-                                    Categories
-                                </h4>
-                                <ul className="space-y-2">
-                                    <li>
-                                        <button
-                                            onClick={() => {
-                                                setSelectedCategory(null);
-                                                setIsMobileFilterOpen(false);
-                                            }}
-                                            className={`w-full text-left px-4 py-2.5 rounded-lg transition-all ${selectedCategory === null
-                                                ? "bg-[var(--primary)] text-white font-medium shadow-md"
-                                                : "text-[var(--text-secondary)] hover:bg-[var(--primary)]/5"
-                                                }`}
-                                        >
-                                            All Products
-                                        </button>
-                                    </li>
-                                    {categories.map((category) => (
-                                        <li key={category.id}>
+                            <div className="space-y-8">
+                                <div>
+                                    <h4 className="text-sm font-bold uppercase tracking-wider text-[var(--primary)] mb-4">
+                                        Categories
+                                    </h4>
+                                    <ul className="space-y-2">
+                                        <li>
                                             <button
                                                 onClick={() => {
-                                                    setSelectedCategory(category.slug);
+                                                    setSelectedCategory(null);
                                                     setIsMobileFilterOpen(false);
                                                 }}
-                                                className={`w-full text-left px-4 py-2.5 rounded-lg transition-all ${selectedCategory === category.slug
+                                                className={`w-full text-left px-4 py-2.5 rounded-lg transition-all ${selectedCategory === null
                                                     ? "bg-[var(--primary)] text-white font-medium shadow-md"
                                                     : "text-[var(--text-secondary)] hover:bg-[var(--primary)]/5"
                                                     }`}
                                             >
-                                                {category.name}
+                                                All Products
                                             </button>
                                         </li>
-                                    ))}
-                                    <li>
-                                        <button
-                                            onClick={() => {
-                                                setSelectedCategory("bestseller");
-                                                setIsMobileFilterOpen(false);
-                                            }}
-                                            className={`w-full text-left px-4 py-2.5 rounded-lg transition-all ${selectedCategory === "bestseller"
-                                                ? "bg-[var(--primary)] text-white font-medium shadow-md"
-                                                : "text-[var(--text-secondary)] hover:bg-[var(--primary)]/5"
-                                                }`}
-                                        >
-                                            Bestsellers
-                                        </button>
-                                    </li>
-                                </ul>
+                                        {initialCategories.map((category) => (
+                                            <li key={category.id}>
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedCategory(category.slug);
+                                                        setIsMobileFilterOpen(false);
+                                                    }}
+                                                    className={`w-full text-left px-4 py-2.5 rounded-lg transition-all ${selectedCategory === category.slug
+                                                        ? "bg-[var(--primary)] text-white font-medium shadow-md"
+                                                        : "text-[var(--text-secondary)] hover:bg-[var(--primary)]/5"
+                                                        }`}
+                                                >
+                                                    {category.name}
+                                                </button>
+                                            </li>
+                                        ))}
+                                        <li>
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedCategory("bestseller");
+                                                    setIsMobileFilterOpen(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-2.5 rounded-lg transition-all ${selectedCategory === "bestseller"
+                                                    ? "bg-[var(--primary)] text-white font-medium shadow-md"
+                                                    : "text-[var(--text-secondary)] hover:bg-[var(--primary)]/5"
+                                                    }`}
+                                            >
+                                                Bestsellers
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                    </motion.div>
-                </div>
-            )}
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

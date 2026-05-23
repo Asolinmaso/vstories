@@ -25,7 +25,7 @@ function OrderSuccessContent() {
             setCountdown((prev) => {
                 if (prev <= 1) {
                     clearInterval(timer);
-                    router.push("/profile/orders");
+                    router.push("/");
                     return 0;
                 }
                 return prev - 1;
@@ -62,13 +62,7 @@ function OrderSuccessContent() {
                     </div>
 
                     <div className="space-y-3">
-                        <Link
-                            href={`/profile/orders`}
-                            className="btn-primary w-full flex items-center justify-center gap-2"
-                        >
-                            <Package className="w-5 h-5" />
-                            View Order Details
-                        </Link>
+
 
                         <Link
                             href="/shop"
@@ -79,7 +73,7 @@ function OrderSuccessContent() {
                     </div>
 
                     <p className="text-sm text-gray-500 mt-6">
-                        Redirecting to orders page in {countdown} seconds...
+                        Redirecting to home in {countdown} seconds...
                     </p>
 
                     <div className="mt-8 pt-6 border-t">

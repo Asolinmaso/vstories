@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 
 /**
  * /signup route — opens the login modal (signup tab) on the current page.
- * If already authenticated, goes directly to /profile.
+ * If already authenticated, goes directly to home.
  */
 export default function SignupPage() {
     const router = useRouter();
@@ -17,7 +17,7 @@ export default function SignupPage() {
     useEffect(() => {
         if (loading) return;
         if (user) {
-            router.replace("/profile");
+            router.replace("/");
             return;
         }
         router.replace("/");
