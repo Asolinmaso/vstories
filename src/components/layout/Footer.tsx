@@ -24,7 +24,7 @@ const policies = [
     { href: "/policies/terms", label: "Terms & Conditions" },
     { href: "/policies/shipping", label: "Shipping & Cancellations" },
     { href: "/policies/returns", label: "Returns & Refunds" },
-    { href: "/policies/collaboration", label: "Collaboration & Partnership" },
+    { href: "/contact", label: "Collaboration & Partnership" },
 ];
 
 function SocialIcon({ src, href, label }: { src: string; href: string; label: string }) {
