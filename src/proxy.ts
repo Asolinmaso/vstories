@@ -1,7 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-export async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
     let response = NextResponse.next({
         request: {
             headers: request.headers,
@@ -11,21 +11,9 @@ export async function middleware(request: NextRequest) {
     // Skip middleware for static files, images, and internal Next.js routes
     const { pathname } = request.nextUrl;
 
-    // Legacy route — redirect old account/profile links to home
-    if (pathname.startsWith('/account') || pathname.startsWith('/profile')) {
-        return NextResponse.redirect(new URL('/', request.url));
-    }
-
-    // ── OAuth code interception ──────────────────────────────────────────────
-    // Supabase may land on the site root (or any page) with ?code= when the
-    // /auth/callback URL isn't whitelisted. Catch it here and forward properly.
-    const code = request.nextUrl.searchParams.get('code');
-    if (code && pathname !== '/auth/callback') {
-        const callbackUrl = new URL('/auth/callback', request.url);
-        callbackUrl.searchParams.set('code', code);
-        const next = request.nextUrl.searchParams.get('next');
-        if (next) callbackUrl.searchParams.set('next', next);
-        return NextResponse.redirect(callbackUrl);
+    // Legacy route — profile dashboard replaced the old account page
+    if (pathname.startsWith('/account')) {
+        return NextResponse.redirect(new URL('/profile', request.url));
     }
 
     if (
@@ -83,7 +71,7 @@ export async function middleware(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
 
     // Protect user routes
-    const isUserRoute = pathname.startsWith('/checkout') || pathname.startsWith('/order-success');
+    const isUserRoute = pathname.startsWith('/profile') || pathname.startsWith('/checkout') || pathname.startsWith('/order-success');
     if (isUserRoute && !user) {
         const redirectUrl = new URL('/', request.url);
         redirectUrl.searchParams.set('login', '1');
@@ -96,7 +84,7 @@ export async function middleware(request: NextRequest) {
         if (!user) {
             return NextResponse.redirect(new URL('/', request.url));
         }
-        
+
         // Fetch user profile to check role
         const { data: profile } = await supabase
             .from('profiles')
