@@ -9,6 +9,7 @@ import { Product } from "@/lib/services/product.service";
 
 interface FeaturedBestsellersProps {
   dbProducts: Product[];
+  hideHeader?: boolean;
 }
 
 function LeafIcon({ flipped = false }: { flipped?: boolean }) {
@@ -125,9 +126,9 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
   };
 
   return (
-    <div className="flex flex-col justify-center items-start gap-6 w-full max-w-[292px] mx-auto">
-      {/* Image box */}
-      <div className="relative w-full aspect-[292/303] lg:w-[292px] lg:h-[303px] bg-[#EAEAEA] rounded-lg overflow-hidden">
+    <div className="flex flex-col w-full max-w-[400px] mx-auto gap-6">
+      {/* Image box — full width on mobile per Figma */}
+      <div className="relative w-full bg-[#EAEAEA] rounded-lg overflow-hidden" style={{ height: "303px" }}>
         <Image
           src={product.images?.[0] || "/images/products/prophetic-face-serum.png"}
           alt={product.name}
@@ -187,7 +188,7 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
           onClick={handleShop}
           className="font-inter font-medium hover:opacity-90 transition-all flex items-center justify-center"
           style={{
-            width: "127px",
+            width: "111px",
             height: "43px",
             background: "#1A3E25",
             color: "#F7EDE2",
@@ -203,13 +204,14 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
   );
 }
 
-export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsellersProps) {
+export default function FeaturedBestsellers({ dbProducts = [], hideHeader = false }: FeaturedBestsellersProps) {
   const displayProducts = fallbackProducts.map((p, i) => ({ ...p, badge: i < 2 ? "Best seller" : i === 2 ? "Most Loved" : "New Launch" }));
 
   return (
     <section className="py-12 lg:py-20" style={{ background: "#FCFAF4" }}>
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
         {/* Section Header */}
+        {!hideHeader && (
         <div className="flex flex-col items-center text-center mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -232,7 +234,7 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px]"
+            className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl lg:text-[32px] lg:leading-[43px]"
           >
             Real Ingredients, Real Results
           </motion.h2>
@@ -242,7 +244,7 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 mb-8 text-base sm:text-lg lg:text-2xl lg:leading-[29px] max-w-[671px]"
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 mb-8 text-base leading-[19px] max-w-[671px]"
           >
             Handpicked by thousands of happy customers across India
           </motion.p>
@@ -251,7 +253,7 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
             href="/shop"
             className="font-inter font-medium inline-flex items-center justify-center hover:opacity-90 transition-all"
             style={{
-              width: "162px",
+              width: "127px",
               height: "43px",
               background: "#1D3B29",
               color: "#F7EDE2",
@@ -263,9 +265,10 @@ export default function FeaturedBestsellers({ dbProducts = [] }: FeaturedBestsel
             View All
           </Link>
         </div>
+        )}
 
-        {/* Products Grid - 4 columns */}
-        <div className="flex flex-wrap justify-center gap-6">
+        {/* Products — vertical stack on mobile, 4-col grid on desktop */}
+        <div className="flex flex-col items-center gap-6 lg:grid lg:grid-cols-4 lg:gap-6">
           {displayProducts.map((product: any, index: number) => (
             <motion.div
               key={product.id}

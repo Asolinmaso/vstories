@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { supabase } from "@/lib/supabase-browser";
+import { getCartItemKey } from "./cart-utils";
 
 export interface CartItem {
     id: string; // product_id
@@ -24,10 +25,6 @@ interface CartStore {
     getTotal: () => number;
     setUserId: (id: string | null) => void;
     syncCart: () => Promise<void>;
-}
-
-export function getCartItemKey(item: Pick<CartItem, "id" | "size" | "cartItemId">): string {
-    return item.cartItemId || `${item.id}::${item.size || "default"}`;
 }
 
 function findCartItem(items: CartItem[], itemKey: string): CartItem | undefined {

@@ -71,16 +71,16 @@ function ProductCard({ product }: { product: Product }) {
 
   return (
     <div
-      className="relative flex flex-col bg-[#FFFFFF] w-full max-w-[396px] mx-auto h-auto lg:h-[641px]"
+      className="relative flex flex-col bg-[#FCFAF4] w-full max-w-[396px] mx-auto h-[641px]"
       style={{
         border: "1px solid #D9D9D9",
-        boxShadow: "0px 10px 25px rgba(0, 0, 0, 0.08)",
+        boxShadow: "0px 20px 20px rgba(0, 0, 0, 0.1)",
         borderRadius: "12px",
         overflow: "hidden",
       }}
     >
       {/* Product Image */}
-      <div className="relative w-full h-48 sm:h-64 lg:h-[387px] shrink-0">
+      <div className="relative w-full h-[387px] shrink-0 bg-[#FCFAF4]">
         <Image
           src={product.images?.[0] || "/images/home/hero2.png"}
           alt={product.name}
@@ -101,7 +101,7 @@ function ProductCard({ product }: { product: Product }) {
           </h3>
           <button
             onClick={toggleWishlist}
-            className="w-8 h-8 flex items-center justify-center transition-colors hover:scale-110"
+            className="w-7 h-6 flex items-center justify-center transition-colors hover:scale-110"
             aria-label={isLiked ? "Remove from wishlist" : "Add to wishlist"}
           >
             <Heart 
@@ -117,43 +117,43 @@ function ProductCard({ product }: { product: Product }) {
         {/* Description */}
         <p
           className="font-inter font-normal text-[#2E2E2E]"
-          style={{ fontSize: "16px", lineHeight: "19px", height: "38px", overflow: "hidden" }}
+          style={{ fontSize: "16px", lineHeight: "19px", height: "57px", overflow: "hidden" }}
         >
-          {product.description?.substring(0, 100) || "A gentle formula for visible, natural results."}
+          {product.description?.substring(0, 150) || "A gentle formula for visible, natural results."}
         </p>
 
         {/* Price + Rating row */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mt-6">
+        <div className="flex items-center justify-between mt-3 mb-4">
           {/* Price */}
           <div className="flex items-center gap-2">
             <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: "24px", lineHeight: "29px" }}>
               ₹{product.price}
             </span>
             {product.original_price && (
-              <span className="font-inter font-normal text-[#2E2E2E] line-through opacity-50" style={{ fontSize: "16px", lineHeight: "19px" }}>
+              <span className="font-inter font-normal text-[#2E2E2E] line-through" style={{ fontSize: "16px", lineHeight: "19px" }}>
                 (₹{product.original_price})
               </span>
             )}
           </div>
           {/* Rating */}
           <div className="flex items-center gap-2">
-            <svg width="19" height="18" viewBox="0 0 19 18" fill="#E8BF72" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.5 0L11.6329 6.56434H18.535L12.9511 10.6213L15.084 17.1857L9.5 13.1287L3.91604 17.1857L6.04894 10.6213L0.464966 6.56434H7.36712L9.5 0Z" />
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="#E8BF72" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 0L17.0623 9.44286H26.9656L19.2016 15.2857L22.2639 24.7286L14.5 18.8857L6.73607 24.7286L9.79837 15.2857L2.03444 9.44286H12.0377L14 0Z" />
             </svg>
             <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: "24px", lineHeight: "29px" }}>
               {product.rating || 4.8}
             </span>
-            <span className="font-inter font-normal text-[#2E2E2E] opacity-50" style={{ fontSize: "16px", lineHeight: "19px" }}>
+            <span className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: "16px", lineHeight: "19px" }}>
               ({product.reviews_count || 120})
             </span>
           </div>
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-auto">
+        <div className="flex items-center gap-[10px] mt-auto">
           <button
             onClick={handleAddToCart}
-            className="flex-1 font-inter font-medium text-[#1D3B29] transition-all hover:bg-[#F4F0EC]"
+            className="flex flex-1 items-center justify-center font-inter font-medium text-[#1D3B29] transition-all hover:bg-[#F4F0EC]"
             style={{
               height: "43px",
               border: "1px solid #1D3B29",
@@ -166,7 +166,7 @@ function ProductCard({ product }: { product: Product }) {
           </button>
           <Link
             href={`/product/${product.slug || product.id}`}
-            className="flex-1 font-inter font-medium transition-all hover:opacity-90"
+            className="flex flex-1 items-center justify-center font-inter font-medium transition-all hover:opacity-90"
             style={{
               height: "43px",
               background: "#1D3B29",
@@ -174,9 +174,6 @@ function ProductCard({ product }: { product: Product }) {
               borderRadius: "8px",
               fontSize: "16px",
               lineHeight: "19px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
             }}
           >
             Buy Now
@@ -253,7 +250,9 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
   const tabs = ["Skin Care", "Hair Care", "Combo & Gift Packs", "Sample Packs"];
 
   const filteredProducts = (() => {
-    return fallbackProducts.filter((p) => {
+    // Prefer real db products, fall back to static data
+    const source = products && products.length > 0 ? products : fallbackProducts;
+    return source.filter((p) => {
       if (activeTab === "Skin Care") return p.category_id === "skin" || p.category_id === "face";
       if (activeTab === "Hair Care") return p.category_id === "hair";
       if (activeTab === "Combo & Gift Packs") return p.category_id === "combos" || p.category_id === "gifts";
@@ -291,7 +290,7 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#1D3B29] text-3xl sm:text-4xl md:text-5xl lg:text-[64px] leading-tight sm:leading-snug lg:leading-[85px] max-w-full"
+            className="font-playfair font-semibold text-[#2E2E2E] text-[32px] leading-[43px]"
           >
             Find what your skin &amp; hair truely needs
           </motion.h2>
@@ -301,19 +300,19 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-6 text-base sm:text-lg lg:text-2xl lg:leading-[29px] max-w-[800px]"
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-6 text-base leading-[19px] max-w-[375px]"
           >
             Discover gentle, plant-powered skincare and haircare made for <br className="hidden sm:block" /> Indian lifestyles, climates, and everyday routines.
           </motion.p>
         </div>
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-12 lg:mb-16">
+        <div className="flex overflow-x-auto gap-4 sm:gap-6 mb-12 lg:mb-16 pb-2 sm:justify-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:none]">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className="font-inter font-medium transition-all px-4 py-2 sm:px-8 sm:py-2.5 rounded-[32px] text-sm sm:text-base leading-[19px]"
+              className="font-inter font-medium transition-all px-6 py-2.5 sm:px-8 sm:py-2.5 rounded-[32px] text-base leading-[19px] whitespace-nowrap shrink-0"
               style={{
                 background: activeTab === tab ? "#1D3B29" : "transparent",
                 border: "1px solid #1D3B29",
@@ -344,8 +343,8 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
             href="/shop"
             className="font-inter font-medium inline-flex items-center justify-center hover:opacity-90 transition-all shadow-md"
             style={{
-              width: "202px",
-              height: "48px",
+              width: "127px",
+              height: "43px",
               background: "#1D3B29",
               color: "#F7EDE2",
               borderRadius: "8px",

@@ -70,7 +70,7 @@ export default function HeroCarousel() {
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="font-playfair font-semibold text-black text-[28px] leading-[1.15] sm:text-4xl md:text-5xl lg:text-[64px] lg:leading-[85px] max-w-[543px]"
+                className="font-playfair font-semibold text-white text-[28px] leading-[1.15] sm:text-4xl md:text-5xl lg:text-[64px] lg:leading-[85px] max-w-[543px]"
               >
                 Nature&apos;s Goodness Clinically Crafted
               </motion.h1>
@@ -80,7 +80,7 @@ export default function HeroCarousel() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-                className="mt-4 sm:mt-5 font-inter font-normal text-black text-sm sm:text-base lg:text-2xl lg:leading-[29px] max-w-[628px]"
+                className="mt-4 sm:mt-5 font-inter font-normal text-white text-sm sm:text-base lg:text-2xl lg:leading-[29px] max-w-[628px]"
               >
                 Clean, effective &amp; honest skincare and haircare enriched with
                 natural ingredients &amp; powerful herbs for real, visible results.

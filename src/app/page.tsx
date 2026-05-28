@@ -2,7 +2,6 @@ import HeroCarousel from "@/components/home/HeroCarousel";
 import FeaturedBestsellers from "@/components/home/FeaturedBestsellers";
 import CategoryBanners from "@/components/home/CategoryBanners";
 import FindWhatYouNeed from "@/components/home/FindWhatYouNeed";
-import CategoryGrid from "@/components/home/CategoryGrid";
 import OffersSection from "@/components/home/OffersSection";
 import BrandStoryBanner from "@/components/home/BrandStoryBanner";
 import CleanBeauty from "@/components/home/CleanBeauty";
@@ -56,9 +55,6 @@ export default async function Home() {
 
       {/* 2. Trust Marquee */}
       <Marquee items={trustItems} variant="dark" speed="slow" />
-
-      {/* 3. Browse by category */}
-      <CategoryGrid />
 
       {/* 4. Find what your skin & hair truly needs */}
       <FindWhatYouNeed products={products} />

@@ -3,7 +3,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { X, Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
-import { useCartStore, getCartItemKey } from "@/lib/store";
+import { useCartStore } from "@/lib/store";
+import { getCartItemKey } from "@/lib/cart-utils";
 import { useAuth } from "@/context/AuthContext";
 import { useLoginModal } from "@/context/LoginModalContext";
 import Link from "next/link";

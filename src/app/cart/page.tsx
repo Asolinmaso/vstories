@@ -6,7 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Trash2, Plus, Minus } from "lucide-react";
-import { useCartStore, getCartItemKey } from "@/lib/store";
+import { useCartStore } from "@/lib/store";
+import { getCartItemKey } from "@/lib/cart-utils";
 import YouMayAlsoLike from "@/components/home/YouMayAlsoLike";
 
 function TeardropIcon() {
