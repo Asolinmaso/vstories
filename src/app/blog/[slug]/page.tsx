@@ -140,7 +140,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   />
                 </div>
                 <div>
-                  <h4 
+                  <h4
                     className="font-medium text-[#2E2E2E] mb-1 group-hover:text-[#1D3B29] transition line-clamp-2"
                     style={{ fontSize: "16px", lineHeight: "1.3" }}
                   >

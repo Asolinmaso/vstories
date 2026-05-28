@@ -118,11 +118,11 @@ export default function Footer() {
                         <ul className="flex flex-col gap-4">
                             {policies.map((link) => (
                                 <li key={link.label}>
-                                    <Link 
-                                        href={link.href} 
+                                    <Link
+                                        href={link.href}
                                         target={link.href.startsWith('http') ? '_blank' : undefined}
                                         rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                                        className="font-inter text-[16px] font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors" 
+                                        className="font-inter text-[16px] font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors"
                                         style={{ color: '#F7EDE2' }}
                                     >
                                         {link.label}

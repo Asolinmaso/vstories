@@ -47,7 +47,6 @@ export const products: Product[] = [
         rating: 4.8,
         reviews: 124,
     },
-
     {
         id: "10",
         name: "V Herbal Face Pack",
@@ -104,7 +103,6 @@ export const products: Product[] = [
         isNew: true,
         isBestseller: true,
     },
-
 
     {
         id: "12",

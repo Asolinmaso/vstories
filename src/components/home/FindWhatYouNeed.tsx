@@ -30,7 +30,6 @@ function LeafIcon({ flipped = false }: { flipped?: boolean }) {
 
 function ProductCard({ product }: { product: Product }) {
   const addItem = useCartStore((s) => s.addItem);
-
   const { hasItem, addItem: addWishlistItem, removeItem: removeWishlistItem, items: wishlistItems } = useWishlistStore();
   const [isLiked, setIsLiked] = useState(false);
 

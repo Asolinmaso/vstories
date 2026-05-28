@@ -29,8 +29,8 @@ export default function ProfileMobileNav() {
               <Link
                 href={item.href}
                 className={`inline-flex items-center gap-2 rounded-[16px] px-4 py-2.5 font-inter text-sm whitespace-nowrap transition-colors ${active
-                    ? "bg-[#1D3B29] font-semibold text-white"
-                    : "bg-[#F4F0EC] font-normal text-[#1D3B29]"
+                  ? "bg-[#1D3B29] font-semibold text-white"
+                  : "bg-[#F4F0EC] font-normal text-[#1D3B29]"
                   }`}
               >
                 <item.icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />

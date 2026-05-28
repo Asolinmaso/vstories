@@ -106,8 +106,8 @@ export default function AddressSelection({ onSelect, selectedId }: AddressSelect
                         key={address.id}
                         onClick={() => onSelect(address)}
                         className={`text-left p-4 rounded-xl border-2 transition-all relative group ${selectedId === address.id
-                                ? "border-[var(--primary)] bg-[var(--primary)]/5"
-                                : "border-gray-100 bg-white hover:border-[var(--primary)]/30"
+                            ? "border-[var(--primary)] bg-[var(--primary)]/5"
+                            : "border-gray-100 bg-white hover:border-[var(--primary)]/30"
                             }`}
                     >
                         <div className="flex items-center gap-2 mb-2">
@@ -224,8 +224,8 @@ export default function AddressSelection({ onSelect, selectedId }: AddressSelect
                                         type="button"
                                         onClick={() => setNewAddress({ ...newAddress, label })}
                                         className={`px-6 py-2 rounded-lg border-2 text-sm font-medium transition-all ${newAddress.label === label
-                                                ? "border-[var(--primary)] bg-[var(--primary)] text-white"
-                                                : "border-gray-100 text-gray-600 hover:border-gray-300"
+                                            ? "border-[var(--primary)] bg-[var(--primary)] text-white"
+                                            : "border-gray-100 text-gray-600 hover:border-gray-300"
                                             }`}
                                     >
                                         {label}

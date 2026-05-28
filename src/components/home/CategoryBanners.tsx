@@ -107,7 +107,7 @@ export default function CategoryBanners() {
                 Flat 25% Discount
               </div>
 
-              <h3 
+              <h3
                 className="font-playfair font-semibold text-[16px] sm:text-[20px] lg:text-[26px] lg:leading-[1.2] max-w-[400px]"
                 style={{ color: "#FFFFFF" }}
               >

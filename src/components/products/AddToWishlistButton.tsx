@@ -11,7 +11,7 @@ export default function AddToWishlistButton({ product, className = "" }: { produ
     const addItem = useWishlistStore((state) => state.addItem);
     const removeItem = useWishlistStore((state) => state.removeItem);
     const [mounted, setMounted] = useState(false);
-    
+
     useEffect(() => {
         setMounted(true);
     }, []);

@@ -157,11 +157,10 @@ export default function BlogContent() {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`font-inter font-medium transition-all hover:opacity-80 rounded-full text-[14px] md:text-[16px] snap-start whitespace-nowrap px-5 py-2 md:py-2.5 border border-solid ${
-                    active 
-                      ? "!bg-[#1D3B29] !text-[#F7EDE2] !border-transparent" 
-                      : "!bg-white !text-[#1D3B29] !border-[#1D3B29]"
-                  }`}
+                  className={`font-inter font-medium transition-all hover:opacity-80 rounded-full text-[14px] md:text-[16px] snap-start whitespace-nowrap px-5 py-2 md:py-2.5 border border-solid ${active
+                    ? "!bg-[#1D3B29] !text-[#F7EDE2] !border-transparent"
+                    : "!bg-white !text-[#1D3B29] !border-[#1D3B29]"
+                    }`}
                 >
                   {cat}
                 </button>
@@ -209,7 +208,6 @@ export default function BlogContent() {
           </div>
         </div>
       </section>
-
 
 
     </div>

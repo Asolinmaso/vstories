@@ -8,10 +8,10 @@ import { X } from "lucide-react";
 interface MobileMenuProps {
     isOpen: boolean;
     onClose: () => void;
-    navLinks: { 
-        href: string; 
-        label: string; 
-        dropdown?: { href: string; label: string }[] 
+    navLinks: {
+        href: string;
+        label: string;
+        dropdown?: { href: string; label: string }[]
     }[];
 }
 
@@ -74,11 +74,10 @@ export default function MobileMenu({
                                             <div className="flex flex-col">
                                                 <Link
                                                     href={link.href}
-                                                    className={`block py-3 text-lg transition-colors ${
-                                                        (pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href)))
-                                                            ? "font-black text-[var(--primary)]" 
+                                                    className={`block py-3 text-lg transition-colors ${(pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href)))
+                                                            ? "font-black text-[var(--primary)]"
                                                             : "font-medium text-black hover:text-[var(--primary)]"
-                                                    }`}
+                                                        }`}
                                                     onClick={() => !link.dropdown && onClose()}
                                                 >
                                                     {link.label}

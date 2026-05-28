@@ -516,7 +516,6 @@ export default function AboutContent() {
         </div>
       </section>
 
-
     </div>
   );
 }

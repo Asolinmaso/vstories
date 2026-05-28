@@ -9,9 +9,9 @@ export async function GET() {
 
         // Cleanup old products that were deleted from products.ts
         await db.from("products").delete().in("slug", [
-            "v-glow-face-serum", 
-            "v-natural-face-wash", 
-            "herbal-scalp-treatment", 
+            "v-glow-face-serum",
+            "v-natural-face-wash",
+            "herbal-scalp-treatment",
             "radiance-day-cream"
         ]);
 

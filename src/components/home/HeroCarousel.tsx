@@ -30,7 +30,7 @@ const slides = [
 
 export default function HeroCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveIndex((current) => (current + 1) % slides.length);

@@ -102,7 +102,7 @@ export default async function proxy(request: NextRequest) {
             if (!user) {
                 return NextResponse.redirect(new URL('/', request.url));
             }
-            
+
             // Fetch user profile to check role
             const { data: profile } = await supabase
                 .from('profiles')

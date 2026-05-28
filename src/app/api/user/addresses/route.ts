@@ -34,7 +34,7 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        
+
         const { data, error } = await supabase
             .from("addresses")
             .insert({
