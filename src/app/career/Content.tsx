@@ -30,7 +30,7 @@ function JobCard({ title, type, location, description, onApply }: JobProps & { o
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="flex flex-col gap-4 p-6 md:p-8 rounded-[16px] bg-[#F8F7F4] w-full md:w-[397px] min-h-[270px] shrink-0"
+      className="flex flex-col gap-4 p-6 md:p-8 rounded-[16px] bg-[#F4F0EC] w-full md:w-[397px] min-h-[270px] shrink-0"
     >
       <h3
         className="font-inter font-medium text-[#2E2E2E]"
@@ -213,7 +213,7 @@ export default function CareerContent() {
           </div>
 
           {/* Right: Form */}
-          <div className="flex flex-col gap-6 flex-1 lg:pl-24">
+          <div className="flex flex-col gap-6 flex-1">
             <h2
               className="font-playfair font-semibold text-black text-[28px] md:text-[32px] leading-tight md:leading-[43px]"
             >
@@ -312,18 +312,19 @@ export default function CareerContent() {
 
               {/* Upload File box */}
               <div
-                className="lg:absolute flex items-center w-full lg:w-[513px] h-[48px] border border-[#2E2E2E] rounded-[4px] lg:left-0 lg:top-[252px]"
+                className="lg:absolute flex items-center w-full lg:w-[513px] h-[48px] border border-[#2E2E2E] rounded-none lg:left-0 lg:top-[235px]"
               >
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
-                  className="flex items-center gap-1 font-inter font-normal text-[#1D3B29] mx-2 px-3 py-1 border border-[#1D3B29] rounded-[4px] text-[16px] bg-transparent"
+                  className="flex items-center justify-center gap-2 font-inter font-normal text-[#1D3B29] ml-3 mr-6 px-4 py-1.5 rounded-none text-[15px] bg-transparent hover:bg-[#1D3B29]/5 transition-all"
+                  style={{ border: '1px solid #1D3B29' }}
                 >
-                  <Upload className="w-4 h-4" />
+                  <Upload className="w-[18px] h-[18px]" strokeWidth={1.5} />
                   Upload File
                 </button>
                 <span
-                  className="font-inter font-normal text-[#2E2E2E] ml-2 text-[12px] leading-[15px]"
+                  className="font-inter font-normal text-[#2E2E2E]/80 text-[13px] leading-[15px]"
                 >
                   {fileName}
                 </span>
@@ -337,16 +338,17 @@ export default function CareerContent() {
               </div>
 
               <p
-                className="lg:absolute font-inter font-light text-[#2E2E2E] text-[12px] leading-[15px] lg:left-0 lg:top-[316px] mt-1 lg:mt-0"
+                className="lg:absolute font-inter font-light text-[#2E2E2E] text-[12px] leading-[18px] lg:left-0 lg:top-[295px] mt-1 lg:mt-0"
               >
-                Drag & drop your file here (PDF, DOCX, JPG, PNG) Max size: 5MB
+                Drag & drop your file here (PDF, DOCX, JPG, PNG)<br />
+                Max size: 5MB
               </p>
 
               {/* Submit */}
               <button
                 type="submit"
                 style={{ color: '#ffffff', backgroundColor: '#1D3B29' }}
-                className="self-end lg:absolute font-inter font-semibold rounded-[8px] hover:bg-[#2A4F38] transition-all text-[16px] w-[103px] h-[43px] lg:left-[537px] lg:top-[252px] mt-4 lg:mt-0"
+                className="self-end lg:absolute font-inter font-semibold rounded-[8px] hover:bg-[#2A4F38] transition-all text-[16px] w-[103px] h-[48px] lg:left-[537px] lg:top-[235px] mt-4 lg:mt-0"
               >
                 Submit
               </button>
