@@ -22,7 +22,7 @@ export const blogPosts: BlogPost[] = [
     excerpt: "Discover time-tested, natural tips to nourish your scalp and strengthen hair from the roots.",
     date: "20 Feb, 2026",
     readTime: "5 Min Read",
-    image: "/images/blog/hair care.png",
+    image: "/images/blog/Hair Care.png",
     category: "Hair Care",
     content: {
       intro: "Healthy hair starts at the roots. When your scalp is nourished and your roots are strong, your hair naturally grows better, feels thicker, and looks more vibrant. Here are 7 natural ways to strengthen your hair roots and improve overall hair health.",

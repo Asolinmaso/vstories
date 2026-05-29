@@ -109,9 +109,9 @@ export default function ShopContent({
                         {/* Desktop Sidebar Filters */}
                         <aside className="hidden lg:block w-64 flex-shrink-0 space-y-10">
                             <div>
-                                <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--primary)] mb-6">
+                                <div className="text-sm font-bold uppercase tracking-widest text-[var(--primary)] mb-6 font-inter">
                                     Categories
-                                </h3>
+                                </div>
                                 <ul className="space-y-4">
                                     <li className="pb-4">
                                         <button
@@ -150,29 +150,31 @@ export default function ShopContent({
                         {/* Main Content */}
                         <div className="flex-1">
                             {/* Toolbar */}
-                            <div className="flex items-center justify-between gap-4 mb-10 pb-6 border-b border-gray-100">
-                                {/* Mobile Filter Toggle */}
-                                <button
-                                    onClick={() => setIsMobileFilterOpen(true)}
-                                    className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl text-sm font-bold text-[var(--primary)]"
-                                >
-                                    <Filter className="w-4 h-4" />
-                                    Filter
-                                </button>
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-gray-100">
+                                <div className="flex items-center justify-between w-full sm:w-auto">
+                                    <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                                        {filteredProducts.length} Results found
+                                    </p>
+                                    
+                                    {/* Mobile Filter Toggle */}
+                                    <button
+                                        onClick={() => setIsMobileFilterOpen(true)}
+                                        className="lg:hidden flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-100 rounded-lg text-sm font-bold text-[var(--primary)] shadow-sm"
+                                    >
+                                        <Filter className="w-4 h-4" />
+                                        Filter
+                                    </button>
+                                </div>
 
-                                <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                                    {filteredProducts.length} Results found
-                                </p>
-
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-center justify-end w-full sm:w-auto gap-3">
                                     <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest text-gray-400">
                                         Sort by
                                     </span>
-                                    <div className="relative">
+                                    <div className="relative w-full sm:w-auto">
                                         <select
                                             value={sortBy}
                                             onChange={(e) => setSortBy(e.target.value as SortOption)}
-                                            className="appearance-none pl-4 pr-10 py-2 bg-white border-0 rounded-xl text-sm font-bold text-[var(--primary)] cursor-pointer focus:ring-2 focus:ring-[var(--primary)]/10 outline-none min-w-[160px]"
+                                            className="appearance-none w-full sm:w-auto pl-4 pr-10 py-2.5 bg-white border border-gray-100 rounded-xl text-sm font-bold text-[var(--primary)] shadow-sm cursor-pointer focus:ring-2 focus:ring-[var(--primary)]/10 outline-none min-w-[160px]"
                                         >
                                             {sortOptions.map((option) => (
                                                 <option key={option.value} value={option.value}>
@@ -186,7 +188,7 @@ export default function ShopContent({
                             </div>
 
                             {/* Products Grid */}
-                            <div className="grid grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-8 md:gap-x-8 md:gap-y-12">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
                                 {filteredProducts.map((product, index) => (
                                     <motion.div
                                         key={product.id}
@@ -198,7 +200,6 @@ export default function ShopContent({
                                     >
                                         <ProductCard
                                             product={product}
-                                            titleStyle={{ fontSize: "24px" }}
                                         />
                                     </motion.div>
                                 ))}
@@ -243,12 +244,12 @@ export default function ShopContent({
                             className="absolute left-0 top-0 bottom-0 w-[320px] bg-[var(--background)] p-6 shadow-2xl overflow-y-auto"
                         >
                             <div className="flex items-center justify-between mb-8">
-                                <h3
+                                <div
                                     className="text-xl font-semibold text-[var(--primary)]"
                                     style={{ fontFamily: "var(--font-peachi)" }}
                                 >
                                     Filter Products
-                                </h3>
+                                </div>
                                 <button
                                     onClick={() => setIsMobileFilterOpen(false)}
                                     className="p-2 text-[var(--primary)] hover:bg-[var(--primary)]/5 rounded-full transition-colors"
@@ -259,9 +260,9 @@ export default function ShopContent({
 
                             <div className="space-y-8">
                                 <div>
-                                    <h4 className="text-sm font-bold uppercase tracking-wider text-[var(--primary)] mb-4">
+                                    <div className="text-sm font-bold uppercase tracking-wider text-[var(--primary)] mb-4 font-inter">
                                         Categories
-                                    </h4>
+                                    </div>
                                     <ul className="space-y-2">
                                         <li className="pb-4">
                                             <button

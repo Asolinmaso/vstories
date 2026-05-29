@@ -11,6 +11,7 @@ interface FeaturedBestsellersProps {
   dbProducts?: Product[];
   title?: string;
   hideSubtitle?: boolean;
+  hideHeader?: boolean;
 }
 
 function LeafIcon({ flipped = false }: { flipped?: boolean }) {
@@ -195,72 +196,74 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
   );
 }
 
-export default function FeaturedBestsellers({ dbProducts = [], title = "Our Bestsellers", hideSubtitle = false }: FeaturedBestsellersProps) {
+export default function FeaturedBestsellers({ dbProducts = [], title = "Our Bestsellers", hideSubtitle = false, hideHeader = false }: FeaturedBestsellersProps) {
   const displayProducts = fallbackProducts.map((p, i) => ({ ...p, badge: i < 2 ? "Best seller" : i === 2 ? "Most Loved" : "New Launch" }));
 
   return (
     <section className="py-12 lg:py-20" style={{ background: "#FCFAF4" }}>
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-6 mb-4"
-          >
-            <LeafIcon />
-            <h2
-              className="font-playfair font-semibold text-[#2E2E2E]"
-              style={{ fontSize: "36px", lineHeight: "1.2" }}
+        {!hideHeader && (
+          <div className="flex flex-col items-center text-center mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex items-center gap-6 mb-4"
             >
-              {title}
-            </h2>
-            <LeafIcon flipped />
-          </motion.div>
-
-          {!hideSubtitle && (
-            <>
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px]"
+              <LeafIcon />
+              <h2
+                className="font-playfair font-semibold text-[#2E2E2E]"
+                style={{ fontSize: "36px", lineHeight: "1.2" }}
               >
-                Real Ingredients, Real Results
-              </motion.h2>
+                {title}
+              </h2>
+              <LeafIcon flipped />
+            </motion.div>
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-                className="font-inter font-normal text-[#2E2E2E] text-center mt-2 mb-8 text-base sm:text-lg lg:text-2xl lg:leading-[29px] max-w-[671px]"
+            {!hideSubtitle && (
+              <>
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 }}
+                  className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px]"
+                >
+                  Real Ingredients, Real Results
+                </motion.h2>
+
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                  className="font-inter font-normal text-[#2E2E2E] text-center mt-2 mb-8 text-base sm:text-lg lg:text-2xl lg:leading-[29px] max-w-[671px]"
+                >
+                  Handpicked by thousands of happy customers across India
+                </motion.p>
+              </>
+            )}
+
+            {!hideSubtitle && (
+              <Link
+                href="/shop"
+                className="font-inter font-medium inline-flex items-center justify-center hover:opacity-90 transition-all"
+                style={{
+                  width: "162px",
+                  height: "43px",
+                  background: "#1D3B29",
+                  color: "#F7EDE2",
+                  borderRadius: "8px",
+                  fontSize: "16px",
+                  lineHeight: "19px",
+                }}
               >
-                Handpicked by thousands of happy customers across India
-              </motion.p>
-            </>
-          )}
-
-          {!hideSubtitle && (
-            <Link
-              href="/shop"
-              className="font-inter font-medium inline-flex items-center justify-center hover:opacity-90 transition-all"
-              style={{
-                width: "162px",
-                height: "43px",
-                background: "#1D3B29",
-                color: "#F7EDE2",
-                borderRadius: "8px",
-                fontSize: "16px",
-                lineHeight: "19px",
-              }}
-            >
-              View All
-            </Link>
-          )}
-        </div>
+                View All
+              </Link>
+            )}
+          </div>
+        )}
 
         {/* Products Grid - 4 columns */}
         <div className="flex flex-wrap justify-center gap-6">

@@ -4,6 +4,8 @@ import ShopContent from "./ShopContent";
 import { getProducts } from "@/lib/services/product.service";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
     title: "Shop All Products",
     description:

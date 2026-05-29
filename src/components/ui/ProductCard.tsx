@@ -84,8 +84,8 @@ export default function ProductCard({ product, titleClassName, titleStyle }: Pro
                     <div className="relative p-4 md:p-5 flex flex-col flex-1">
                         <div className="flex items-start justify-between gap-2 mb-2">
                             <h3
-                                className={`font-semibold text-[#2E2E2E] leading-tight line-clamp-1 font-inter flex-1 pt-1 ${titleClassName || ''}`}
-                                style={{ ...titleStyle, fontSize: titleStyle?.fontSize || "20px" }}
+                                className={`font-semibold text-[#2E2E2E] leading-tight line-clamp-1 font-inter flex-1 pt-1 ${titleClassName || 'text-[18px] lg:text-[20px] xl:text-[22px]'}`}
+                                style={titleStyle}
                             >
                                 {product.name}
                             </h3>
@@ -129,7 +129,7 @@ export default function ProductCard({ product, titleClassName, titleStyle }: Pro
                             </div>
 
                             {/* Buttons */}
-                            <div className="flex flex-row items-center gap-3">
+                            <div className="flex flex-col 2xl:flex-row xl:flex-col lg:flex-row md:flex-row sm:flex-col items-stretch 2xl:items-center xl:items-stretch lg:items-center md:items-center sm:items-stretch gap-2 lg:gap-3 mt-2">
                                 <button
                                     onClick={handleAddToCart}
                                     className="flex-1 font-inter font-medium text-[#1D3B29] transition-all hover:bg-[#1D3B29]/5"
