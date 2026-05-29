@@ -34,19 +34,23 @@ export interface ProductSize {
 }
 
 export const getProducts = async (): Promise<Product[]> => {
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from("products")
         .select(`
             *,
             categories(name, slug),
             sizes:product_sizes(id, label, price)
         `);
+        
+    if (error) {
+        console.error("Error fetching products:", error);
+    }
     const filteredData = (data as any[])?.filter(p => p.images && p.images.length > 0) || [];
     return filteredData;
 };
 
 export const getProductBySlug = cache(async (slug: string): Promise<Product | null> => {
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from("products")
         .select(`
             *,
@@ -55,12 +59,16 @@ export const getProductBySlug = cache(async (slug: string): Promise<Product | nu
         `)
         .eq("slug", slug)
         .single();
+        
+    if (error) {
+        console.error(`Error fetching product by slug ${slug}:`, error);
+    }
     if (!data || !data.images || data.images.length === 0) return null;
     return (data as any);
 });
 
 export const getFeaturedProducts = async (): Promise<Product[]> => {
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from("products")
         .select(`
             *,
@@ -70,13 +78,16 @@ export const getFeaturedProducts = async (): Promise<Product[]> => {
         .or('is_bestseller.eq.true,is_new.eq.true')
         .limit(10); // Increased limit since we might filter some out
 
+    if (error) {
+        console.error("Error fetching featured products:", error);
+    }
 
     return (data as any[])?.filter(p => p.images && p.images.length > 0).slice(0, 4) || [];
 };
 
 export const getProductsByIds = async (ids: string[]): Promise<Product[]> => {
     if (!ids || ids.length === 0) return [];
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from("products")
         .select(`
             *,
@@ -84,6 +95,10 @@ export const getProductsByIds = async (ids: string[]): Promise<Product[]> => {
             sizes:product_sizes(id, label, price)
         `)
         .in('id', ids);
+
+    if (error) {
+        console.error("Error fetching products by ids:", error);
+    }
 
     return (data as any[]) || [];
 };

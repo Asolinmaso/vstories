@@ -42,7 +42,7 @@ export default function ProductReviews({ productId, productName, onReviewAdded }
     const [page, setPage] = useState(1);
 
     useEffect(() => {
-        fetch(`/api/feedback?product_id=${productId}&t=${Date.now()}`)
+        fetch(`/api/feedback?product_id=${productId}`, { cache: 'no-store' })
             .then(res => res.json())
             .then(data => setReviews(data.feedback || []))
             .finally(() => setLoading(false));

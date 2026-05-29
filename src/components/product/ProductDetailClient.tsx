@@ -150,7 +150,7 @@ export default function ProductDetailClient({ product, includedProducts = [] }: 
     const router = useRouter();
 
     const fetchReviews = () => {
-        fetch(`/api/feedback?product_id=${product.id}&t=${Date.now()}`)
+        fetch(`/api/feedback?product_id=${product.id}`, { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 const feedback: { rating: number | null }[] = data.feedback || [];
