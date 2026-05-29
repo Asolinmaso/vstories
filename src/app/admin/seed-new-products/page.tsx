@@ -7,6 +7,26 @@ import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 // Data provided by the user
 const productsToSeed = [
     {
+        name: "Complete Hair Care Trio",
+        slug: "complete-hair-care-trio",
+        category_slug: "combo",
+        price: 600,
+        original_price: 680,
+        size: "1 Set",
+        description: `The ultimate hair transformation set! Get all three of our bestselling hair care products: V Herbal Hair Oil, Hibiscus Shampoo, and Rosemary Hair Mask. This complete regimen addresses hair fall, dandruff, dryness, and damage for visibly healthier, stronger hair.`,
+        benefits: [
+            "Complete hair care in one set",
+            "Reduces hair fall with herbal oil",
+            "Cleanses & nourishes with Hibiscus Shampoo",
+            "Deep conditioning with Rosemary Hair Mask",
+            "Addresses dandruff, dryness & damage",
+            "Visibly healthier, stronger hair"
+        ],
+        ingredients: ["V Herbal Hair Oil", "Hibiscus Shampoo", "Rosemary Hair Mask"],
+        short_description: "Hair Oil + Shampoo + Hair Mask - Complete hair transformation set.",
+        images: ["/images/products/combo-hair-trio.png"]
+    },
+    {
         name: "Rosemary Hairmask",
         slug: "rosemary-hairmask",
         category_slug: "hair",
@@ -25,7 +45,7 @@ const productsToSeed = [
         ],
         ingredients: ["Rosemary", "Moringa", "Fenugreek", "Indigo", "Henna", "Sidr Leaves", "Neem", "Bhringraj", "5+ other herbs"],
         short_description: "A luxurious all-in-one herbal treatment for stronger, healthier, and naturally radiant hair.",
-        image_placeholder: "/images/products/rosemary-hairmask.png"
+        images: ["/images/products/hairpack1.png", "/images/products/hairpack.png"]
     },
     {
         name: "Herbal Facepack",
@@ -45,7 +65,7 @@ const productsToSeed = [
         ],
         ingredients: ["Licorice", "Multani Mitti", "Sandalwood", "Manjistha", "Kadukai", "Maysoor Daal", "Avarampoo", "15+ other herbs"],
         short_description: "A gentle yet powerful herbal blend that deeply cleanses and restores skin's natural radiance.",
-        image_placeholder: "/images/products/herbal-facepack.png"
+        images: ["/images/products/facepack1.png", "/images/products/facepack.png"]
     },
     {
         name: "Hibiscus Shampoo",
@@ -62,7 +82,7 @@ const productsToSeed = [
         ],
         ingredients: ["Hibiscus", "Rosemary", "Aloe Vera", "Fenugreek", "Shikakai", "Reetha", "Moringa", "Amla", "Neem", "Sidr", "Tea Tree Oil", "Vitamin E"],
         short_description: "Gentle on the scalp. Powerful against dandruff & hair fall.",
-        image_placeholder: "/images/products/hibiscus-shampoo.png"
+        images: ["/images/products/shampoo1.png", "/images/products/shampoo.png"]
     },
     {
         name: "V Herbal Hair Oil",
@@ -81,7 +101,7 @@ const productsToSeed = [
         ],
         ingredients: ["Bhringraj", "Amla", "Hibiscus", "Neem", "Fenugreek", "Curry Leaves", "Manjistha", "Jadamansi", "Avarampoo", "Henna", "Indigo", "Rosemary", "Sidr Leaves", "Black Seed", "Aloe Vera", "Notchi Leaves", "Thavanam", "Karusilangani", "Vembala Pattai", "Ashwagandha", "Licorice", "Gua Leaves", "Kesavarthani", "20+ Other Herbs"],
         short_description: "A nourishing blend of 40+ organic herbs and pure pressed oils to strengthen roots and reduce hair fall.",
-        image_placeholder: "/images/products/herbal-hair-oil.png"
+        images: ["/images/products/hair oil1.png", "/images/products/hair oil.png"]
     },
     {
         name: "Prophetic Face Serum",
@@ -99,7 +119,7 @@ const productsToSeed = [
         ],
         ingredients: ["Frankincense Extract", "Black Cumin Seed", "Niacinamide", "Hyaluronic Acid", "Manjistha Extract"],
         short_description: "A lightweight, day-use formula infused with Prophetic and herbal ingredients to reduce dark spots and even skin tone.",
-        image_placeholder: "/images/products/prophetic-face-serum.png"
+        images: ["/images/products/serum1.png", "/images/products/serum.png"]
     }
 ];
 
@@ -156,11 +176,13 @@ ${product.benefits.map(b => `• ${b}`).join('\n')}
                         description: formattedDescription,
                         short_description: product.short_description,
                         price: product.price,
+                        ...(('original_price' in product && product.original_price) ? { original_price: product.original_price } : {}),
                         stock: 100, // Default stock
                         category_id: categoryId,
-                        images: [product.image_placeholder], // Placeholder
+                        images: product.images,
                         ingredients: product.ingredients,
                         is_new: true,
+                        is_bestseller: true,
                         how_to_use: "Apply as directed on packaging."
                     }, { onConflict: 'slug' })
                     .select()

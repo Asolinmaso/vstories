@@ -3,8 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { X, Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
-import { useCartStore } from "@/lib/store";
-import { getCartItemKey } from "@/lib/cart-utils";
+import { useCartStore, getCartItemKey } from "@/lib/store";
 import { useAuth } from "@/context/AuthContext";
 import { useLoginModal } from "@/context/LoginModalContext";
 import Link from "next/link";
@@ -101,86 +100,86 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                     {items.map((item, index) => {
                                         const itemKey = getCartItemKey(item);
                                         return (
-                                        <motion.li
-                                            key={itemKey || `${item.id}-${index}`}
-                                            layout
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, x: 50 }}
-                                            className="flex gap-4 pb-6 border-b border-[var(--primary)]/10"
-                                        >
-                                            {/* Product Image */}
-                                            <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-[var(--secondary-light)]/20 relative">
-                                                {item.image ? (
-                                                    <Image
-                                                        src={item.image}
-                                                        alt={item.name}
-                                                        fill
-                                                        sizes="80px"
-                                                        className="object-cover object-center"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-[var(--primary)] font-semibold text-lg">
-                                                        {item.name?.charAt(0) || "?"}
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            {/* Product Details */}
-                                            <div className="flex-1 min-w-0">
-                                                <h4
-                                                    className="font-medium text-[var(--primary)] text-sm mb-1 truncate"
-                                                    style={{ fontFamily: "var(--font-fira-sans)" }}
-                                                >
-                                                    {item.name}
-                                                </h4>
-                                                {item.size && (
-                                                    <p className="text-xs text-[var(--text-muted)] mb-2">
-                                                        Size: {item.size}
-                                                    </p>
-                                                )}
-                                                <p className="text-sm font-semibold text-[var(--highlight)]">
-                                                    ₹{item.price}
-                                                </p>
-
-                                                {/* Quantity Controls */}
-                                                <div className="flex items-center justify-between mt-3">
-                                                    <div className="flex items-center gap-2 bg-[var(--white)] rounded-md border border-[var(--primary)]/10">
-                                                        <button
-                                                            onClick={() =>
-                                                                updateQuantity(
-                                                                    itemKey,
-                                                                    Math.max(1, item.quantity - 1)
-                                                                )
-                                                            }
-                                                            className="p-1.5 text-[var(--primary)] hover:text-[var(--highlight)] transition-colors"
-                                                            aria-label="Decrease quantity"
-                                                        >
-                                                            <Minus className="w-3.5 h-3.5" />
-                                                        </button>
-                                                        <span className="text-sm font-medium w-6 text-center">
-                                                            {item.quantity}
-                                                        </span>
-                                                        <button
-                                                            onClick={() =>
-                                                                updateQuantity(itemKey, item.quantity + 1)
-                                                            }
-                                                            className="p-1.5 text-[var(--primary)] hover:text-[var(--highlight)] transition-colors"
-                                                            aria-label="Increase quantity"
-                                                        >
-                                                            <Plus className="w-3.5 h-3.5" />
-                                                        </button>
-                                                    </div>
-                                                    <button
-                                                        onClick={() => removeItem(itemKey)}
-                                                        className="p-1.5 text-[var(--text-muted)] hover:text-red-500 transition-colors"
-                                                        aria-label="Remove item"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
+                                            <motion.li
+                                                key={itemKey || `${item.id}-${index}`}
+                                                layout
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, x: 50 }}
+                                                className="flex gap-4 pb-6 border-b border-[var(--primary)]/10"
+                                            >
+                                                {/* Product Image */}
+                                                <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-[var(--secondary-light)]/20 relative">
+                                                    {item.image ? (
+                                                        <Image
+                                                            src={item.image}
+                                                            alt={item.name}
+                                                            fill
+                                                            sizes="80px"
+                                                            className="object-cover object-center"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center text-[var(--primary)] font-semibold text-lg">
+                                                            {item.name?.charAt(0) || "?"}
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            </div>
-                                        </motion.li>
+
+                                                {/* Product Details */}
+                                                <div className="flex-1 min-w-0">
+                                                    <h4
+                                                        className="font-medium text-[var(--primary)] text-sm mb-1 truncate"
+                                                        style={{ fontFamily: "var(--font-fira-sans)" }}
+                                                    >
+                                                        {item.name}
+                                                    </h4>
+                                                    {item.size && (
+                                                        <p className="text-xs text-[var(--text-muted)] mb-2">
+                                                            Size: {item.size}
+                                                        </p>
+                                                    )}
+                                                    <p className="text-sm font-semibold text-[var(--highlight)]">
+                                                        ₹{item.price}
+                                                    </p>
+
+                                                    {/* Quantity Controls */}
+                                                    <div className="flex items-center justify-between mt-3">
+                                                        <div className="flex items-center gap-2 bg-[var(--white)] rounded-md border border-[var(--primary)]/10">
+                                                            <button
+                                                                onClick={() =>
+                                                                    updateQuantity(
+                                                                        itemKey,
+                                                                        Math.max(1, item.quantity - 1)
+                                                                    )
+                                                                }
+                                                                className="p-1.5 text-[var(--primary)] hover:text-[var(--highlight)] transition-colors"
+                                                                aria-label="Decrease quantity"
+                                                            >
+                                                                <Minus className="w-3.5 h-3.5" />
+                                                            </button>
+                                                            <span className="text-sm font-medium w-6 text-center">
+                                                                {item.quantity}
+                                                            </span>
+                                                            <button
+                                                                onClick={() =>
+                                                                    updateQuantity(itemKey, item.quantity + 1)
+                                                                }
+                                                                className="p-1.5 text-[var(--primary)] hover:text-[var(--highlight)] transition-colors"
+                                                                aria-label="Increase quantity"
+                                                            >
+                                                                <Plus className="w-3.5 h-3.5" />
+                                                            </button>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => removeItem(itemKey)}
+                                                            className="p-1.5 text-[var(--text-muted)] hover:text-red-500 transition-colors"
+                                                            aria-label="Remove item"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </motion.li>
                                         );
                                     })}
                                 </ul>

@@ -11,9 +11,21 @@ export default async function proxy(request: NextRequest) {
     // Skip middleware for static files, images, and internal Next.js routes
     const { pathname } = request.nextUrl;
 
-    // Legacy route — profile dashboard replaced the old account page
-    if (pathname.startsWith('/account')) {
-        return NextResponse.redirect(new URL('/profile', request.url));
+    // We removed the legacy redirect for /profile and /account because we just built the new Profile page!
+    // if (pathname.startsWith('/account') || pathname.startsWith('/profile')) {
+    //     return NextResponse.redirect(new URL('/', request.url));
+    // }
+
+    // ── OAuth code interception ──────────────────────────────────────────────
+    // Supabase may land on the site root (or any page) with ?code= when the
+    // /auth/callback URL isn't whitelisted. Catch it here and forward properly.
+    const code = request.nextUrl.searchParams.get('code');
+    if (code && pathname !== '/auth/callback') {
+        const callbackUrl = new URL('/auth/callback', request.url);
+        callbackUrl.searchParams.set('code', code);
+        const next = request.nextUrl.searchParams.get('next');
+        if (next) callbackUrl.searchParams.set('next', next);
+        return NextResponse.redirect(callbackUrl);
     }
 
     if (
@@ -68,32 +80,39 @@ export default async function proxy(request: NextRequest) {
         }
     );
 
-    const { data: { user } } = await supabase.auth.getUser();
+    // Define protected routes
+    const isUserRoute = pathname.startsWith('/checkout') || pathname.startsWith('/order-success');
+    const isAdminRoute = pathname.startsWith('/admin');
 
-    // Protect user routes
-    const isUserRoute = pathname.startsWith('/profile') || pathname.startsWith('/checkout') || pathname.startsWith('/order-success');
-    if (isUserRoute && !user) {
-        const redirectUrl = new URL('/', request.url);
-        redirectUrl.searchParams.set('login', '1');
-        redirectUrl.searchParams.set('redirect', pathname);
-        return NextResponse.redirect(redirectUrl);
-    }
+    // Only authenticate user if they are trying to access a protected route.
+    // This avoids a 1.5s network request delay on public pages!
+    if (isUserRoute || isAdminRoute) {
+        const { data: { user } } = await supabase.auth.getUser();
 
-    // Protect admin routes
-    if (pathname.startsWith('/admin')) {
-        if (!user) {
-            return NextResponse.redirect(new URL('/', request.url));
+        // Protect user routes
+        if (isUserRoute && !user) {
+            const redirectUrl = new URL('/', request.url);
+            redirectUrl.searchParams.set('login', '1');
+            redirectUrl.searchParams.set('redirect', pathname);
+            return NextResponse.redirect(redirectUrl);
         }
 
-        // Fetch user profile to check role
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single();
+        // Protect admin routes
+        if (isAdminRoute) {
+            if (!user) {
+                return NextResponse.redirect(new URL('/', request.url));
+            }
 
-        if (profile?.role !== 'admin') {
-            return NextResponse.redirect(new URL('/', request.url));
+            // Fetch user profile to check role
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', user.id)
+                .single();
+
+            if (profile?.role !== 'admin') {
+                return NextResponse.redirect(new URL('/', request.url));
+            }
         }
     }
 

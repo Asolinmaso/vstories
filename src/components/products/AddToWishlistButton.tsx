@@ -5,14 +5,18 @@ import { Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function AddToWishlistButton({ product, className = "" }: { product: WishlistItem, className?: string }) {
-    const { hasItem, addItem, removeItem } = useWishlistStore();
-    const [isWishlisted, setIsWishlisted] = useState(false);
+import { toast } from "sonner";
 
-    // Sync state with store
+export default function AddToWishlistButton({ product, className = "" }: { product: WishlistItem, className?: string }) {
+    const addItem = useWishlistStore((state) => state.addItem);
+    const removeItem = useWishlistStore((state) => state.removeItem);
+    const [mounted, setMounted] = useState(false);
+
     useEffect(() => {
-        setIsWishlisted(hasItem(product.id));
-    }, [hasItem, product.id, useWishlistStore().items]); // React to store changes
+        setMounted(true);
+    }, []);
+
+    const isWishlisted = useWishlistStore((state) => !!state.items.find(i => i.id === product.id));
 
     const toggleWishlist = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -20,19 +24,21 @@ export default function AddToWishlistButton({ product, className = "" }: { produ
 
         if (isWishlisted) {
             await removeItem(product.id);
-            setIsWishlisted(false);
+            toast.success("Removed from Wishlist");
         } else {
             await addItem(product);
-            setIsWishlisted(true);
+            toast.success("Added to Wishlist");
         }
     };
+
+    if (!mounted) return <div className={`w-[30px] h-[30px] flex items-center justify-center p-1 rounded-full ${className}`} />;
 
     return (
         <button
             onClick={toggleWishlist}
-            className={`flex items-center justify-center p-2 rounded-full transition-all duration-300 ${isWishlisted
-                ? "bg-red-50 text-red-500 hover:bg-red-100"
-                : "bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-red-400"
+            className={`flex items-center justify-center p-1 rounded-full transition-all duration-300 ${isWishlisted
+                ? "text-[var(--primary)]"
+                : "text-gray-400 hover:text-[var(--primary)]"
                 } ${className}`}
             aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
         >
@@ -44,7 +50,7 @@ export default function AddToWishlistButton({ product, className = "" }: { produ
                     exit={{ scale: 0.5, opacity: 0 }}
                     transition={{ duration: 0.2 }}
                 >
-                    <Heart className={`w-5 h-5 ${isWishlisted ? "fill-current" : ""}`} />
+                    <Heart className={`w-[22px] h-[22px] ${isWishlisted ? "fill-current" : ""}`} strokeWidth={1.5} />
                 </motion.div>
             </AnimatePresence>
         </button>

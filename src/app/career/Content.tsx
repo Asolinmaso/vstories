@@ -24,14 +24,13 @@ interface JobProps {
   description: string;
 }
 
-function JobCard({ title, type, location, description }: JobProps) {
+function JobCard({ title, type, location, description, onApply }: JobProps & { onApply: (title: string) => void }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="flex flex-col gap-4 p-8 rounded-2xl"
-      style={{ width: 397, minHeight: 270, background: "#F4F0EC", flexShrink: 0 }}
+      className="flex flex-col gap-4 p-6 md:p-8 rounded-[16px] bg-[#F8F7F4] w-full md:w-[397px] min-h-[270px] shrink-0"
     >
       <h3
         className="font-inter font-medium text-[#2E2E2E]"
@@ -46,7 +45,8 @@ function JobCard({ title, type, location, description }: JobProps) {
         {description}
       </p>
       <button
-        className="flex items-center justify-center font-inter font-semibold text-[#F7EDE2] rounded-[8px] hover:bg-[#2A4F38] transition-all"
+        onClick={() => onApply(title)}
+        className="flex items-center justify-center font-inter font-semibold !text-white rounded-[8px] hover:bg-[#2A4F38] transition-all"
         style={{ width: 132, height: 43, background: "#1D3B29", fontSize: 16 }}
       >
         Apply Now
@@ -101,6 +101,11 @@ export default function CareerContent() {
   });
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const handleApplyClick = (jobTitle: string) => {
+    setForm(prev => ({ ...prev, jobPosition: jobTitle }));
+    document.getElementById("apply-form")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     setFileName(f ? f.name : "No File Chosen");
@@ -139,37 +144,34 @@ export default function CareerContent() {
   ];
 
   return (
-    <div className="w-full" style={{ background: "#FCFAF4" }}>
+    <div className="w-full bg-[#FCFAF4]">
       {/* ── HERO BANNER ────────────────────────────────────── */}
-      <section className="relative w-full" style={{ height: 581 }}>
+      <section className="relative w-full h-[640px] md:h-[581px] bg-[#FCFAF4]">
         <Image
           src="/images/career/career hero.png"
           alt="Career at V Stories"
           fill
-          className="object-cover"
+          className="object-cover object-[80%_bottom] md:object-center"
           priority
         />
-        {/* dark overlay for readability */}
-        <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.25)" }} />
+        {/* Removed dark overlay for black text readability */}
 
         {/* Hero text */}
-        <div className="absolute flex flex-col gap-8" style={{ left: 100, top: 86, width: 848 }}>
+        <div className="absolute flex flex-col gap-4 md:gap-8 left-6 top-12 md:left-[100px] md:top-[86px] right-6 md:right-auto max-w-[90%] md:w-[848px]">
           <h1
-            className="font-playfair font-semibold text-white"
-            style={{ fontSize: 64, lineHeight: "85px", maxWidth: 542 }}
+            className="font-playfair !font-bold !text-[#000000] !text-[28px] md:!text-[64px] leading-tight md:leading-[85px] max-w-[340px] sm:max-w-[450px] md:max-w-[550px]"
           >
-            Grow With Nature, Build With Purpose
+            Grow With Nature,<br className="md:hidden" /> Build With Pupose
           </h1>
           <p
-            className="font-inter font-normal text-white"
-            style={{ fontSize: 24, lineHeight: "29px", maxWidth: 504 }}
+            className="font-inter font-normal text-black !text-[15px] md:!text-[24px] leading-relaxed md:leading-[29px] max-w-[340px] sm:max-w-[400px] md:max-w-[504px]"
           >
             Join our passionate team and help us bring the power of nature to the world.
           </p>
           <a
             href="#openings"
-            className="inline-flex items-center justify-center font-inter font-semibold hover:bg-[#2A4F38] transition-all"
-            style={{ width: 218, height: 43, background: "#1D3B29", fontSize: 16, color: "#FFFFFF" }}
+            style={{ color: '#ffffff', backgroundColor: '#1D3B29' }}
+            className="inline-flex items-center justify-center font-inter font-semibold hover:bg-[#2A4F38] transition-all rounded-[8px] text-[12px] md:text-[14px] w-fit px-4 py-2 md:px-5 md:py-2"
           >
             Explore Opportunities
           </a>
@@ -177,78 +179,51 @@ export default function CareerContent() {
       </section>
 
       {/* ── CURRENT OPENINGS ───────────────────────────────── */}
-      <section id="openings" className="w-full" style={{ background: "#FCFAF4", paddingTop: 80, paddingBottom: 60 }}>
-        <div className="w-full max-w-[1440px] mx-auto" style={{ paddingLeft: 100 }}>
+      <section id="openings" className="w-full py-16 md:py-20 bg-[#FCFAF4]">
+        <div className="w-full max-w-[1440px] mx-auto px-6 md:px-0 md:pl-[100px]">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="font-playfair font-semibold text-[#2E2E2E]"
-            style={{ fontSize: 48, lineHeight: "64px", marginBottom: 40 }}
+            className="font-playfair font-semibold text-[#2E2E2E] text-[32px] md:text-[48px] leading-tight md:leading-[64px] mb-8 md:mb-10"
           >
             Current Openings
           </motion.h2>
 
-          {/* Row 1 */}
-          <div className="flex gap-6 mb-6 flex-wrap">
-            {jobs.slice(0, 3).map((job, i) => (
-              <JobCard key={i} {...job} />
-            ))}
-          </div>
-          {/* Row 2 */}
-          <div className="flex gap-6 flex-wrap">
-            {jobs.slice(3, 6).map((job, i) => (
-              <JobCard key={i + 3} {...job} />
+          {/* Openings Container */}
+          <div className="flex flex-col md:flex-row md:flex-wrap gap-6 justify-start">
+            {jobs.map((job, i) => (
+              <JobCard key={i} {...job} onApply={handleApplyClick} />
             ))}
           </div>
         </div>
       </section>
 
       {/* ── APPLY NOW SECTION ──────────────────────────────── */}
-      <section className="w-full" style={{ background: "#FCFAF4", paddingBottom: 80 }}>
-        <div
-          className="w-full max-w-[1440px] mx-auto relative flex gap-0"
-          style={{ paddingLeft: 100, paddingRight: 100 }}
-        >
+      <section id="apply-form" className="w-full pb-16 md:pb-20 bg-[#FCFAF4]">
+        <div className="w-full max-w-[1440px] mx-auto flex flex-col lg:flex-row gap-12 px-6 lg:px-[100px]">
           {/* Left: Image */}
-          <div className="relative flex-shrink-0 rounded-2xl overflow-hidden" style={{ width: 548, height: 419 }}>
+          <div className="relative flex-shrink-0 rounded-2xl overflow-hidden w-full lg:w-[548px] h-[280px] lg:h-[419px]">
             <Image
               src="/images/career/career.png"
               alt="Apply to V Stories"
               fill
               className="object-cover"
             />
-            {/* Overlay text */}
-            <div
-              className="absolute inset-0 flex items-center justify-center"
-              style={{ background: "rgba(29,59,41,0.5)" }}
-            >
-              <p
-                className="font-inter font-medium text-center"
-                style={{ fontSize: 24, lineHeight: "32px", padding: "24px", color: "#FFFFFF" }}
-              >
-                Great people grow here. So does impact.
-              </p>
-            </div>
           </div>
 
           {/* Right: Form */}
-          <div className="flex flex-col gap-6 flex-1" style={{ paddingLeft: 96 }}>
+          <div className="flex flex-col gap-6 flex-1 lg:pl-24">
             <h2
-              className="font-playfair font-semibold text-black"
-              style={{ fontSize: 32, lineHeight: "43px" }}
+              className="font-playfair font-semibold text-black text-[28px] md:text-[32px] leading-tight md:leading-[43px]"
             >
               Apply Now!
             </h2>
 
-            <form onSubmit={handleSubmit} className="relative" style={{ height: 352 }}>
+            <form onSubmit={handleSubmit} className="relative w-full lg:h-[352px] flex flex-col lg:block gap-6 lg:gap-0">
               {/* Name */}
               <div
-                className="absolute flex items-center"
-                style={{
-                  left: 0, top: 0, width: 310, height: 43,
-                  borderBottom: "1px solid #2E2E2E",
-                }}
+                className="lg:absolute flex items-center w-full lg:w-[310px] h-[43px] border-b border-[#2E2E2E] lg:left-0 lg:top-0"
               >
                 <input
                   type="text"
@@ -263,11 +238,7 @@ export default function CareerContent() {
 
               {/* Phone */}
               <div
-                className="absolute flex items-center gap-2"
-                style={{
-                  left: 334, top: 0, width: 310, height: 52,
-                  borderBottom: "1px solid #2E2E2E",
-                }}
+                className="lg:absolute flex items-center gap-2 w-full lg:w-[310px] h-[43px] border-b border-[#2E2E2E] lg:left-[334px] lg:top-0"
               >
                 <div className="flex items-center gap-1 flex-shrink-0 relative">
                   <select
@@ -298,11 +269,7 @@ export default function CareerContent() {
 
               {/* Email */}
               <div
-                className="absolute flex items-center"
-                style={{
-                  left: 0, top: 72, width: 310, height: 43,
-                  borderBottom: "1px solid #2E2E2E",
-                }}
+                className="lg:absolute flex items-center w-full lg:w-[310px] h-[43px] border-b border-[#2E2E2E] lg:left-0 lg:top-[72px]"
               >
                 <input
                   type="email"
@@ -317,11 +284,7 @@ export default function CareerContent() {
 
               {/* Job Position */}
               <div
-                className="absolute flex items-center"
-                style={{
-                  left: 334, top: 72, width: 310, height: 43,
-                  borderBottom: "1px solid #2E2E2E",
-                }}
+                className="lg:absolute flex items-center w-full lg:w-[310px] h-[43px] border-b border-[#2E2E2E] lg:left-[334px] lg:top-[72px]"
               >
                 <input
                   type="text"
@@ -335,12 +298,7 @@ export default function CareerContent() {
 
               {/* Message */}
               <div
-                className="absolute flex items-start"
-                style={{
-                  left: 0, top: 144, width: 644, height: 79,
-                  borderBottom: "1px solid #2E2E2E",
-                  paddingTop: 12,
-                }}
+                className="lg:absolute flex items-start w-full lg:w-[644px] h-[79px] border-b border-[#2E2E2E] pt-3 lg:left-0 lg:top-[144px]"
               >
                 <textarea
                   placeholder="Message"
@@ -354,32 +312,18 @@ export default function CareerContent() {
 
               {/* Upload File box */}
               <div
-                className="absolute flex items-center"
-                style={{
-                  left: 0, top: 252, width: 513, height: 48,
-                  border: "1px solid #2E2E2E",
-                  borderRadius: 4,
-                }}
+                className="lg:absolute flex items-center w-full lg:w-[513px] h-[48px] border border-[#2E2E2E] rounded-[4px] lg:left-0 lg:top-[252px]"
               >
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
-                  className="flex items-center gap-1 font-inter font-normal text-[#1D3B29]"
-                  style={{
-                    margin: 8,
-                    padding: "4px 12px",
-                    border: "1px solid #1D3B29",
-                    borderRadius: 4,
-                    fontSize: 16,
-                    background: "transparent",
-                  }}
+                  className="flex items-center gap-1 font-inter font-normal text-[#1D3B29] mx-2 px-3 py-1 border border-[#1D3B29] rounded-[4px] text-[16px] bg-transparent"
                 >
                   <Upload className="w-4 h-4" />
                   Upload File
                 </button>
                 <span
-                  className="font-inter font-normal text-[#2E2E2E] ml-2"
-                  style={{ fontSize: 12, lineHeight: "15px" }}
+                  className="font-inter font-normal text-[#2E2E2E] ml-2 text-[12px] leading-[15px]"
                 >
                   {fileName}
                 </span>
@@ -393,8 +337,7 @@ export default function CareerContent() {
               </div>
 
               <p
-                className="absolute font-inter font-light text-[#2E2E2E]"
-                style={{ left: 0, top: 316, fontSize: 12, lineHeight: "15px" }}
+                className="lg:absolute font-inter font-light text-[#2E2E2E] text-[12px] leading-[15px] lg:left-0 lg:top-[316px] mt-1 lg:mt-0"
               >
                 Drag & drop your file here (PDF, DOCX, JPG, PNG) Max size: 5MB
               </p>
@@ -402,14 +345,8 @@ export default function CareerContent() {
               {/* Submit */}
               <button
                 type="submit"
-                className="absolute font-inter font-semibold rounded-[8px] hover:bg-[#2A4F38] transition-all"
-                style={{
-                  left: 537, top: 252,
-                  width: 103, height: 43,
-                  background: "#1D3B29",
-                  fontSize: 16,
-                  color: "#FFFFFF",
-                }}
+                style={{ color: '#ffffff', backgroundColor: '#1D3B29' }}
+                className="self-end lg:absolute font-inter font-semibold rounded-[8px] hover:bg-[#2A4F38] transition-all text-[16px] w-[103px] h-[43px] lg:left-[537px] lg:top-[252px] mt-4 lg:mt-0"
               >
                 Submit
               </button>
@@ -417,40 +354,6 @@ export default function CareerContent() {
           </div>
         </div>
       </section>
-      {/* ── TRUST BAR ─────────────────────────────────────── */}
-      <div style={{ background: "#F7F3EF", height: 185, display: "flex", alignItems: "center", marginTop: 40 }}>
-        <div className="w-full max-w-[1440px] mx-auto px-[100px]">
-          <div className="flex items-center justify-around">
-            {[
-              {
-                title: "Free Shipping",
-                desc: "On orders above ₹799",
-                icon: "/images/icons/shippings.png",
-              },
-              {
-                title: "Cash On Delivery",
-                desc: "₹25 Per Order",
-                icon: "/images/icons/savings.png",
-              },
-              {
-                title: "Secure Payments",
-                desc: "Razor pay Payment",
-                icon: "/images/icons/payments.png",
-              },
-            ].map((item, idx) => (
-              <div key={idx} className="flex flex-col items-center gap-3">
-                <div className="relative w-[50px] h-[50px]">
-                  <Image src={item.icon} alt={item.title} fill className="object-contain" />
-                </div>
-                <div className="flex flex-col items-center">
-                  <span className="font-playfair font-semibold text-[#2E2E2E]" style={{ fontSize: 24 }}>{item.title}</span>
-                  <span className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: 16 }}>{item.desc}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

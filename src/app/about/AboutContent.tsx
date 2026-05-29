@@ -54,7 +54,7 @@ function ValueOrb({
         }}
       />
       <div className="relative flex items-center justify-center" style={{ width: 140, height: 140 }}>
-        <div className="absolute inset-0 rounded-full" style={{ background: "linear-gradient(180deg, #FCFAF4 0%, #D8AE5E 100%)" }} />
+        <div className="absolute inset-0 rounded-full" style={{ background: "linear-gradient(135deg, #CBA45A 0%, #FFEAC3 50%, #C39641 100%)" }} />
         <div
           className="absolute flex items-center justify-center rounded-full"
           style={{ width: 100, height: 100, marginTop: -45, background: "#1D3B29", boxShadow: "0px 4px 15px rgba(0,0,0,0.2)" }}
@@ -85,39 +85,17 @@ function MobileValueCard({
   desc: string;
 }) {
   return (
-    <div className="flex flex-col items-center text-center gap-[16px]">
-      <div className="relative w-[150px] h-[150px]">
-        {/* Outer golden circle */}
-        <div 
-          className="absolute inset-0 rounded-full" 
-          style={{ 
-            background: "linear-gradient(231.77deg, #CBA45A 16.84%, #FFEAC3 54.23%, #C39641 91.63%)" 
-          }} 
-        />
-        {/* Inner green circle */}
-        <div 
-          className="absolute rounded-full flex items-center justify-center bg-[#1D3B29]"
-          style={{
-            width: "100px",
-            height: "100px",
-            top: 0,
-            left: "25px",
-            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.25)"
-          }}
-        >
+    <div className="flex flex-col items-center text-center gap-3 px-2">
+      <div className="relative flex items-center justify-center w-[100px] h-[100px]">
+        <div className="absolute inset-0 rounded-full" style={{ background: "linear-gradient(135deg, #CBA45A 0%, #FFEAC3 50%, #C39641 100%)" }} />
+        <div className="relative flex items-center justify-center w-[72px] h-[72px] rounded-full bg-[#1D3B29] shadow-md">
           <div className="relative w-8 h-8">
             <Image src={iconSrc} alt={title} fill className="object-contain" />
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-[12px] max-w-[239px]">
-        <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: "24px", lineHeight: "29px" }}>
-          {title}
-        </span>
-        <span className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: "16px", lineHeight: "19px" }}>
-          {desc}
-        </span>
-      </div>
+      <span className="font-inter font-semibold text-[#2E2E2E] text-base leading-5">{title}</span>
+      <span className="font-inter font-normal text-[#2E2E2E] text-xs leading-4 max-w-[150px]">{desc}</span>
     </div>
   );
 }
@@ -127,7 +105,7 @@ function TimelineItem({ year, title, desc }: { year: string; title: string; desc
   return (
     <div className="relative flex flex-col items-center" style={{ width: 292 }}>
       <div
-        className="flex items-center justify-center rounded-full"
+        className="flex items-center justify-center rounded-full relative z-20"
         style={{ width: 100, height: 100, background: "linear-gradient(231.77deg,#CBA45A 16.84%,#FFEAC3 54.23%,#C39641 91.63%)" }}
       >
         <span className="font-inter font-normal text-[#1D3B29]" style={{ fontSize: 24 }}>
@@ -136,7 +114,7 @@ function TimelineItem({ year, title, desc }: { year: string; title: string; desc
       </div>
       <div
         className="flex flex-col items-center justify-center text-center relative z-10"
-        style={{ width: 292, height: 177, marginTop: 16, background: "#F3EEE9", borderRadius: 24, padding: "0 24px" }}
+        style={{ width: 292, height: 177, marginTop: -50, background: "#F3EEE9", borderRadius: 24, padding: "30px 24px 0" }}
       >
         <span className="font-inter font-semibold text-[#1D3B29] mb-2" style={{ fontSize: 24, lineHeight: "29px" }}>
           {title}
@@ -145,7 +123,7 @@ function TimelineItem({ year, title, desc }: { year: string; title: string; desc
           {desc}
         </span>
       </div>
-      <div className="flex items-center justify-center rounded-full" style={{ width: 16, height: 16, marginTop: 6, background: "#E8BF72" }}>
+      <div className="flex items-center justify-center rounded-full relative z-10" style={{ width: 16, height: 16, marginTop: 24, background: "linear-gradient(135deg, #CBA45A 0%, #FFEAC3 50%, #C39641 100%)" }}>
         <div style={{ width: 10, height: 10, background: "#1D3B29", borderRadius: "50%" }} />
       </div>
     </div>
@@ -160,7 +138,7 @@ function MobileTimelineItem({ year, title, desc, isLast }: { year: string; title
         <div className="flex items-center justify-center w-[72px] h-[72px] rounded-full bg-gradient-to-br from-[#CBA45A] via-[#FFEAC3] to-[#C39641]">
           <span className="font-inter font-normal text-[#1D3B29] text-lg">{year}</span>
         </div>
-        {!isLast && <div className="w-0.5 flex-1 min-h-[24px] bg-[#E8BF72]/60 my-1" />}
+        {!isLast && <div className="w-0.5 flex-1 min-h-[24px] bg-gradient-to-b from-[#CBA45A] via-[#FFEAC3] to-[#C39641] opacity-60 my-1" />}
       </div>
       <div className="flex-1 min-w-0 pb-6">
         <div className="bg-[#F3EEE9] rounded-2xl px-4 py-5 text-center">
@@ -202,51 +180,32 @@ const TIMELINE = [
   { year: "2024", title: "New Horizons", desc: "Introducing new product lines and B2B partnerships." },
 ];
 
-const TRUST_FEATURES = [
-  { title: "Free Shipping", desc: "On orders above ₹799", icon: "/images/icons/shippings.png" },
-  { title: "Cash On Delivery", desc: "₹25 Per Order", icon: "/images/icons/savings.png" },
-  { title: "Secure Payments", desc: "Razor Pay Payment", icon: "/images/icons/payments.png" },
-];
 
 export default function AboutContent() {
   return (
     <div style={{ background: "#FCFAF4" }}>
       {/* ── 1. HERO ──────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[#F5F5F5] h-[762px] lg:h-[781px]">
-        <Image src="/images/about/hero-about.png" alt="About Hero" fill className="object-cover object-[center_bottom] lg:object-center" priority />
+      <section className="relative overflow-hidden bg-[#F5F5F5] min-h-[420px] sm:min-h-[500px] lg:min-h-0 lg:h-[781px]">
+        <Image src="/images/about/hero-about.png" alt="About Hero" fill className="object-cover" priority />
 
         {/* Mobile hero */}
-        <div className="lg:hidden relative z-10 px-[20px] pt-[80px]">
+        <div className="lg:hidden relative z-10 px-4 sm:px-6 pt-20 pb-10 sm:pt-24 sm:pb-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex flex-col items-start gap-[32px] w-full"
+            className="flex flex-col gap-4 sm:gap-6 max-w-full"
           >
-            <h1 
-              className="font-playfair font-semibold text-[#000000]" 
-              style={{ fontSize: "48px", lineHeight: "64px" }}
-            >
+            <h1 className="font-playfair font-semibold text-[#000000] text-[28px] sm:text-4xl leading-tight sm:leading-[1.2] max-w-full">
               Born from Nature. Built for Indian Skin.
             </h1>
-            <p 
-              className="font-inter font-normal text-[#000000]" 
-              style={{ fontSize: "16px", lineHeight: "19px" }}
-            >
+            <p className="font-inter font-normal text-[#000000] text-sm sm:text-base leading-relaxed max-w-full">
               At Vstories, we blend time-tested herbs with modern formulation science to create skincare and haircare that actually works in Indian conditions from heat and humidity to pollution and stress.
             </p>
             <Link
               href="#our-story"
-              className="flex justify-center items-center font-inter font-medium transition-all"
-              style={{ 
-                width: "167px", 
-                height: "43px", 
-                background: "#1D3B29", 
-                borderRadius: "8px",
-                color: "#F7EDE2",
-                fontSize: "16px",
-                lineHeight: "19px"
-              }}
+              className="inline-flex items-center justify-center font-inter font-medium hover:opacity-90 transition-all w-full sm:w-auto sm:min-w-[183px] h-11 px-6 bg-[#1D3B29] rounded-lg text-sm sm:text-base"
+              style={{ color: "#F7EDE2" }}
             >
               Explore Our Story
             </Link>
@@ -286,23 +245,13 @@ export default function AboutContent() {
       <section className="relative overflow-hidden bg-[#FCFAF4] py-10 sm:py-12 lg:pt-[60px] lg:pb-10">
         {/* Mobile values grid */}
         <div className="lg:hidden px-4 sm:px-6">
-          <div className="flex flex-col items-center text-center gap-[16px] mb-[40px]">
-            <div className="flex items-center gap-[12px]">
-              <div className="relative w-6 h-6">
-                <Image src="/images/icons/leafleft.png" alt="Leaf Left" fill className="object-contain" />
-              </div>
-              <span className="font-playfair font-normal text-[#000000]" style={{ fontSize: "16px", lineHeight: "21px" }}>
-                Our Values
-              </span>
-              <div className="relative w-6 h-6">
-                <Image src="/images/icons/leafright.png" alt="Leaf Right" fill className="object-contain" />
-              </div>
-            </div>
-            <h2 className="font-playfair font-semibold text-[#2E2E2E]" style={{ fontSize: "32px", lineHeight: "43px" }}>
+          <div className="flex flex-col items-center text-center gap-3 mb-8">
+            <SectionTag label="Our Values" />
+            <h2 className="font-playfair font-semibold text-[#1D3B29] text-2xl sm:text-3xl leading-tight">
               What We Stand For
             </h2>
           </div>
-          <div className="flex flex-col gap-[40px] max-w-md mx-auto">
+          <div className="grid grid-cols-2 gap-6 sm:gap-8 max-w-md mx-auto">
             {VALUES.map((value) => (
               <MobileValueCard key={value.title} {...value} />
             ))}
@@ -368,25 +317,28 @@ export default function AboutContent() {
       {/* ── 3. VISION & MISSION ──────────────────────────────── */}
       <section className="py-10 sm:py-12 lg:py-16 bg-[#FCFAF4]">
         {/* Mobile cards */}
-        <div className="lg:hidden px-4 sm:px-6 flex flex-col gap-[32px] items-center">
-          {/* Vision */}
-          <div className="relative w-full max-w-[400px] min-h-[386px] rounded-[12px] overflow-hidden bg-[#F9F6F1]">
-            <Image src="/images/about/vission.png" alt="Our Vision" fill className="object-cover" />
-            <div className="relative z-10 flex flex-col gap-[16px] pl-[94px] pr-4 pt-[49px] pb-6">
-              <h3 className="font-playfair font-semibold text-[#2E2E2E]" style={{ fontSize: "32px", lineHeight: "43px" }}>Our Vission</h3>
-              <p className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: "16px", lineHeight: "19px" }}>
-                To take nature-rooted Indian beauty from Keelakarai to the world, creating trusted skincare and haircare inspired by purity and care. We envision a future where traditional herbal wisdom meets modern science to create products that are safe, effective, and made for everyday lifestyles. Through honest formulations and thoughtful innovation, V Stories aims to bring authentic Indian wellness to homes across the globe.
+        <div className="lg:hidden px-4 sm:px-6 flex flex-col gap-6 max-w-lg mx-auto">
+          <div className="relative overflow-hidden rounded-xl bg-[#F9F6F1]">
+            <div className="relative w-full h-44 sm:h-52">
+              <Image src="/images/about/vission.png" alt="Our Vision" fill className="object-cover" />
+            </div>
+            <div className="px-4 sm:px-6 py-5 flex flex-col gap-3">
+              <h3 className="font-playfair font-semibold text-[#2E2E2E] text-xl sm:text-2xl leading-snug">Our Vision</h3>
+              <p className="font-inter font-normal text-[#2E2E2E] text-sm sm:text-base leading-relaxed">
+                To take nature-rooted Indian beauty from Keelakarai to the world, creating trusted skincare and haircare inspired by purity and care.<br></br> We envision a future where traditional herbal wisdom meets modern science to create products that are safe, effective, and made for everyday lifestyles. Through honest formulations and thoughtful innovation, V Stories aims to bring authentic Indian wellness to homes across the globe.
               </p>
             </div>
           </div>
 
-          {/* Mission */}
-          <div className="relative w-full max-w-[400px] min-h-[398px] rounded-[12px] overflow-hidden bg-[#778E6B]">
-            <Image src="/images/about/mission.png" alt="Our Mission" fill className="object-cover" />
-            <div className="relative z-10 flex flex-col gap-[16px] pl-[122px] pr-4 pt-[27px] pb-6">
-              <h3 className="font-playfair font-semibold text-[#FFFFFF]" style={{ fontSize: "32px", lineHeight: "43px" }}>Our Mission</h3>
-              <p className="font-inter font-normal text-[#FFFFFF]" style={{ fontSize: "16px", lineHeight: "19px" }}>
-                To craft honest herbal skincare and haircare for modern lifestyles, blending nature and science for safe, effective everyday wellness. We are committed to creating gentle, high-quality products using carefully selected herbal ingredients and skin-friendly formulations. Every V Stories product is designed to nourish, protect, and support healthy skin and hair while staying rooted in transparency, sustainability, and authentic Indian care traditions.
+          <div className="relative overflow-hidden rounded-xl bg-[#778E6B]">
+            <div className="relative w-full h-44 sm:h-52">
+              <Image src="/images/about/mission.png" alt="Our Mission" fill className="object-cover" />
+            </div>
+            <div className="px-4 sm:px-6 py-5 flex flex-col gap-3">
+              <h3 className="font-playfair font-semibold text-white text-xl sm:text-2xl leading-snug" style={{ color: "#FFFFFF" }}>Our Mission</h3>
+              <p className="font-inter font-normal text-white text-sm sm:text-base leading-relaxed" style={{ color: "#FFFFFF" }}>
+                To craft honest herbal skincare and haircare for modern lifestyles, blending nature and science for safe, effective everyday wellness.<br />
+                We are committed to creating gentle, high-quality products using carefully selected herbal ingredients and skin-friendly formulations. Every V Stories product is designed to nourish, protect, and support healthy skin and hair while staying rooted in transparency, sustainability, and authentic Indian care traditions.
               </p>
             </div>
           </div>
@@ -397,23 +349,27 @@ export default function AboutContent() {
           <div className="flex gap-6" style={{ width: 1240, height: 338 }}>
             <div className="relative overflow-hidden" style={{ width: 608, height: 338, background: "#F9F6F1", borderRadius: 12, flexShrink: 0 }}>
               <Image src="/images/about/vission.png" alt="Our Vision" fill className="object-cover" />
-              <div className="absolute flex flex-col gap-4" style={{ left: 234, top: 35, width: 345 }}>
-                <h3 className="font-playfair font-semibold text-[#2E2E2E]" style={{ fontSize: 32, lineHeight: "43px" }}>
-                  Our Vision
+              <div className="absolute flex flex-col justify-center" style={{ left: 234, top: 0, bottom: 0, width: 345, paddingRight: 20 }}>
+                <h3 className="font-playfair font-semibold text-[#2E2E2E] mb-2" style={{ fontSize: 32, lineHeight: "43px" }}>
+                  Our Vission
                 </h3>
-                <p className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: 16, lineHeight: "19px" }}>
-                  To take nature-rooted Indian beauty from Keelakarai to the world, creating trusted skincare and haircare inspired by purity and care. We envision a future where traditional herbal wisdom meets modern science to create products that are safe, effective, and made for everyday lifestyles. Through honest formulations and thoughtful innovation, V Stories aims to bring authentic Indian wellness to homes across the globe.
+                <p className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: 14, lineHeight: "20px" }}>
+                  To take nature-rooted Indian beauty from Keelakarai to the world, creating trusted skincare and haircare inspired by purity and care.
+                  <br />
+                  We envision a future where traditional herbal wisdom meets modern science to create products that are safe, effective, and made for everyday lifestyles. Through honest formulations and thoughtful innovation, V Stories aims to bring authentic Indian wellness to homes across the globe.
                 </p>
               </div>
             </div>
             <div className="relative overflow-hidden" style={{ width: 608, height: 338, background: "#778E6B", borderRadius: 12, flexShrink: 0 }}>
               <Image src="/images/about/mission.png" alt="Our Mission" fill className="object-cover" />
-              <div className="absolute flex flex-col gap-4" style={{ left: 257, top: 16, width: 324 }}>
-                <h3 className="font-playfair font-semibold text-white" style={{ fontSize: 32, lineHeight: "43px" }}>
+              <div className="absolute flex flex-col justify-center" style={{ left: 257, top: 0, bottom: 0, width: 324, paddingRight: 20 }}>
+                <h3 className="font-playfair font-semibold text-white mb-2" style={{ fontSize: 32, lineHeight: "43px", color: "#FFFFFF" }}>
                   Our Mission
                 </h3>
-                <p className="font-inter font-normal text-white" style={{ fontSize: 16, lineHeight: "19px" }}>
-                  To craft honest herbal skincare and haircare for modern lifestyles, blending nature and science for safe, effective everyday wellness. We are committed to creating gentle, high-quality products using carefully selected herbal ingredients and skin-friendly formulations. Every V Stories product is designed to nourish, protect, and support healthy skin and hair while staying rooted in transparency, sustainability, and authentic Indian care traditions.
+                <p className="font-inter font-normal text-white" style={{ fontSize: 14, lineHeight: "20px", color: "#FFFFFF" }}>
+                  To craft honest herbal skincare and haircare for modern lifestyles, blending nature and science for safe, effective everyday wellness.
+                  <br />
+                  We are committed to creating gentle, high-quality products using carefully selected herbal ingredients and skin-friendly formulations. Every V Stories product is designed to nourish, protect, and support healthy skin and hair while staying rooted in transparency, sustainability, and authentic Indian care traditions.
                 </p>
               </div>
             </div>
@@ -422,7 +378,7 @@ export default function AboutContent() {
       </section>
 
       {/* ── 4. GROWING TOGETHER (timeline) ───────────────────── */}
-      <section className="relative overflow-hidden bg-[#1D3B29] py-10 sm:py-12 lg:min-h-[645px] lg:pt-[60px] lg:pb-[60px]">
+      <section className="relative overflow-hidden bg-[#1D3B29] py-10 sm:py-12 lg:pt-[60px] lg:pb-[60px]">
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-[100px]">
           <div className="flex flex-col items-center text-center gap-3 sm:gap-4 mb-8 lg:mb-8">
             <SectionTag label="Our Journey" dark />
@@ -449,7 +405,7 @@ export default function AboutContent() {
               className="absolute left-0 w-full"
               style={{
                 height: "12px",
-                top: "307px",
+                top: "259px",
                 backgroundImage: "url('/images/about/our%20journey.png')",
                 backgroundSize: "100% 100%",
                 backgroundRepeat: "no-repeat",
@@ -560,26 +516,6 @@ export default function AboutContent() {
         </div>
       </section>
 
-      {/* ── 6. TRUST BAR ─────────────────────────────────────── */}
-      <div className="bg-[#F7F3EF] py-8 lg:h-[185px] lg:py-0 flex items-center">
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-[100px]">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-around gap-8 sm:gap-4 lg:gap-0">
-            {TRUST_FEATURES.map((feature) => (
-              <div key={feature.title} className="flex flex-col items-center gap-3 w-full max-w-[216px] mx-auto sm:mx-0">
-                <div className="relative w-10 h-10">
-                  <Image src={feature.icon} alt={feature.title} fill className="object-contain" />
-                </div>
-                <h4 className="font-playfair font-semibold text-[#2E2E2E] text-center text-lg lg:text-2xl lg:leading-8">
-                  {feature.title}
-                </h4>
-                <p className="font-inter font-normal text-[#2E2E2E] text-center text-sm lg:text-base lg:leading-[19px]">
-                  {feature.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

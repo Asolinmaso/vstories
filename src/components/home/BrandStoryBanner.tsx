@@ -27,9 +27,9 @@ export default function BrandStoryBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="font-playfair font-semibold text-white text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px] max-w-[486px]"
+              className="font-playfair font-semibold text-white text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[1.2] max-w-[486px]"
             >
-              More Than Skincare. <br /> A Story of Care.
+              More Than Skincare.<br />A Story of Care.
             </motion.h2>
 
             <motion.p
@@ -37,9 +37,9 @@ export default function BrandStoryBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="font-inter font-normal mt-4 text-white font-light text-base sm:text-lg lg:text-2xl lg:leading-[29px] max-w-[562px]"
+              className="font-inter font-normal mt-4 text-white font-light text-base sm:text-lg lg:text-[22px] lg:leading-[1.4] max-w-[562px]"
             >
-              Inspired by real experiences, built for Indian skin, our journey blends tradition with modern science.
+              Inspired by real experiences, built for Indian skin,<br />our journey blends tradition with modern science.
             </motion.p>
 
             <motion.div
@@ -50,15 +50,14 @@ export default function BrandStoryBanner() {
             >
               <Link
                 href="/about"
-                className="inline-flex items-center justify-center font-inter font-medium mt-8 hover:opacity-90 transition-all"
+                className="inline-flex items-center justify-center font-inter font-medium mt-6 hover:opacity-90 transition-all"
                 style={{
-                  width: "181px",
-                  height: "43px",
+                  width: "160px",
+                  height: "40px",
                   border: "1px solid #E8BF72",
-                  borderRadius: "8px",
+                  borderRadius: "6px",
                   color: "#E8BF72",
-                  fontSize: "16px",
-                  lineHeight: "19px",
+                  fontSize: "14px",
                 }}
               >
                 Know Our Story

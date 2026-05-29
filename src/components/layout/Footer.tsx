@@ -20,10 +20,10 @@ const categories = [
 ];
 
 const policies = [
-    { href: "/policies/privacy", label: "Privacy Policies" },
-    { href: "/policies/terms", label: "Terms & Conditions" },
-    { href: "/policies/shipping", label: "Shipping & Cancellations" },
-    { href: "/policies/returns", label: "Returns & Refunds" },
+    { href: "https://docs.google.com/document/d/1bDH1icRD7yNGTE2o9QGW-P_JRlcmf9Cml8hFaoMMAEw/edit?usp=sharing", label: "Privacy Policies" },
+    { href: "https://docs.google.com/document/d/1bDH1icRD7yNGTE2o9QGW-P_JRlcmf9Cml8hFaoMMAEw/edit?usp=sharing", label: "Terms & Conditions" },
+    { href: "https://docs.google.com/document/d/1bDH1icRD7yNGTE2o9QGW-P_JRlcmf9Cml8hFaoMMAEw/edit?usp=sharing", label: "Shipping & Cancellations" },
+    { href: "https://docs.google.com/document/d/1bDH1icRD7yNGTE2o9QGW-P_JRlcmf9Cml8hFaoMMAEw/edit?usp=sharing", label: "Returns & Refunds" },
     { href: "/contact", label: "Collaboration & Partnership" },
 ];
 
@@ -33,11 +33,11 @@ function SocialIcon({ src, href, label }: { src: string; href: string; label: st
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 rounded-full border border-[#E8BF72] flex items-center justify-center hover:bg-[#E8BF72] transition-all duration-300"
+            className="w-10 h-10 rounded-full border border-[#E8BF72] flex items-center justify-center hover:bg-[#E8BF72] transition-all duration-300 group"
             aria-label={label}
         >
             <div className="relative w-5 h-5">
-                <Image src={src} alt={label} fill className="object-contain" />
+                <Image src={src} alt={label} fill className="object-contain transition-all duration-300 group-hover:brightness-0" />
             </div>
         </a>
     );
@@ -45,10 +45,10 @@ function SocialIcon({ src, href, label }: { src: string; href: string; label: st
 
 function ContactItem({ iconSrc, text, href }: { iconSrc: string; text: string; href?: string }) {
     const content = (
-        <div className="flex items-center gap-4 group">
+        <div className="flex items-center gap-4 group cursor-pointer">
             <div className="w-6 h-6 rounded-full border border-[#E8BF72] flex items-center justify-center group-hover:bg-[#E8BF72] transition-all duration-300">
                 <div className="relative w-3 h-3">
-                    <Image src={iconSrc} alt="Icon" fill className="object-contain" />
+                    <Image src={iconSrc} alt="Icon" fill className="object-contain transition-all duration-300 group-hover:brightness-0" />
                 </div>
             </div>
             <span className="text-[#F7EDE2] font-inter text-base font-normal">{text}</span>
@@ -62,7 +62,7 @@ export default function Footer() {
     return (
         <footer className="bg-[#1D3B29] pt-20 pb-10 overflow-hidden relative" style={{ backgroundColor: '#1D3B29' }}>
             <div className="w-full max-w-[1440px] mx-auto px-4 md:px-[100px]">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-12 mb-20">
+                <div className="flex flex-col lg:flex-row lg:justify-between gap-12 lg:gap-8 mb-20">
                     {/* Column 1: Brand */}
                     <div className="flex flex-col gap-8 lg:col-span-1">
                         <Link href="/" className="w-[180px]">
@@ -118,7 +118,13 @@ export default function Footer() {
                         <ul className="flex flex-col gap-4">
                             {policies.map((link) => (
                                 <li key={link.label}>
-                                    <Link href={link.href} className="font-inter text-[16px] font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors" style={{ color: '#F7EDE2' }}>
+                                    <Link
+                                        href={link.href}
+                                        target={link.href.startsWith('http') ? '_blank' : undefined}
+                                        rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                                        className="font-inter text-[16px] font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors"
+                                        style={{ color: '#F7EDE2' }}
+                                    >
                                         {link.label}
                                     </Link>
                                 </li>
@@ -140,11 +146,11 @@ export default function Footer() {
                                 href="https://wa.me/916383921957"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-10 h-10 rounded-full border border-[#E8BF72] flex items-center justify-center hover:bg-[#E8BF72] transition-all duration-300"
+                                className="w-10 h-10 rounded-full border border-[#E8BF72] flex items-center justify-center hover:bg-[#E8BF72] transition-all duration-300 group"
                                 aria-label="WhatsApp"
                             >
                                 <div className="relative w-5 h-5">
-                                    <Image src="/images/icons/whatsapp.png" alt="WhatsApp" fill className="object-contain" />
+                                    <Image src="/images/icons/whatsapp.png" alt="WhatsApp" fill className="object-contain transition-all duration-300 group-hover:brightness-0" />
                                 </div>
                             </a>
                         </div>
@@ -167,7 +173,7 @@ export default function Footer() {
                 </div>
 
                 {/* Copyright Text */}
-                <div className="text-center mt-4 pb-10">
+                <div className="text-center mt-10 pb-10">
                     <p className="font-inter text-sm font-normal text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>
                         © {new Date().getFullYear()} Vstories. All rights reserved. | Designed & Developed By Manvian
                     </p>

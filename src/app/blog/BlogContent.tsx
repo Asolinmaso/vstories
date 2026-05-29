@@ -6,81 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 
-/* ─── Types ──────────────────────────────────────────────────── */
-interface BlogPost {
-  id: number;
-  slug: string;
-  title: string;
-  excerpt: string;
-  date: string;
-  readTime: string;
-  image: string;
-  category: string;
-}
-
-/* ─── Static blog data ───────────────────────────────────────── */
-const posts: BlogPost[] = [
-  {
-    id: 1,
-    slug: "7-natural-ways-to-strengthen-hair-roots",
-    title: "7 Natural Ways to Strengthen Your Hair Roots",
-    excerpt: "Discover time-tested, natural tips to nourish your scalp and strengthen hair from the roots.",
-    date: "20 Feb, 2026",
-    readTime: "5 Min Read",
-    image: "/images/blog/hair care.png",
-    category: "Hair Care",
-  },
-  {
-    id: 2,
-    slug: "the-power-of-bhringraj-for-healthy-hair",
-    title: "The Power of Bhringraj for Healthy Hair",
-    excerpt: "A closer look at the ancient herb Bhringraj and its amazing benefits for hair growth.",
-    date: "20 Feb, 2026",
-    readTime: "5 Min Read",
-    image: "/images/blog/Incridients.png",
-    category: "Ingredients",
-  },
-  {
-    id: 3,
-    slug: "ayurvedic-skincare-ancient-wisdom-for-glowing-skin",
-    title: "Ayurvedic Skincare: Ancient Wisdom for Glowing Skin",
-    excerpt: "How Ayurveda helps balance your skin naturally for a healthy, radiant glow.",
-    date: "20 Feb, 2026",
-    readTime: "7 Min Read",
-    image: "/images/blog/Skin care.png",
-    category: "Skin Care",
-  },
-  {
-    id: 4,
-    slug: "5-herbs-that-improve-scalp-health-naturally",
-    title: "5 Herbs That Improve Scalp Health Naturally",
-    excerpt: "These powerful herbs can help reduce dandruff, irritation & promote scalp wellness.",
-    date: "20 Feb, 2026",
-    readTime: "5 Min Read",
-    image: "/images/blog/wellness.png",
-    category: "Wellness",
-  },
-  {
-    id: 5,
-    slug: "our-commitment-to-sustainable-beauty",
-    title: "Our Commitment to Sustainable Beauty",
-    excerpt: "From clean ingredients to eco-friendly packaging, here's how we care for you & planet.",
-    date: "20 Feb, 2026",
-    readTime: "5 Min Read",
-    image: "/images/blog/Sustainability.png",
-    category: "Sustainability",
-  },
-  {
-    id: 6,
-    slug: "how-to-build-a-natural-hair-care-routine",
-    title: "How to Build a Natural Hair Care Routine",
-    excerpt: "Simple steps to create a natural hair care routine that works for your hair type.",
-    date: "20 Feb, 2026",
-    readTime: "5 Min Read",
-    image: "/images/blog/Hair.png",
-    category: "Hair Care",
-  },
-];
+import { blogPosts as posts, type BlogPost } from "@/data/blogData";
 
 const categories = ["All Articles", "Hair Care", "Skin Care", "Sustainability", "Wellness"];
 
@@ -92,78 +18,60 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.08 }}
-      className="relative flex-shrink-0"
-      style={{
-        width: 396,
-        background: "#FCFAF4",
-        border: "1px solid #D9D9D9",
-        boxShadow: index % 3 === 0 ? "0px 20px 20px rgba(0,0,0,0.1)" : undefined,
-        borderRadius: 12,
-        overflow: "hidden",
-      }}
+      className="relative w-full bg-white rounded-[20px] overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_35px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col p-4"
     >
-      {/* Image */}
-      <div className="relative" style={{ width: 396, height: 387 }}>
-        <Image src={post.image} alt={post.title} fill className="object-cover" />
-        {/* Category badge */}
-        <span
-          className="absolute bottom-3 left-3 font-inter font-medium text-white px-3 py-1 rounded-full"
-          style={{ fontSize: 13, background: "rgba(29,59,41,0.85)" }}
+      <div className="relative w-full aspect-[4/3] bg-[#EBE7DF] rounded-[16px] overflow-hidden">
+        <Image src={post.image} alt={post.title} fill className="object-cover object-top" />
+        <div
+          className="absolute left-3 bottom-3 px-3 py-1.5 flex items-center gap-1.5 text-xs font-semibold text-white bg-[#1D3B29] rounded-[6px] z-10"
         >
           {post.category}
-        </span>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="relative" style={{ padding: "24px 24px 28px" }}>
-        {/* Title */}
-        <h3
-          className="font-inter font-semibold text-[#2E2E2E]"
-          style={{ fontSize: 24, lineHeight: "29px", marginBottom: 12 }}
-        >
-          {post.title}
-        </h3>
+      <div className="relative pt-4 flex flex-col flex-1 justify-between">
+        <div>
+          {/* Title */}
+          <h3
+            className="font-inter font-semibold text-[#2E2E2E] text-[18px] md:text-[22px] leading-tight mb-2.5"
+          >
+            {post.title}
+          </h3>
 
-        {/* Excerpt */}
-        <p
-          className="font-inter font-normal text-[#2E2E2E]"
-          style={{ fontSize: 16, lineHeight: "19px", marginBottom: 16 }}
-        >
-          {post.excerpt}
-        </p>
-
-        {/* Meta row */}
-        <div className="flex items-center gap-16 mb-5" style={{ width: 348 }}>
-          <div className="flex items-center gap-2">
-            <Calendar size={16} color="#000" />
-            <span className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: 16, lineHeight: "19px" }}>
-              {post.date}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Clock size={16} color="#2E2E2E" />
-            <span className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: 16, lineHeight: "19px" }}>
-              {post.readTime}
-            </span>
-          </div>
+          {/* Excerpt */}
+          <p
+            className="font-inter font-normal text-[#2E2E2E]/70 text-[13px] md:text-[14px] leading-relaxed mb-4"
+          >
+            {post.excerpt}
+          </p>
         </div>
 
-        {/* CTA */}
-        <Link
-          href={`/blog/${post.slug}`}
-          className="inline-flex items-center justify-center font-inter font-medium hover:opacity-90 transition-all"
-          style={{
-            width: 162,
-            height: 43,
-            background: "#1D3B29",
-            borderRadius: 8,
-            fontSize: 16,
-            lineHeight: "19px",
-            color: "#FFFFFF",
-          }}
-        >
-          Read Article
-        </Link>
+        <div>
+          {/* Meta row */}
+          <div className="flex items-center gap-5 mb-4 text-[#2E2E2E]/60 text-xs md:text-sm">
+            <div className="flex items-center gap-1.5">
+              <Calendar size={15} className="text-[#2E2E2E]" />
+              <span className="font-inter font-medium">
+                {post.date}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Clock size={15} className="text-[#2E2E2E]" />
+              <span className="font-inter font-medium">
+                {post.readTime}
+              </span>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <Link
+            href={`/blog/${post.slug}`}
+            className="inline-flex items-center justify-center font-inter font-medium hover:opacity-90 transition-all bg-[#1D3B29] !text-white text-[13px] md:text-[14px] rounded-[8px] px-5 py-2 w-fit"
+          >
+            Read Article
+          </Link>
+        </div>
       </div>
     </motion.div>
   );
@@ -192,31 +100,38 @@ export default function BlogContent() {
       : posts.filter((p) => p.category === activeCategory);
 
   return (
-    <div style={{ background: "#FCFAF4" }}>
+    <div className="bg-[#FCFAF4]">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+      `}} />
 
       {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden" style={{ height: 581, background: "#F5F5F5" }}>
+      <section className="relative overflow-hidden flex flex-col items-center justify-start h-[440px] md:h-[580px] pt-20 md:pt-36 bg-[#F5F5F5]">
         <Image
           src="/images/blog/blog hero.png"
           alt="Our Blog"
           fill
-          className="object-cover"
+          className="object-cover object-left md:object-center"
           priority
         />
         {/* Dark overlay */}
-        <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.35)" }} />
+        <div className="absolute inset-0 bg-black/35" />
 
         {/* Centered content */}
-        <div
-          className="absolute flex flex-col gap-8"
-          style={{ left: 536, top: 171, width: 609 }}
-        >
+        <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-[90%] md:max-w-[700px] gap-3 md:gap-6">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="font-playfair font-semibold text-center"
-            style={{ fontSize: 64, lineHeight: "85px", color: "#E8BF72", width: 262 }}
+            className="font-playfair font-semibold text-center text-[44px] md:text-[64px] leading-tight"
+            style={{ color: "#E8BF72" }}
           >
             Our Blog
           </motion.h1>
@@ -224,8 +139,8 @@ export default function BlogContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-inter font-normal"
-            style={{ fontSize: 24, lineHeight: "29px", color: "#E8BF72", width: 576 }}
+            className="font-inter font-normal text-[15px] md:text-[24px] leading-[22px] md:leading-normal max-w-[340px] md:max-w-[576px]"
+            style={{ color: "#E8BF72" }}
           >
             Natural care tips, ingredient stories, and wellness wisdom for a better you.
           </motion.p>
@@ -233,27 +148,19 @@ export default function BlogContent() {
       </section>
 
       {/* ── CATEGORY FILTERS ─────────────────────────────────── */}
-      <section className="py-10" style={{ background: "#FCFAF4" }}>
-        <div className="w-full max-w-[1440px] mx-auto px-[100px]">
-          <div className="flex items-center gap-6" style={{ width: 738 }}>
+      <section className="py-6 md:py-10 bg-[#FCFAF4]">
+        <div className="w-full max-w-[1440px] mx-auto px-4 md:px-[100px]">
+          <div className="flex items-center gap-3 md:gap-6 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0">
             {categories.map((cat) => {
               const active = cat === activeCategory;
               return (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className="font-inter font-medium transition-all hover:opacity-80"
-                  style={{
-                    height: 43,
-                    padding: "12px 24px",
-                    borderRadius: 32,
-                    fontSize: 16,
-                    lineHeight: "19px",
-                    background: active ? "#1D3B29" : "transparent",
-                    color: active ? "#F7EDE2" : "#1D3B29",
-                    border: active ? "none" : "1px solid #1D3B29",
-                    whiteSpace: "nowrap",
-                  }}
+                  className={`font-inter font-medium transition-all hover:opacity-80 rounded-full text-[14px] md:text-[16px] snap-start whitespace-nowrap px-5 py-2 md:py-2.5 border border-solid ${active
+                    ? "!bg-[#1D3B29] !text-[#F7EDE2] !border-transparent"
+                    : "!bg-white !text-[#1D3B29] !border-[#1D3B29]"
+                    }`}
                 >
                   {cat}
                 </button>
@@ -264,27 +171,16 @@ export default function BlogContent() {
       </section>
 
       {/* ── BLOG GRID ────────────────────────────────────────── */}
-      <section style={{ background: "#FCFAF4", paddingBottom: 80 }}>
-        <div className="w-full max-w-[1440px] mx-auto px-[100px]">
-          <div className="flex flex-col gap-[21px]">
-            {/* Row 1 */}
-            <div className="flex gap-6">
-              {filtered.slice(0, 3).map((post, i) => (
-                <BlogCard key={post.id} post={post} index={i} />
-              ))}
-            </div>
-            {/* Row 2 */}
-            {filtered.length > 3 && (
-              <div className="flex gap-6">
-                {filtered.slice(3, 6).map((post, i) => (
-                  <BlogCard key={post.id} post={post} index={i + 3} />
-                ))}
-              </div>
-            )}
+      <section className="bg-[#FCFAF4] pb-16 md:pb-24">
+        <div className="w-full max-w-[1440px] mx-auto px-4 md:px-[100px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-[24px]">
+            {filtered.map((post, i) => (
+              <BlogCard key={post.id} post={post} index={i} />
+            ))}
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-center gap-10 mt-10">
+          <div className="flex items-center justify-center gap-6 md:gap-10 mt-10 md:mt-12">
             <button
               className="flex items-center justify-center"
               style={{
@@ -313,42 +209,6 @@ export default function BlogContent() {
         </div>
       </section>
 
-      {/* ── TRUST BAR ────────────────────────────────────────── */}
-      <div style={{ background: "#F7F3EF", height: 185, display: "flex", alignItems: "center" }}>
-        <div className="w-full max-w-[1440px] mx-auto px-[100px]">
-          <div className="flex items-center justify-around">
-            {[
-              {
-                title: "Free Shipping",
-                desc: "On orders above ₹799",
-                icon: "/images/icons/shippings.png",
-              },
-              {
-                title: "Cash On Delivery",
-                desc: "₹25 Per Order",
-                icon: "/images/icons/savings.png",
-              },
-              {
-                title: "Secure Payments",
-                desc: "Razor Pay Payment",
-                icon: "/images/icons/payments.png",
-              },
-            ].map((f) => (
-              <div key={f.title} className="flex flex-col items-center gap-3" style={{ width: 216 }}>
-                <div className="relative w-10 h-10">
-                  <Image src={f.icon} alt={f.title} fill className="object-contain" />
-                </div>
-                <h4 className="font-playfair font-semibold text-[#2E2E2E] text-center" style={{ fontSize: 24, lineHeight: "32px" }}>
-                  {f.title}
-                </h4>
-                <p className="font-inter font-normal text-[#2E2E2E] text-center" style={{ fontSize: 16, lineHeight: "19px" }}>
-                  {f.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
     </div>
   );

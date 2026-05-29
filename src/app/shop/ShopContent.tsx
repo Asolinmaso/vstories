@@ -12,6 +12,13 @@ import { useSearchParams } from "next/navigation";
 
 type SortOption = "featured" | "price-asc" | "price-desc" | "name";
 
+const SHOP_CATEGORIES = [
+    { slug: "skin", name: "Skin Care" },
+    { slug: "hair", name: "Hair Care" },
+    { slug: "combos", name: "Combo / Gift Packs" },
+    { slug: "sample-packs", name: "Sample Packs" },
+];
+
 export default function ShopContent({
     initialProducts,
     initialCategories,
@@ -41,6 +48,14 @@ export default function ShopContent({
             if (!selectedCategory) return true;
             if (selectedCategory === "bestseller") return product.is_bestseller;
 
+            // Combos specific logic
+            if (selectedCategory === "combos" || selectedCategory === "combo") {
+                const isCombo = product.combo_product_ids && product.combo_product_ids.length > 0;
+                const pSlug = product.slug.toLowerCase();
+                const pName = product.name.toLowerCase();
+                return isCombo || pSlug.includes('combo') || pName.includes('combo') || pSlug.includes('kit') || pSlug.includes('trio') || pSlug.includes('duo');
+            }
+
             // Match by category_id — try by slug match on the categories list
             const matchedCat = initialCategories.find((c) => c.slug === selectedCategory);
             if (matchedCat) {
@@ -68,10 +83,7 @@ export default function ShopContent({
         { value: "name", label: "Name: A to Z" },
     ];
 
-    const selectedCategoryName =
-        selectedCategory === "bestseller"
-            ? "Bestsellers"
-            : initialCategories.find((c) => c.slug === selectedCategory)?.name;
+    const selectedCategoryName = SHOP_CATEGORIES.find((c) => c.slug === selectedCategory)?.name;
 
     return (
         <div className="bg-[var(--background)] min-h-screen">
@@ -101,7 +113,7 @@ export default function ShopContent({
                                     Categories
                                 </h3>
                                 <ul className="space-y-4">
-                                    <li>
+                                    <li className="pb-4">
                                         <button
                                             onClick={() => setSelectedCategory(null)}
                                             className={`text-sm transition-all hover:translate-x-1 flex items-center gap-2 ${!selectedCategory ? "text-[var(--highlight)] font-bold" : "text-gray-500"}`}
@@ -110,8 +122,8 @@ export default function ShopContent({
                                             All Products
                                         </button>
                                     </li>
-                                    {initialCategories.map((category) => (
-                                        <li key={category.id}>
+                                    {SHOP_CATEGORIES.map((category) => (
+                                        <li key={category.slug}>
                                             <button
                                                 onClick={() => setSelectedCategory(category.slug)}
                                                 className={`text-sm transition-all hover:translate-x-1 flex items-center gap-2 ${selectedCategory === category.slug ? "text-[var(--highlight)] font-bold" : "text-gray-500"}`}
@@ -123,17 +135,6 @@ export default function ShopContent({
                                             </button>
                                         </li>
                                     ))}
-                                    <li>
-                                        <button
-                                            onClick={() => setSelectedCategory("bestseller")}
-                                            className={`text-sm transition-all hover:translate-x-1 flex items-center gap-2 ${selectedCategory === "bestseller" ? "text-[var(--highlight)] font-bold" : "text-gray-500"}`}
-                                        >
-                                            {selectedCategory === "bestseller" && (
-                                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--highlight)]" />
-                                            )}
-                                            Bestsellers
-                                        </button>
-                                    </li>
                                 </ul>
                             </div>
 
@@ -195,7 +196,10 @@ export default function ShopContent({
                                         transition={{ duration: 0.4, delay: (index % 3) * 0.1 }}
                                         className="h-full"
                                     >
-                                        <ProductCard product={product} />
+                                        <ProductCard
+                                            product={product}
+                                            titleStyle={{ fontSize: "24px" }}
+                                        />
                                     </motion.div>
                                 ))}
                             </div>
@@ -259,13 +263,13 @@ export default function ShopContent({
                                         Categories
                                     </h4>
                                     <ul className="space-y-2">
-                                        <li>
+                                        <li className="pb-4">
                                             <button
                                                 onClick={() => {
                                                     setSelectedCategory(null);
                                                     setIsMobileFilterOpen(false);
                                                 }}
-                                                className={`w-full text-left px-4 py-2.5 rounded-lg transition-all ${selectedCategory === null
+                                                className={`w-full text-left px-4 py-2.5 rounded-lg transition-all ${!selectedCategory
                                                     ? "bg-[var(--primary)] text-white font-medium shadow-md"
                                                     : "text-[var(--text-secondary)] hover:bg-[var(--primary)]/5"
                                                     }`}
@@ -273,8 +277,8 @@ export default function ShopContent({
                                                 All Products
                                             </button>
                                         </li>
-                                        {initialCategories.map((category) => (
-                                            <li key={category.id}>
+                                        {SHOP_CATEGORIES.map((category) => (
+                                            <li key={category.slug}>
                                                 <button
                                                     onClick={() => {
                                                         setSelectedCategory(category.slug);
@@ -289,20 +293,6 @@ export default function ShopContent({
                                                 </button>
                                             </li>
                                         ))}
-                                        <li>
-                                            <button
-                                                onClick={() => {
-                                                    setSelectedCategory("bestseller");
-                                                    setIsMobileFilterOpen(false);
-                                                }}
-                                                className={`w-full text-left px-4 py-2.5 rounded-lg transition-all ${selectedCategory === "bestseller"
-                                                    ? "bg-[var(--primary)] text-white font-medium shadow-md"
-                                                    : "text-[var(--text-secondary)] hover:bg-[var(--primary)]/5"
-                                                    }`}
-                                            >
-                                                Bestsellers
-                                            </button>
-                                        </li>
                                     </ul>
                                 </div>
                             </div>

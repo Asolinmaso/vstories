@@ -7,6 +7,14 @@ export async function GET() {
     try {
         const db = supabaseAdmin || supabase;
 
+        // Cleanup old products that were deleted from products.ts
+        await db.from("products").delete().in("slug", [
+            "v-glow-face-serum",
+            "v-natural-face-wash",
+            "herbal-scalp-treatment",
+            "radiance-day-cream"
+        ]);
+
         // 1. Insert Categories
         const categoryMap = new Map<string, string>(); // slug -> uuid 
 
@@ -85,6 +93,13 @@ export async function GET() {
                 if (error) throw new Error(`Error inserting product ${prod.slug}: ${error.message}`);
                 productId = data.id;
                 productsInserted++;
+            } else {
+                // Update images for existing products so changes in products.ts are synced
+                const { error } = await db
+                    .from("products")
+                    .update({ images: prod.images })
+                    .eq("id", productId);
+                if (error) throw new Error(`Error updating product ${prod.slug}: ${error.message}`);
             }
 
             // 3. Insert Sizes

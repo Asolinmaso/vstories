@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,7 +25,7 @@ const testimonials = [
     rating: 5,
     quote: "Finally, a brand that delivers what it promises. My skin has never looked this radiant and clear!",
     productName: "Prophetic-Face Serum",
-    productSlug: "prophetic-face-serum",
+    productSlug: "herbal-face-serum",
   },
   {
     id: 3,
@@ -34,37 +35,70 @@ const testimonials = [
     rating: 5,
     quote: "The herbal hair oil has transformed my thinning hair into thick, healthy locks. Amazing results!",
     productName: "V Herbal Hair Oil",
-    productSlug: "v-herbal-hair-oil",
+    productSlug: "herbal-hair-oil",
   },
 ];
 
 function ComparisonCard({ testimonial }: { testimonial: typeof testimonials[0] }) {
+  const [position, setPosition] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+    setPosition((x / rect.width) * 100);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging || !containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+    setPosition((x / rect.width) * 100);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(false);
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  };
+
   return (
     <div className="flex flex-col bg-white border border-[#EAEAEA] rounded-2xl overflow-hidden shadow-[0px_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0px_12px_36px_rgba(0,0,0,0.08)] transition-all duration-300 w-full max-w-[380px] mx-auto h-auto lg:h-[450px]">
       {/* Before/After Images top section */}
-      <div className="relative w-full h-48 sm:h-56 lg:h-[276px] overflow-hidden select-none flex">
-        {/* Before image */}
+      <div
+        className="relative w-full h-48 sm:h-56 lg:h-[276px] overflow-hidden select-none cursor-ew-resize touch-none"
+        ref={containerRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+      >
+        {/* Base image (Before) */}
         <div
-          className="w-1/2 h-full"
+          className="absolute inset-0 w-full h-full"
           style={{
             backgroundImage: `url(${testimonial.beforeImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         />
-        {/* After image */}
+        {/* Overlay image (After) */}
         <div
-          className="w-1/2 h-full"
+          className="absolute inset-0 w-full h-full"
           style={{
             backgroundImage: `url(${testimonial.afterImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
+            clipPath: `polygon(0 0, ${position}% 0, ${position}% 100%, 0 100%)`,
           }}
         />
         {/* Divider Line */}
         <div
           className="absolute top-0 bottom-0 w-[2px] bg-white z-10 pointer-events-none"
-          style={{ left: "50%", transform: "translateX(-50%)" }}
+          style={{ left: `${position}%`, transform: "translateX(-50%)" }}
         >
           {/* Handle */}
           <div

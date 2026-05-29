@@ -11,6 +11,10 @@ export interface Product {
     original_price: number | null;
     images: string[];
     category_id: string;
+    categories?: {
+        name: string;
+        slug: string;
+    };
     stock: number;
     is_new: boolean;
     is_bestseller: boolean;
@@ -34,6 +38,7 @@ export const getProducts = async (): Promise<Product[]> => {
         .from("products")
         .select(`
             *,
+            categories(name, slug),
             sizes:product_sizes(id, label, price)
         `);
     const filteredData = (data as any[])?.filter(p => p.images && p.images.length > 0) || [];
@@ -45,6 +50,7 @@ export const getProductBySlug = cache(async (slug: string): Promise<Product | nu
         .from("products")
         .select(`
             *,
+            categories(name, slug),
             sizes:product_sizes(id, label, price)
         `)
         .eq("slug", slug)
@@ -58,6 +64,7 @@ export const getFeaturedProducts = async (): Promise<Product[]> => {
         .from("products")
         .select(`
             *,
+            categories(name, slug),
             sizes:product_sizes(id, label, price)
         `)
         .or('is_bestseller.eq.true,is_new.eq.true')
@@ -73,6 +80,7 @@ export const getProductsByIds = async (ids: string[]): Promise<Product[]> => {
         .from("products")
         .select(`
             *,
+            categories(name, slug),
             sizes:product_sizes(id, label, price)
         `)
         .in('id', ids);

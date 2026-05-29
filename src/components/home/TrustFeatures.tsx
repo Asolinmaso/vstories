@@ -4,7 +4,7 @@ export default function TrustFeatures() {
   const features = [
     {
       title: "Free Shipping",
-      desc: "On orders above ₹799",
+      desc: "On orders above ₹749",
       icon: (
         <div className="relative w-10 h-10">
           <Image
@@ -18,7 +18,7 @@ export default function TrustFeatures() {
     },
     {
       title: "Cash On Delivery",
-      desc: "₹25 Per Order",
+      desc: "Pay on delivery",
       icon: (
         <div className="relative w-10 h-10">
           <Image

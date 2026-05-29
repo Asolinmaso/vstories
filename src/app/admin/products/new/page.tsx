@@ -19,6 +19,7 @@ export default function NewProductPage() {
         name: "",
         slug: "",
         price: "",
+        original_price: "",
         short_description: "",
         description: "",
         category: "", // Will default to first category loaded
@@ -61,7 +62,7 @@ export default function NewProductPage() {
         const { name, value } = e.target;
 
         // Handle numeric fields that might receive "Price ₹250"
-        if (name === 'price' || name === 'stock') {
+        if (name === 'price' || name === 'original_price' || name === 'stock') {
             // Remove non-numeric characters except decimal point
             const sanitized = value.replace(/[^0-9.]/g, '');
             setFormData(prev => ({ ...prev, [name]: sanitized }));
@@ -219,6 +220,7 @@ export default function NewProductPage() {
                     short_description: formData.short_description,
                     description: finalDescription,
                     price: parseFloat(formData.price),
+                    original_price: formData.original_price ? parseFloat(formData.original_price) : null,
                     stock: parseInt(formData.stock),
                     category_id: categoryData.id,
                     images: images,
@@ -328,7 +330,7 @@ export default function NewProductPage() {
                         <h3 className="font-semibold text-lg mb-4">Pricing & Inventory</h3>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price (₹)</label>
                                 <input
                                     type="text"
                                     name="price"
@@ -336,6 +338,17 @@ export default function NewProductPage() {
                                     onChange={handleChange}
                                     required
                                     className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Original Price (₹) - For Discounts</label>
+                                <input
+                                    type="text"
+                                    name="original_price"
+                                    value={formData.original_price}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                    placeholder="e.g. 300"
                                 />
                             </div>
                             <div>

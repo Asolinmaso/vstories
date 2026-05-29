@@ -12,10 +12,18 @@ export async function createSupabaseServerClient() {
                     return cookieStore.get(name)?.value;
                 },
                 set(name: string, value: string, options: CookieOptions) {
-                    cookieStore.set({ name, value, ...options });
+                    try {
+                        cookieStore.set({ name, value, ...options });
+                    } catch (error) {
+                        // Ignored because middleware handles session refresh
+                    }
                 },
                 remove(name: string, options: CookieOptions) {
-                    cookieStore.delete({ name, ...options });
+                    try {
+                        cookieStore.delete({ name, ...options });
+                    } catch (error) {
+                        // Ignored because middleware handles session refresh
+                    }
                 },
             },
         }
