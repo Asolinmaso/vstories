@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,36 +8,33 @@ import { motion, AnimatePresence } from "framer-motion";
 const slides = [
   {
     id: "hero-banner",
-    image: "/images/home/hero4.png",
+    image: "/images/home/hero-banner.png",
     alt: "Vstories Hibiscus Shampoo",
   },
   {
     id: "hero-4",
-    image: "/images/home/hero3.png",
+    image: "/images/home/hero4.png",
     alt: "Vstories Herbal Hair Oil",
   },
   {
     id: "hero-3",
-    image: "/images/home/hero2.png",
+    image: "/images/home/hero3.png",
     alt: "Vstories skincare collection",
   },
   {
     id: "hero-2",
-    image: "/images/home/hero1.png",
+    image: "/images/home/hero2.png",
     alt: "Vstories natural products",
+  },
+  {
+    id: "hero-1",
+    image: "/images/home/hero1.png",
+    alt: "Vstories herbal care",
   },
 ];
 
 export default function HeroCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveIndex((current) => (current + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   const activeSlide = slides[activeIndex];
 
   return (
@@ -73,9 +70,9 @@ export default function HeroCarousel() {
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="font-playfair font-normal text-black text-[24px] leading-[1.15] sm:text-4xl md:text-5xl lg:text-[64px] lg:leading-[1.15] max-w-none"
+                className="font-playfair font-semibold text-white text-[28px] leading-[1.15] sm:text-4xl md:text-5xl lg:text-[64px] lg:leading-[85px] max-w-[543px]"
               >
-                Nature’s Goodness<br />Clinically Crafted
+                Nature&apos;s Goodness Clinically Crafted
               </motion.h1>
 
               <motion.p
@@ -83,9 +80,10 @@ export default function HeroCarousel() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-                className="mt-4 sm:mt-5 font-inter font-normal text-black text-sm sm:text-base lg:text-2xl lg:leading-[34px] max-w-[628px]"
+                className="mt-4 sm:mt-5 font-inter font-normal text-white text-sm sm:text-base lg:text-2xl lg:leading-[29px] max-w-[628px]"
               >
-                Clean, effective & honest skincare and haircare<br />enriched with natural ingredients & powerful herbs for<br />real , visible results.
+                Clean, effective &amp; honest skincare and haircare enriched with
+                natural ingredients &amp; powerful herbs for real, visible results.
               </motion.p>
 
               <motion.div
@@ -112,10 +110,11 @@ export default function HeroCarousel() {
                     onClick={() => setActiveIndex(index)}
                     aria-label={`Show slide ${index + 1}`}
                     aria-current={index === activeIndex ? "true" : undefined}
-                    className={`relative h-[42px] w-[42px] sm:h-[55px] sm:w-[55px] shrink-0 overflow-hidden rounded-[8px] sm:rounded-[10px] border transition-all ${index === activeIndex
-                      ? "border-[#1A3026] border-2 shadow-md -translate-y-0.5"
-                      : "border-[#1A3026] border-[1.5px] opacity-90 hover:opacity-100"
-                      }`}
+                    className={`relative h-[42px] w-[42px] sm:h-[55px] sm:w-[55px] shrink-0 overflow-hidden rounded-[8px] sm:rounded-[10px] border transition-all ${
+                      index === activeIndex
+                        ? "border-[#1A3026] border-2 shadow-md -translate-y-0.5"
+                        : "border-[#1A3026] border-[1.5px] opacity-90 hover:opacity-100"
+                    }`}
                   >
                     <Image
                       src={slide.image}

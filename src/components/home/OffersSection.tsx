@@ -65,7 +65,7 @@ export default function OffersSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px]"
+            className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl lg:text-[32px] lg:leading-[43px]"
           >
             Offers Crafted for You
           </motion.h2>
@@ -75,20 +75,20 @@ export default function OffersSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 text-base sm:text-lg lg:text-2xl lg:leading-[29px] max-w-[1041px]"
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 text-base leading-[19px] max-w-[400px]"
           >
             Enjoy thoughtful savings on skincare and haircare made for Indian skin and everyday needs.
           </motion.p>
         </div>
 
         {/* Offer Cards */}
-        <div className="flex flex-col items-center sm:flex-row sm:flex-wrap sm:justify-center gap-4 lg:gap-5">
+        <div className="flex flex-col items-center sm:flex-row sm:flex-wrap sm:justify-center gap-[24px]">
           {/* Card 1: Get ₹200 OFF */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 p-6 w-full max-w-[333px] sm:min-h-[182px] lg:h-[182px]"
+            className="flex flex-row items-start gap-[24px] p-[24px] w-full max-w-[333px] h-[182px]"
             style={{
               background: "#F9F6F1",
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
@@ -105,7 +105,7 @@ export default function OffersSection() {
                 borderRadius: "40px",
               }}
             >
-              <div className="relative w-8 h-8">
+              <div className="relative w-6 h-6">
                 <Image
                   src="/images/icons/benefits.png"
                   alt="Benefit"
@@ -115,7 +115,7 @@ export default function OffersSection() {
               </div>
             </div>
             {/* Content */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-[8px]">
               <h4 className="font-inter font-semibold text-[#1D3B29]" style={{ fontSize: "24px", lineHeight: "29px" }}>
                 Get ₹200 OFF
               </h4>
@@ -129,14 +129,13 @@ export default function OffersSection() {
                 onClick={() => copyCode("VSTORIES200")}
                 className="font-inter font-medium flex items-center justify-center hover:opacity-90 transition-all"
                 style={{
-                  width: "134px",
+                  width: "118px",
                   height: "43px",
                   background: "#1D3B29",
                   color: "#F4F0EC",
                   borderRadius: "8px",
                   fontSize: "16px",
                   lineHeight: "19px",
-                  marginTop: "4px",
                 }}
               >
                 Copy Code
@@ -150,7 +149,7 @@ export default function OffersSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 p-6 w-full max-w-[315px] sm:min-h-[182px] lg:h-[182px]"
+            className="flex flex-row items-start gap-[24px] p-[24px] w-full max-w-[333px] h-[182px]"
             style={{
               background: "#778E6B",
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
@@ -167,7 +166,7 @@ export default function OffersSection() {
                 borderRadius: "40px",
               }}
             >
-              <div className="relative w-8 h-8">
+              <div className="relative w-6 h-6">
                 <Image
                   src="/images/icons/benefits-1.png"
                   alt="Benefit"
@@ -177,7 +176,7 @@ export default function OffersSection() {
               </div>
             </div>
             {/* Content */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-[8px]">
               <h4 className="font-inter font-semibold text-[#F4F0EC]" style={{ fontSize: "24px", lineHeight: "29px" }}>
                 Free Sample Kit
               </h4>
@@ -191,14 +190,13 @@ export default function OffersSection() {
                 href="/shop"
                 className="font-inter font-medium flex items-center justify-center hover:opacity-90 transition-all"
                 style={{
-                  width: "127px",
+                  width: "111px",
                   height: "43px",
                   background: "#F4F0EC",
                   color: "#1D3B29",
                   borderRadius: "8px",
                   fontSize: "16px",
                   lineHeight: "19px",
-                  marginTop: "4px",
                 }}
               >
                 Shop Now
@@ -212,7 +210,7 @@ export default function OffersSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 p-6 w-full max-w-[300px] sm:min-h-[182px] lg:h-[182px]"
+            className="flex flex-row items-start gap-[24px] p-[24px] w-full max-w-[333px] h-[182px]"
             style={{
               background: "#F9F6F1",
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
@@ -239,7 +237,7 @@ export default function OffersSection() {
               </div>
             </div>
             {/* Content */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-[8px]">
               <h4 className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: "24px", lineHeight: "29px" }}>
                 Free Shipping
               </h4>
@@ -253,14 +251,13 @@ export default function OffersSection() {
                 href="/shop"
                 className="font-inter font-medium flex items-center justify-center hover:opacity-90 transition-all"
                 style={{
-                  width: "127px",
+                  width: "111px",
                   height: "43px",
                   background: "#1D3B29",
                   color: "#F4F0EC",
                   borderRadius: "8px",
                   fontSize: "16px",
                   lineHeight: "19px",
-                  marginTop: "4px",
                 }}
               >
                 Shop Now
