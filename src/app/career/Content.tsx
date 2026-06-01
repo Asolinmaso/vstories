@@ -146,12 +146,48 @@ export default function CareerContent() {
   return (
     <div className="w-full bg-[#FCFAF4]">
       {/* ── HERO BANNER ────────────────────────────────────── */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        .career-hero-img {
+            object-position: center;
+        }
+        @media screen and (max-width: 1024px) {
+            .career-hero-img {
+                object-position: center;
+            }
+        }
+        @media screen and (max-width: 768px) {
+            .career-hero-img {
+                object-position: 80% bottom;
+            }
+        }
+        @media screen and (max-width: 480px) {
+            .career-hero-img {
+                object-position: 80% bottom;
+            }
+        }
+        @media screen and (max-width: 375px) {
+            .career-hero-img {
+                object-position: 80% bottom;
+            }
+        }
+        @media screen and (max-width: 360px) {
+            .career-hero-img {
+                object-position: 80% bottom;
+            }
+        }
+        @media screen and (max-width: 320px) {
+            .career-hero-img {
+                object-position: 80% bottom;
+            }
+        }
+      `}} />
       <section className="relative w-full h-[640px] md:h-[581px] bg-[#FCFAF4]">
         <Image
           src="/images/career/career hero.png"
           alt="Career at V Stories"
           fill
-          className="object-cover object-[80%_bottom] md:object-center"
+          className="object-cover career-hero-img"
           priority
         />
         {/* Removed dark overlay for black text readability */}

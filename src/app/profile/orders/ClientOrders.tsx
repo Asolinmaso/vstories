@@ -30,27 +30,27 @@ function StatusBadge({ status }: { status: string }) {
   const s = status?.toLowerCase();
   if (s === "delivered") {
     return (
-      <span className="inline-flex items-center px-1.5 py-[2px] md:px-3 md:py-1 rounded-full font-inter text-[9px] md:text-[12px] font-medium" style={{ backgroundColor: "#1D3B29", color: "#F7EDE2" }}>
+      <span className="inline-flex items-center justify-center px-4 py-1.5 rounded-full font-inter text-[11px] md:text-[12px] font-medium min-w-[90px]" style={{ backgroundColor: "#1D3B29", color: "#F7EDE2" }}>
         Delivered
       </span>
     );
   }
   if (s === "shipped") {
     return (
-      <span className="inline-flex items-center px-1.5 py-[2px] md:px-3 md:py-1 rounded-full font-inter text-[9px] md:text-[12px] font-medium" style={{ backgroundColor: "#6B7F5E", color: "#F7EDE2" }}>
+      <span className="inline-flex items-center justify-center px-4 py-1.5 rounded-full font-inter text-[11px] md:text-[12px] font-medium min-w-[90px]" style={{ backgroundColor: "#778E6B", color: "#F7EDE2" }}>
         Shipped
       </span>
     );
   }
   if (s === "processing" || s === "pending" || s === "confirmed" || s === "paid") {
     return (
-      <span className="inline-flex items-center px-1.5 py-[2px] md:px-3 md:py-1 rounded-full font-inter text-[9px] md:text-[12px] font-medium" style={{ backgroundColor: "#F2E4D5", color: "#8B6A4F" }}>
+      <span className="inline-flex items-center justify-center px-4 py-1.5 rounded-full font-inter text-[11px] md:text-[12px] font-medium min-w-[90px]" style={{ backgroundColor: "#F2E4D5", color: "#2E2E2E" }}>
         Processing
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center px-1.5 py-[2px] md:px-3 md:py-1 rounded-full font-inter text-[9px] md:text-[12px] font-medium bg-gray-100 text-gray-600 capitalize">
+    <span className="inline-flex items-center justify-center px-4 py-1.5 rounded-full font-inter text-[11px] md:text-[12px] font-medium min-w-[90px] bg-gray-100 text-gray-600 capitalize">
       {status}
     </span>
   );
@@ -86,7 +86,7 @@ export default function ClientOrders() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F4EEE2]">
+      <div className="min-h-screen flex items-center justify-center bg-[#FCFAF4]">
         <Loader2 className="w-8 h-8 animate-spin text-[#1D3B29]" />
       </div>
     );
@@ -118,25 +118,25 @@ export default function ClientOrders() {
           {/* Right Content */}
           <div className="flex-1 min-w-0 flex flex-col gap-6">
             {/* Orders Card */}
-            <div className="bg-[#F4EEE2] rounded-[16px] p-6 lg:p-8 border border-black/5">
+            <div className="bg-[#F4EEE2] rounded-[16px] p-6 lg:p-8 border border-black/5 flex-1 h-full min-h-[500px]">
               {/* Tabs */}
-              <div className="flex justify-center md:justify-start gap-4 md:gap-6 mb-6 md:border-b md:border-black/10">
+              <div className="flex justify-start gap-4 md:gap-6 mb-6">
                 <button
                   onClick={() => { setActiveTab("recent"); setShowAll(false); }}
-                  className={`whitespace-nowrap pb-1 md:pb-3 font-inter text-[18px] md:text-[15px] transition-all md:border-b-2 md:-mb-px ${
+                  className={`font-inter text-[18px] md:text-[18px] transition-all ${
                     activeTab === "recent"
-                      ? "font-bold md:font-medium text-[#000000] md:border-[#1D3B29] md:text-[#1D3B29]"
-                      : "font-normal md:font-medium text-[#2E2E2E]/60 md:border-transparent md:text-[#2E2E2E]/50 hover:text-[#2E2E2E]"
+                      ? "font-semibold text-[#000000]"
+                      : "font-normal text-[#2E2E2E] hover:text-[#000000]"
                   }`}
                 >
                   Recent Orders
                 </button>
                 <button
                   onClick={() => { setActiveTab("past"); setShowAll(false); }}
-                  className={`whitespace-nowrap pb-1 md:pb-3 font-inter text-[18px] md:text-[15px] transition-all md:border-b-2 md:-mb-px ${
+                  className={`font-inter text-[18px] md:text-[18px] transition-all ${
                     activeTab === "past"
-                      ? "font-bold md:font-medium text-[#000000] md:border-[#1D3B29] md:text-[#1D3B29]"
-                      : "font-normal md:font-medium text-[#2E2E2E]/60 md:border-transparent md:text-[#2E2E2E]/50 hover:text-[#2E2E2E]"
+                      ? "font-semibold text-[#000000]"
+                      : "font-normal text-[#2E2E2E] hover:text-[#000000]"
                   }`}
                 >
                   Past Orders
@@ -149,20 +149,24 @@ export default function ClientOrders() {
                   <Loader2 className="w-6 h-6 animate-spin text-[#1D3B29]" />
                 </div>
               ) : displayedOrders.length === 0 ? (
-                /* Empty State */
-                <div className="flex flex-col items-center justify-center py-12 gap-3">
-                  <div className="w-14 h-14 rounded-full bg-[#1D3B29]/10 flex items-center justify-center">
-                    <ShoppingBag className="w-6 h-6 text-[#1D3B29]" />
+                /* Empty State in White Card */
+                <div className="bg-white rounded-[16px] flex flex-col items-center justify-center py-16 gap-3">
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center mb-2" style={{ backgroundColor: "#1D3B29" }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 7H4C2.89543 7 2 7.89543 2 9V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V9C22 7.89543 21.1046 7 20 7Z" stroke="#F4F0EC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M16 21V5C16 4.46957 15.7893 3.96086 15.4142 3.58579C15.0391 3.21071 14.5304 3 14 3H10C9.46957 3 8.96086 3.21071 8.58579 3.58579C8.21071 3.96086 8 4.46957 8 5V21" stroke="#F4F0EC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M12 11H12.01" stroke="#F4F0EC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </div>
-                  <h3 className="font-inter font-semibold text-[16px] text-[#2E2E2E]">
+                  <h3 className="font-inter font-bold text-[18px] text-[#000000]">
                     No Active Orders
                   </h3>
-                  <p className="font-inter text-[13px] text-[#2E2E2E]/60 text-center max-w-[220px]">
-                    Your herbal journey begins here. Discover our premium collection.
+                  <p className="font-inter text-[14px] text-[#2E2E2E] text-center max-w-[280px]">
+                    Your herbal journey begins here.<br/>Discover our premium collection.
                   </p>
                   <Link
                     href="/shop"
-                    className="mt-2 px-6 py-2.5 rounded-[8px] font-inter font-medium text-[13px] transition-colors hover:bg-[#2A4F38]"
+                    className="mt-4 px-6 py-2.5 rounded-[6px] font-inter font-medium text-[13px] transition-colors hover:opacity-90"
                     style={{ backgroundColor: "#1D3B29", color: "#F7EDE2" }}
                   >
                     Start Shopping
@@ -170,7 +174,7 @@ export default function ClientOrders() {
                 </div>
               ) : (
                 /* Orders Table */
-                <div>
+                <div className="flex flex-col gap-6">
                   {/* Mobile View */}
                   <div className="block md:hidden bg-white rounded-[16px] p-4 mx-auto max-w-[400px]">
                     <div className="flex flex-col divide-y divide-[#1D3B29]/20">
@@ -231,89 +235,94 @@ export default function ClientOrders() {
                   </div>
 
                   {/* Desktop View */}
-                  <div className="hidden md:block">
+                  <div className="hidden md:block bg-white rounded-[16px] px-8 py-6">
                     {/* Table Header */}
-                    <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_1.2fr_0.8fr] gap-3 pb-3 border-b border-black/10 mb-3">
-                    {["Product", "Price", "Ordered Date", "Quantity", "Status", "Action"].map((h) => (
-                      <span key={h} className="font-inter font-semibold text-[12px] text-[#2E2E2E]">
-                        {h}
-                      </span>
-                    ))}
-                  </div>
+                    <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_1.2fr_0.8fr] gap-3 pb-3 border-b border-black/20 mb-1">
+                      {["Product", "Price", "Ordered Date", "Quantity", "Status", "Action"].map((h) => (
+                        <span key={h} className="font-inter font-semibold text-[13px] text-[#2E2E2E]">
+                          {h}
+                        </span>
+                      ))}
+                    </div>
 
-                  {/* Table Rows */}
-                  <div className="flex flex-col divide-y divide-black/5">
-                    {visibleOrders.map((order) => {
-                      const firstItem = order.items?.[0];
-                      const qty = firstItem?.quantity ?? 1;
-                      const productName = firstItem?.name ?? "Product";
-                      const productSize = firstItem?.size ?? "";
-                      // image can be a string URL or an array of URLs
-                      const rawImage = firstItem?.image;
-                      const productImage = Array.isArray(rawImage) ? rawImage[0] : (rawImage || null);
-                      const orderedDate = new Date(order.created_at).toLocaleDateString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      });
+                    {/* Table Rows */}
+                    <div className="flex flex-col">
+                      {visibleOrders.map((order) => {
+                        const firstItem = order.items?.[0];
+                        const qty = firstItem?.quantity ?? 1;
+                        const productName = firstItem?.name ?? "Product";
+                        const productSize = firstItem?.size ?? "";
+                        // image can be a string URL or an array of URLs
+                        const rawImage = firstItem?.image;
+                        const productImage = Array.isArray(rawImage) ? rawImage[0] : (rawImage || null);
+                        const orderedDate = new Date(order.created_at).toLocaleDateString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        });
 
-                      return (
-                        <div
-                          key={order.id}
-                          className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_1.2fr_0.8fr] gap-3 items-center py-4"
-                        >
-                          {/* Product */}
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-11 h-11 shrink-0 rounded-[8px] bg-[#1D3B29]/10 overflow-hidden flex items-center justify-center">
-                              {productImage ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                  src={productImage}
-                                  alt={productName}
-                                  className="w-full h-full object-cover"
-                                  onError={(e) => {
-                                    (e.target as HTMLImageElement).style.display = "none";
-                                  }}
-                                />
-                              ) : (
-                                <ShoppingBag className="w-5 h-5 text-[#1D3B29]/40" />
-                              )}
+                        return (
+                          <div
+                            key={order.id}
+                            className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_1.2fr_0.8fr] gap-3 items-center py-5 border-b border-black/10 last:border-0"
+                          >
+                            {/* Product */}
+                            <div className="flex items-center gap-4 min-w-0">
+                              <div className="w-[48px] h-[48px] shrink-0 rounded-[8px] bg-[#1D3B29]/10 overflow-hidden flex items-center justify-center">
+                                {productImage ? (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img
+                                    src={productImage}
+                                    alt={productName}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).style.display = "none";
+                                    }}
+                                  />
+                                ) : (
+                                  <ShoppingBag className="w-5 h-5 text-[#1D3B29]/40" />
+                                )}
+                              </div>
+                              <div className="flex flex-col min-w-0 justify-center">
+                                <span className="font-inter font-medium text-[13px] text-[#2E2E2E] truncate leading-tight">{productName}</span>
+                                {productSize && (
+                                  <span className="font-inter text-[11px] text-[#2E2E2E] mt-0.5">{productSize}</span>
+                                )}
+                              </div>
                             </div>
-                            <div className="flex flex-col min-w-0">
-                              <span className="font-inter font-semibold text-[13px] text-[#2E2E2E] truncate">{productName}</span>
-                              {productSize && (
-                                <span className="font-inter text-[11px] text-[#2E2E2E]/50">{productSize}</span>
-                              )}
+
+                            {/* Price */}
+                            <span className="font-inter text-[13px] text-[#2E2E2E]">₹{order.amount ?? order.total ?? "—"}</span>
+
+                            {/* Date */}
+                            <span className="font-inter text-[13px] text-[#2E2E2E]">{orderedDate}</span>
+
+                            {/* Quantity */}
+                            <span className="font-inter text-[13px] text-[#2E2E2E]">
+                              {String(qty).padStart(2, "0")}
+                            </span>
+
+                            {/* Status */}
+                            <div>
+                              <StatusBadge status={order.status} />
+                            </div>
+
+                            {/* Action */}
+                            <div>
+                              <Link
+                                href={`/profile/orders/${order.id}`}
+                                className="inline-flex items-center justify-center px-6 py-2 rounded-[6px] font-inter text-[12px] font-medium transition-colors hover:opacity-90"
+                                style={{ backgroundColor: "#1D3B29", color: "#F7EDE2" }}
+                              >
+                                View
+                              </Link>
                             </div>
                           </div>
-
-                          {/* Price */}
-                          <span className="font-inter font-medium text-[13px] text-[#2E2E2E]">₹{order.amount ?? order.total ?? "—"}</span>
-
-                          {/* Date */}
-                          <span className="font-inter text-[13px] text-[#2E2E2E]">{orderedDate}</span>
-
-                          {/* Quantity */}
-                          <span className="font-inter text-[13px] text-[#2E2E2E]">
-                            {String(qty).padStart(2, "0")}
-                          </span>
-
-                          {/* Status */}
-                          <StatusBadge status={order.status} />
-
-                          {/* Action */}
-                          <Link
-                            href={`/profile/orders/${order.id}`}
-                            className="inline-flex items-center justify-center px-4 py-1.5 rounded-[6px] font-inter text-[13px] font-medium transition-colors hover:bg-[#2A4F38]"
-                            style={{ backgroundColor: "#1D3B29", color: "#F7EDE2" }}
-                          >
-                            View
-                          </Link>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                  </div>
+
 
                   {/* View All Button */}
                   {displayedOrders.length > 3 && (
@@ -338,6 +347,7 @@ export default function ClientOrders() {
                   src="/images/profile.png"
                   alt="Exclusive offers"
                   fill
+                  priority
                   className="object-cover object-[65%_75%] lg:object-[100%_75%]"
                 />
               </div>
@@ -361,7 +371,7 @@ export default function ClientOrders() {
 
             {/* Need Help Card (Mobile Only) */}
             <div className="flex lg:hidden bg-[#F7EDE2] rounded-[16px] p-6 flex-col items-center text-center mt-4">
-              <Image src="/images/icons/help.png" alt="Help" width={32} height={32} className="mb-3 object-contain" />
+              <Image src="/images/icons/help.png" alt="Help" width={32} height={32} className="mb-3 object-contain" style={{ width: "auto", height: "auto" }} />
               <h3 className="font-inter font-semibold text-[#1D3B29] text-[24px] mb-1 leading-none">Need Help?</h3>
               <p className="font-inter text-[#1D3B29] text-[13px] opacity-80 mb-5">
                 We're here to help you.

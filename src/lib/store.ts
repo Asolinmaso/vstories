@@ -42,9 +42,9 @@ function mapRemoteCartItem(ri: any): CartItem {
         id: ri.product_id,
         name: ri.product?.name || "Unknown Product",
         price: ri.product?.price || 0,
-        quantity: ri.quantity,
+        quantity: Math.min(99, Math.max(1, ri.quantity || 1)),
         image: ri.product?.images?.[0] || "",
-        size: ri.size_label || undefined,
+        size: ri.size_label === 'default' ? undefined : (ri.size_label || undefined),
         cartItemId: ri.id,
     };
 }
@@ -63,22 +63,41 @@ export const useCartStore = create<CartStore>()(
 
                 // Push guest/local items to Supabase before fetching remote cart
                 for (const item of localItems) {
-                    const { data, error } = await supabase
+                    const { data: existingRows } = await supabase
                         .from("cart_items")
-                        .upsert(
-                            {
+                        .select("id")
+                        .eq("user_id", userId)
+                        .eq("product_id", item.id)
+                        .eq("size_label", item.size || 'default')
+                        .limit(1);
+
+                    const existing = existingRows?.[0];
+                    let data;
+                    let error;
+
+                    if (existing) {
+                        const res = await supabase
+                            .from("cart_items")
+                            .update({ quantity: item.quantity })
+                            .eq("id", existing.id)
+                            .select("id")
+                            .single();
+                        data = res.data;
+                        error = res.error;
+                    } else {
+                        const res = await supabase
+                            .from("cart_items")
+                            .insert({
                                 user_id: userId,
                                 product_id: item.id,
-                                size_label: item.size || null,
+                                size_label: item.size || 'default',
                                 quantity: item.quantity,
-                            },
-                            {
-                                onConflict: "user_id, product_id, size_label",
-                                ignoreDuplicates: false,
-                            }
-                        )
-                        .select("id")
-                        .single();
+                            })
+                            .select("id")
+                            .single();
+                        data = res.data;
+                        error = res.error;
+                    }
 
                     if (!error && data?.id) {
                         set((state) => ({
@@ -97,7 +116,35 @@ export const useCartStore = create<CartStore>()(
                     .eq("user_id", userId);
 
                 if (remoteItems && remoteItems.length > 0) {
-                    set({ items: remoteItems.map(mapRemoteCartItem) });
+                    // Self-healing: Merge duplicate rows that were created due to previous NULL constraint bug
+                    const mergedItems: Record<string, any> = {};
+                    const toDelete: string[] = [];
+
+                    remoteItems.forEach(row => {
+                        const key = `${row.product_id}-${row.size_label || 'default'}`;
+                        if (mergedItems[key]) {
+                            mergedItems[key].quantity += row.quantity;
+                            toDelete.push(row.id);
+                        } else {
+                            mergedItems[key] = row;
+                        }
+                    });
+
+                    const finalItems = Object.values(mergedItems).map(mapRemoteCartItem);
+                    set({ items: finalItems });
+
+                    // Background cleanup of duplicates
+                    if (toDelete.length > 0) {
+                        supabase.from("cart_items").delete().in("id", toDelete).then(() => {
+                            finalItems.forEach(item => {
+                                if (item.cartItemId) {
+                                    supabase.from("cart_items")
+                                        .update({ quantity: item.quantity, size_label: item.size || 'default' })
+                                        .eq("id", item.cartItemId).then();
+                                }
+                            });
+                        });
+                    }
                 }
             },
 
@@ -110,7 +157,7 @@ export const useCartStore = create<CartStore>()(
                         return {
                             items: state.items.map((i) =>
                                 i.id === item.id && i.size === item.size
-                                    ? { ...i, quantity: i.quantity + 1 }
+                                    ? { ...i, quantity: Math.min(99, i.quantity + 1) }
                                     : i
                             ),
                         };
@@ -124,22 +171,38 @@ export const useCartStore = create<CartStore>()(
                         (i) => i.id === item.id && i.size === item.size
                     );
                     if (currentItem) {
-                        const { data } = await supabase
+                        const { data: existingRows } = await supabase
                             .from("cart_items")
-                            .upsert(
-                                {
+                            .select("id")
+                            .eq("user_id", userId)
+                            .eq("product_id", item.id)
+                            .eq("size_label", item.size || 'default')
+                            .limit(1);
+                        
+                        const existing = existingRows?.[0];
+                        let data;
+
+                        if (existing) {
+                            const res = await supabase
+                                .from("cart_items")
+                                .update({ quantity: currentItem.quantity })
+                                .eq("id", existing.id)
+                                .select("id")
+                                .single();
+                            data = res.data;
+                        } else {
+                            const res = await supabase
+                                .from("cart_items")
+                                .insert({
                                     user_id: userId,
                                     product_id: item.id,
-                                    size_label: item.size || null,
+                                    size_label: item.size || 'default',
                                     quantity: currentItem.quantity,
-                                },
-                                {
-                                    onConflict: "user_id, product_id, size_label",
-                                    ignoreDuplicates: false,
-                                }
-                            )
-                            .select("id")
-                            .single();
+                                })
+                                .select("id")
+                                .single();
+                            data = res.data;
+                        }
 
                         if (data) {
                             set((state) => ({
@@ -173,7 +236,7 @@ export const useCartStore = create<CartStore>()(
             },
 
             updateQuantity: async (itemKey, quantity) => {
-                const safeQuantity = Math.max(1, quantity);
+                const safeQuantity = Math.min(99, Math.max(1, quantity));
                 const targetItem = findCartItem(get().items, itemKey);
 
                 set((state) => ({

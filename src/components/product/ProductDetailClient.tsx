@@ -149,11 +149,14 @@ export default function ProductDetailClient({ product, includedProducts = [] }: 
     const addItem = useCartStore((state) => state.addItem);
     const router = useRouter();
 
+    const [reviews, setReviews] = useState<any[]>([]);
+
     const fetchReviews = () => {
         fetch(`/api/feedback?product_id=${product.id}`, { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
-                const feedback: { rating: number | null }[] = data.feedback || [];
+                const feedback: any[] = data.feedback || [];
+                setReviews(feedback);
                 setReviewCount(feedback.length);
                 const rated = feedback.filter(r => r.rating);
                 if (rated.length > 0) {
@@ -570,7 +573,7 @@ export default function ProductDetailClient({ product, includedProducts = [] }: 
                             {activeTab === "reviews" && (
                                 <FadeIn>
                                     <div ref={reviewsSectionRef}>
-                                        <ProductReviews productId={product.id} productName={product.name} onReviewAdded={fetchReviews} />
+                                        <ProductReviews productId={product.id} productName={product.name} initialReviews={reviews} onReviewAdded={fetchReviews} />
                                     </div>
                                 </FadeIn>
                             )}

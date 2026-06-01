@@ -70,7 +70,7 @@ export default function ClientCart() {
             <Link
               href="/shop"
               className="font-inter font-medium text-white rounded hover:opacity-90 transition-all flex items-center justify-center"
-              style={{ width: 180, height: 44, background: "#1D3B29", fontSize: 16 }}
+              style={{ width: 180, height: 44, background: "#1D3B29", color: "#FFFFFF", fontSize: 16 }}
             >
               Start Shopping
             </Link>
@@ -83,7 +83,7 @@ export default function ClientCart() {
                 const itemKey = getCartItemKey(item);
                 return (
                   <div
-                    key={itemKey || index}
+                    key={`${itemKey}-${index}`}
                     className="flex flex-row items-start bg-[#FDFCF8] rounded-[16px] p-3 md:p-4 gap-3 md:gap-5 relative"
                     style={{ border: "1px solid rgba(46, 46, 46, 0.2)" }}
                   >

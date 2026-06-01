@@ -28,7 +28,7 @@ export default function CategoryBanners() {
               style={{ objectPosition: "left center" }}
             />
             {/* Text overlay */}
-            <div className="absolute top-[38px] right-[10px] md:right-[20px] lg:right-auto lg:left-[96px] w-[260px] sm:w-[330px] flex flex-col items-start gap-[16px]">
+            <div className="absolute top-[40px] right-[16px] md:right-[36px] lg:left-[280px] lg:right-auto w-[260px] sm:w-[330px] lg:w-[300px] flex flex-col items-start gap-[16px]">
               {/* Discount badge */}
               <div
                 className="font-inter font-medium text-[#F7EDE2] flex items-center justify-center"
@@ -50,7 +50,7 @@ export default function CategoryBanners() {
 
               <p
                 className="font-inter font-normal text-[#2E2E2E]"
-                style={{ fontSize: "16px", lineHeight: "19px", maxWidth: "276px" }}
+                style={{ fontSize: "16px", lineHeight: "19px", maxWidth: "300px" }}
               >
                 Discover herbal oils and cleansers designed to nourish roots and improve hair strength.
               </p>
@@ -93,7 +93,7 @@ export default function CategoryBanners() {
               style={{ objectPosition: "left center" }}
             />
             {/* Text overlay */}
-            <div className="absolute top-[38px] right-[10px] md:right-[20px] lg:right-auto lg:left-[137px] w-[240px] sm:w-[330px] flex flex-col items-start gap-[16px]">
+            <div className="absolute top-[40px] right-[16px] md:right-[36px] lg:left-[280px] lg:right-auto w-[240px] sm:w-[330px] lg:w-[300px] flex flex-col items-start gap-[16px]">
               {/* Discount badge - light bg for dark banner */}
               <div
                 className="font-inter font-medium text-[#1D3B29] flex items-center justify-center"
@@ -115,7 +115,7 @@ export default function CategoryBanners() {
 
               <p
                 className="font-inter font-normal"
-                style={{ fontSize: "16px", lineHeight: "19px", maxWidth: "233px", color: "#FFFFFF" }}
+                style={{ fontSize: "16px", lineHeight: "19px", maxWidth: "290px", color: "#FFFFFF" }}
               >
                 Explore gentle, plant-based skincare for everyday glow and long-term skin health.
               </p>
