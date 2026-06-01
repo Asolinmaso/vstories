@@ -128,6 +128,11 @@ export default function ContactContent() {
                             background-position: center 9%;
                         }
                     }
+                    @media screen and (max-width: 375px) {
+                        .contact-hero-bg {
+                            background-position: left 25%;
+                        }
+                    }
                     @media screen and (max-width: 360px) {
                         .contact-hero-bg {
                             background-position: left 30%;

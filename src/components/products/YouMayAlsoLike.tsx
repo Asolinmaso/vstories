@@ -40,7 +40,7 @@ export default function YouMayAlsoLike() {
                         }
                     `}} />
                     {[
-                        { name: "Prophetic-Face Serum", original: 280, price: 250, img: "/images/products/serum.png", slug: "prophetic-face-serum" },
+                        { name: "Prophetic-Face Serum", original: 280, price: 250, img: "/images/products/serum.png", slug: "herbal-face-serum" },
                         { name: "Herbal Facepack", original: 200, price: 180, img: "/images/products/facepack.png", slug: "herbal-facepack" },
                         { name: "Hibiscus Shampoo", original: 280, price: 250, img: "/images/products/shampoo.png", slug: "hibiscus-shampoo" },
                         { name: "V Herbal Hair Oil", original: 250, price: 230, img: "/images/products/hair oil.png", slug: "herbal-hair-oil" },

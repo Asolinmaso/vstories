@@ -40,7 +40,8 @@ export const getProducts = async (): Promise<Product[]> => {
             *,
             categories(name, slug),
             sizes:product_sizes(id, label, price)
-        `);
+        `)
+        .order("created_at", { ascending: false });
         
     if (error) {
         console.error("Error fetching products:", error);

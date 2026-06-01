@@ -235,7 +235,7 @@ const fallbackProducts: Product[] = [
   },
 ];
 
-export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
+export default function FindWhatYouNeedMobile({ products }: FindWhatYouNeedProps) {
   const [activeTab, setActiveTab] = useState("Skin Care");
   const tabs = ["Skin Care", "Hair Care", "Combo & Gift Packs", "Sample Packs"];
 

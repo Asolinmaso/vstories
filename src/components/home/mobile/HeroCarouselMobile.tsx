@@ -28,7 +28,7 @@ const slides = [
   },
 ];
 
-export default function HeroCarousel() {
+export default function HeroCarouselMobile() {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeSlide = slides[activeIndex];
 

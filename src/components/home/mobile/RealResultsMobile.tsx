@@ -179,7 +179,7 @@ function LeafIcon({ flipped = false }: { flipped?: boolean }) {
   );
 }
 
-export default function RealResults() {
+export default function RealResultsMobile() {
   return (
     <section className="relative w-full overflow-hidden bg-[#F4F0EC] py-12 sm:py-16 lg:py-20 mt-12 lg:mt-[100px] lg:min-h-[750px]">
       {/* Background watermark pattern */}

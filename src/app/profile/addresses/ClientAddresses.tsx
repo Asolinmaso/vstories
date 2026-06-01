@@ -447,6 +447,7 @@ export default function ClientAddresses() {
                   src="/images/profile.png"
                   alt="Exclusive offers"
                   fill
+                  priority
                   className="object-cover object-[65%_75%] lg:object-[100%_75%]"
                 />
               </div>
@@ -470,7 +471,7 @@ export default function ClientAddresses() {
 
             {/* Need Help Card (Mobile Only) */}
             <div className="flex lg:hidden bg-[#F7EDE2] rounded-[16px] p-6 flex-col items-center text-center mt-4">
-              <Image src="/images/icons/help.png" alt="Help" width={32} height={32} className="mb-3 object-contain" />
+              <Image src="/images/icons/help.png" alt="Help" width={32} height={32} className="mb-3 object-contain" style={{ width: "auto", height: "auto" }} />
               <h3 className="font-inter font-semibold text-[#1D3B29] text-[24px] mb-1 leading-none">Need Help?</h3>
               <p className="font-inter text-[#1D3B29] text-[13px] opacity-80 mb-5">
                 We're here to help you.

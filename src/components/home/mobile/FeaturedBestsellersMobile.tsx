@@ -192,7 +192,7 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
   );
 }
 
-export default function FeaturedBestsellers({ dbProducts = [], hideHeader = false }: FeaturedBestsellersProps) {
+export default function FeaturedBestsellersMobile({ dbProducts = [], hideHeader = false }: FeaturedBestsellersProps) {
   // Use real DB products if available, filter for bestsellers, fallback to regular products if needed
   const realProducts = dbProducts && dbProducts.length > 0
     ? (dbProducts.filter(p => p.is_bestseller).length >= 4

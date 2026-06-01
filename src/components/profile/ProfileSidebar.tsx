@@ -64,7 +64,7 @@ export default function ProfileSidebar({ onSignOut, isAdmin = false }: ProfileSi
 
       {/* Need Help Card */}
       <div className="hidden lg:flex bg-[#F7EDE2] rounded-[16px] p-6 flex-col items-center text-center">
-        <Image src="/images/icons/help.png" alt="Help" width={32} height={32} className="mb-3 object-contain" />
+        <Image src="/images/icons/help.png" alt="Help" width={32} height={32} className="mb-3 object-contain" style={{ width: "auto", height: "auto" }} />
         <h3 className="font-inter font-semibold text-[#1D3B29] text-[24px] mb-1 leading-none">Need Help?</h3>
         <p className="font-inter text-[#1D3B29] text-[13px] opacity-80 mb-5">
           We're here to help you.

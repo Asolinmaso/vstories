@@ -15,6 +15,7 @@ interface FeedbackEntry {
 interface ProductReviewsProps {
     productId: string;
     productName: string;
+    initialReviews: FeedbackEntry[];
     onReviewAdded?: (rating: number) => void;
 }
 
@@ -32,9 +33,9 @@ function timeAgo(dateStr: string) {
 
 const PAGE_SIZE = 10;
 
-export default function ProductReviews({ productId, productName, onReviewAdded }: ProductReviewsProps) {
-    const [reviews, setReviews] = useState<FeedbackEntry[]>([]);
-    const [loading, setLoading] = useState(true);
+export default function ProductReviews({ productId, productName, initialReviews, onReviewAdded }: ProductReviewsProps) {
+    const [reviews, setReviews] = useState<FeedbackEntry[]>(initialReviews);
+    const [loading, setLoading] = useState(false);
     const [isWritingReview, setIsWritingReview] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
@@ -42,11 +43,8 @@ export default function ProductReviews({ productId, productName, onReviewAdded }
     const [page, setPage] = useState(1);
 
     useEffect(() => {
-        fetch(`/api/feedback?product_id=${productId}`, { cache: 'no-store' })
-            .then(res => res.json())
-            .then(data => setReviews(data.feedback || []))
-            .finally(() => setLoading(false));
-    }, [productId]);
+        setReviews(initialReviews);
+    }, [initialReviews]);
 
     const totalPages = Math.ceil(reviews.length / PAGE_SIZE);
     const paginatedReviews = reviews.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);

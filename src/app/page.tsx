@@ -9,6 +9,7 @@ import CleanBeauty from "@/components/home/CleanBeauty";
 import RealResults from "@/components/home/RealResults";
 import CustomerLove from "@/components/home/CustomerLove";
 import Marquee from "@/components/ui/Marquee";
+import HomeMobile from "@/components/home/HomeMobile";
 import { getProducts } from "@/lib/services/product.service";
 import { getWebsiteConfig } from "@/lib/services/website.service";
 
@@ -50,36 +51,42 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      {/* 1. Hero Section */}
-      <HeroCarousel />
+      
+      {/* Mobile View */}
+      <HomeMobile products={products} trustItems={trustItems} />
 
-      {/* 2. Trust Marquee */}
-      <Marquee items={trustItems} variant="dark" speed="slow" />
+      {/* Desktop View */}
+      <div className="hidden lg:block">
+        {/* 1. Hero Section */}
+        <HeroCarousel />
 
-      {/* 4. Find what your skin & hair truly needs */}
-      <FindWhatYouNeed products={products} />
+        {/* 2. Trust Marquee */}
+        <Marquee items={trustItems} variant="dark" speed="slow" />
 
-      {/* 5. Featured Bestsellers */}
-      <FeaturedBestsellers dbProducts={products} />
+        {/* 4. Find what your skin & hair truly needs */}
+        <FindWhatYouNeed products={products} />
 
-      {/* 6. Experience Banners */}
-      <CategoryBanners />
+        {/* 5. Featured Bestsellers */}
+        <FeaturedBestsellers dbProducts={products} />
 
-      {/* 7. Offers Crafted for You */}
-      <OffersSection />
+        {/* 6. Experience Banners */}
+        <CategoryBanners />
 
-      {/* 8. Brand Story Banner */}
-      <BrandStoryBanner />
+        {/* 7. Offers Crafted for You */}
+        <OffersSection />
 
-      {/* 9. Real Results */}
-      <RealResults />
+        {/* 8. Brand Story Banner */}
+        <BrandStoryBanner />
 
-      {/* 10. Customer Love (Reviews) */}
-      <CustomerLove />
+        {/* 9. Real Results */}
+        <RealResults />
 
-      {/* 11. Clean, effective & honest */}
-      <CleanBeauty />
+        {/* 10. Customer Love (Reviews) */}
+        <CustomerLove />
 
+        {/* 11. Clean, effective & honest */}
+        <CleanBeauty />
+      </div>
     </>
   );
 }

@@ -112,13 +112,49 @@ export default function BlogContent() {
         }
       `}} />
 
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        .blog-hero-img {
+            object-position: center;
+        }
+        @media screen and (max-width: 1024px) {
+            .blog-hero-img {
+                object-position: center;
+            }
+        }
+        @media screen and (max-width: 768px) {
+            .blog-hero-img {
+                object-position: left;
+            }
+        }
+        @media screen and (max-width: 480px) {
+            .blog-hero-img {
+                object-position: left;
+            }
+        }
+        @media screen and (max-width: 375px) {
+            .blog-hero-img {
+                object-position: left 25%;
+            }
+        }
+        @media screen and (max-width: 360px) {
+            .blog-hero-img {
+                object-position: left 30%;
+            }
+        }
+        @media screen and (max-width: 320px) {
+            .blog-hero-img {
+                object-position: left 39%;
+            }
+        }
+      `}} />
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="relative overflow-hidden flex flex-col items-center justify-start h-[440px] md:h-[580px] pt-20 md:pt-36 bg-[#F5F5F5]">
         <Image
           src="/images/blog/blog hero.png"
           alt="Our Blog"
           fill
-          className="object-cover object-left md:object-center"
+          className="object-cover blog-hero-img"
           priority
         />
         {/* Dark overlay */}
