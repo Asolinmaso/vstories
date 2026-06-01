@@ -54,7 +54,7 @@ function ValueOrb({
         }}
       />
       <div className="relative flex items-center justify-center" style={{ width: 140, height: 140 }}>
-        <div className="absolute inset-0 rounded-full" style={{ background: "linear-gradient(180deg, #FCFAF4 0%, #D8AE5E 100%)" }} />
+        <div className="absolute inset-0 rounded-full" style={{ background: "linear-gradient(231.77deg, #CBA45A 16.84%, #FFEAC3 54.23%, #C39641 91.63%)" }} />
         <div
           className="absolute flex items-center justify-center rounded-full"
           style={{ width: 100, height: 100, marginTop: -45, background: "#1D3B29", boxShadow: "0px 4px 15px rgba(0,0,0,0.2)" }}
@@ -88,14 +88,14 @@ function MobileValueCard({
     <div className="flex flex-col items-center text-center gap-[16px]">
       <div className="relative w-[150px] h-[150px]">
         {/* Outer golden circle */}
-        <div 
-          className="absolute inset-0 rounded-full" 
-          style={{ 
-            background: "linear-gradient(231.77deg, #CBA45A 16.84%, #FFEAC3 54.23%, #C39641 91.63%)" 
-          }} 
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            background: "linear-gradient(231.77deg, #CBA45A 16.84%, #FFEAC3 54.23%, #C39641 91.63%)"
+          }}
         />
         {/* Inner green circle */}
-        <div 
+        <div
           className="absolute rounded-full flex items-center justify-center bg-[#1D3B29]"
           style={{
             width: "100px",
@@ -127,8 +127,14 @@ function TimelineItem({ year, title, desc }: { year: string; title: string; desc
   return (
     <div className="relative flex flex-col items-center" style={{ width: 292 }}>
       <div
-        className="flex items-center justify-center rounded-full"
-        style={{ width: 100, height: 100, background: "linear-gradient(231.77deg,#CBA45A 16.84%,#FFEAC3 54.23%,#C39641 91.63%)" }}
+        className="flex items-center justify-center rounded-full relative z-20"
+        style={{ 
+          width: 100, 
+          height: 100, 
+          marginBottom: -50, 
+          background: "linear-gradient(231.77deg,#CBA45A 16.84%,#FFEAC3 54.23%,#C39641 91.63%)",
+          boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.15)"
+        }}
       >
         <span className="font-inter font-normal text-[#1D3B29]" style={{ fontSize: 24 }}>
           {year}
@@ -136,7 +142,7 @@ function TimelineItem({ year, title, desc }: { year: string; title: string; desc
       </div>
       <div
         className="flex flex-col items-center justify-center text-center relative z-10"
-        style={{ width: 292, height: 177, marginTop: 16, background: "#F3EEE9", borderRadius: 24, padding: "0 24px" }}
+        style={{ width: 292, height: 177, paddingTop: 40, background: "#F3EEE9", borderRadius: 24, paddingLeft: 24, paddingRight: 24 }}
       >
         <span className="font-inter font-semibold text-[#1D3B29] mb-2" style={{ fontSize: 24, lineHeight: "29px" }}>
           {title}
@@ -145,7 +151,7 @@ function TimelineItem({ year, title, desc }: { year: string; title: string; desc
           {desc}
         </span>
       </div>
-      <div className="flex items-center justify-center rounded-full" style={{ width: 16, height: 16, marginTop: 6, background: "#E8BF72" }}>
+      <div className="flex items-center justify-center rounded-full relative z-20" style={{ width: 16, height: 16, marginTop: 6, background: "linear-gradient(231.77deg,#CBA45A 16.84%,#FFEAC3 54.23%,#C39641 91.63%)" }}>
         <div style={{ width: 10, height: 10, background: "#1D3B29", borderRadius: "50%" }} />
       </div>
     </div>
@@ -202,11 +208,7 @@ const TIMELINE = [
   { year: "2024", title: "New Horizons", desc: "Introducing new product lines and B2B partnerships." },
 ];
 
-const TRUST_FEATURES = [
-  { title: "Free Shipping", desc: "On orders above ₹799", icon: "/images/icons/shippings.png" },
-  { title: "Cash On Delivery", desc: "₹25 Per Order", icon: "/images/icons/savings.png" },
-  { title: "Secure Payments", desc: "Razor Pay Payment", icon: "/images/icons/payments.png" },
-];
+
 
 export default function AboutContent() {
   return (
@@ -223,14 +225,14 @@ export default function AboutContent() {
             transition={{ duration: 0.8 }}
             className="flex flex-col items-start gap-[32px] w-full"
           >
-            <h1 
-              className="font-playfair font-semibold text-[#000000]" 
+            <h1
+              className="font-playfair font-semibold text-[#000000]"
               style={{ fontSize: "48px", lineHeight: "64px" }}
             >
               Born from Nature. Built for Indian Skin.
             </h1>
-            <p 
-              className="font-inter font-normal text-[#000000]" 
+            <p
+              className="font-inter font-normal text-[#000000]"
               style={{ fontSize: "16px", lineHeight: "19px" }}
             >
               At Vstories, we blend time-tested herbs with modern formulation science to create skincare and haircare that actually works in Indian conditions from heat and humidity to pollution and stress.
@@ -238,10 +240,10 @@ export default function AboutContent() {
             <Link
               href="#our-story"
               className="flex justify-center items-center font-inter font-medium transition-all"
-              style={{ 
-                width: "167px", 
-                height: "43px", 
-                background: "#1D3B29", 
+              style={{
+                width: "167px",
+                height: "43px",
+                background: "#1D3B29",
                 borderRadius: "8px",
                 color: "#F7EDE2",
                 fontSize: "16px",
@@ -449,7 +451,7 @@ export default function AboutContent() {
               className="absolute left-0 w-full"
               style={{
                 height: "12px",
-                top: "307px",
+                top: "241px",
                 backgroundImage: "url('/images/about/our%20journey.png')",
                 backgroundSize: "100% 100%",
                 backgroundRepeat: "no-repeat",
@@ -457,7 +459,7 @@ export default function AboutContent() {
                 paddingBottom: 10,
               }}
             />
-            <div className="flex justify-between gap-6">
+            <div className="flex justify-between gap-6 relative z-10">
               {TIMELINE.map((item) => (
                 <motion.div key={item.year} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
                   <TimelineItem {...item} />
@@ -560,26 +562,7 @@ export default function AboutContent() {
         </div>
       </section>
 
-      {/* ── 6. TRUST BAR ─────────────────────────────────────── */}
-      <div className="bg-[#F7F3EF] py-8 lg:h-[185px] lg:py-0 flex items-center">
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-[100px]">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-around gap-8 sm:gap-4 lg:gap-0">
-            {TRUST_FEATURES.map((feature) => (
-              <div key={feature.title} className="flex flex-col items-center gap-3 w-full max-w-[216px] mx-auto sm:mx-0">
-                <div className="relative w-10 h-10">
-                  <Image src={feature.icon} alt={feature.title} fill className="object-contain" />
-                </div>
-                <h4 className="font-playfair font-semibold text-[#2E2E2E] text-center text-lg lg:text-2xl lg:leading-8">
-                  {feature.title}
-                </h4>
-                <p className="font-inter font-normal text-[#2E2E2E] text-center text-sm lg:text-base lg:leading-[19px]">
-                  {feature.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 }

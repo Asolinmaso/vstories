@@ -212,59 +212,59 @@ export default function FeaturedBestsellers({ dbProducts = [], hideHeader = fals
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
         {/* Section Header */}
         {!hideHeader && (
-        <div className="flex flex-col items-center text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex items-end gap-6 mb-4"
-          >
-            <LeafIcon />
-            <span
-              className="font-playfair font-normal text-[#2E2E2E]"
-              style={{ fontSize: "24px", lineHeight: "32px" }}
+          <div className="flex flex-col items-center text-center mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex items-end gap-6 mb-4"
             >
-              Our Bestsellers
-            </span>
-            <LeafIcon flipped />
-          </motion.div>
+              <LeafIcon />
+              <span
+                className="font-playfair font-normal text-[#2E2E2E]"
+                style={{ fontSize: "24px", lineHeight: "32px" }}
+              >
+                Our Bestsellers
+              </span>
+              <LeafIcon flipped />
+            </motion.div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl lg:text-[32px] lg:leading-[43px]"
-          >
-            Real Ingredients, Real Results
-          </motion.h2>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl lg:text-[32px] lg:leading-[43px]"
+            >
+              Real Ingredients, Real Results
+            </motion.h2>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 mb-8 text-base leading-[19px] max-w-[671px]"
-          >
-            Handpicked by thousands of happy customers across India
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="font-inter font-normal text-[#2E2E2E] text-center mt-2 mb-8 text-base leading-[19px] max-w-[671px]"
+            >
+              Handpicked by thousands of happy customers across India
+            </motion.p>
 
-          <Link
-            href="/shop"
-            className="font-inter font-medium inline-flex items-center justify-center hover:opacity-90 transition-all"
-            style={{
-              width: "127px",
-              height: "43px",
-              background: "#1D3B29",
-              color: "#F7EDE2",
-              borderRadius: "8px",
-              fontSize: "16px",
-              lineHeight: "19px",
-            }}
-          >
-            View All
-          </Link>
-        </div>
+            <Link
+              href="/shop"
+              className="font-inter font-medium inline-flex items-center justify-center hover:opacity-90 transition-all"
+              style={{
+                width: "127px",
+                height: "43px",
+                background: "#1D3B29",
+                color: "#F7EDE2",
+                borderRadius: "8px",
+                fontSize: "16px",
+                lineHeight: "19px",
+              }}
+            >
+              View All
+            </Link>
+          </div>
         )}
 
         {/* Products — vertical stack on mobile, 4-col grid on desktop */}
