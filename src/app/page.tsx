@@ -5,7 +5,7 @@ import FindWhatYouNeed from "@/components/home/FindWhatYouNeed";
 import OffersSection from "@/components/home/OffersSection";
 import BrandStoryBanner from "@/components/home/BrandStoryBanner";
 import CleanBeauty from "@/components/home/CleanBeauty";
-import TrustFeatures from "@/components/home/TrustFeatures";
+
 import RealResults from "@/components/home/RealResults";
 import CustomerLove from "@/components/home/CustomerLove";
 import Marquee from "@/components/ui/Marquee";
@@ -80,8 +80,6 @@ export default async function Home() {
       {/* 11. Clean, effective & honest */}
       <CleanBeauty />
 
-      {/* 12. Bottom Trust Features */}
-      <TrustFeatures />
     </>
   );
 }

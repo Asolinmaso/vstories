@@ -7,11 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const slides = [
   {
-    id: "hero-banner",
-    image: "/images/home/hero-banner.png",
-    alt: "Vstories Hibiscus Shampoo",
-  },
-  {
     id: "hero-4",
     image: "/images/home/hero4.png",
     alt: "Vstories Herbal Hair Oil",
@@ -70,9 +65,9 @@ export default function HeroCarousel() {
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="font-playfair font-semibold text-white text-[28px] leading-[1.15] sm:text-4xl md:text-5xl lg:text-[64px] lg:leading-[85px] max-w-[543px]"
+                className="font-playfair font-semibold text-black text-[28px] leading-[1.15] sm:text-4xl md:text-5xl lg:text-[64px] lg:leading-[85px] max-w-full"
               >
-                Nature&apos;s Goodness Clinically Crafted
+                Nature&apos;s Goodness<br />Clinically Crafted
               </motion.h1>
 
               <motion.p
@@ -80,7 +75,7 @@ export default function HeroCarousel() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-                className="mt-4 sm:mt-5 font-inter font-normal text-white text-sm sm:text-base lg:text-2xl lg:leading-[29px] max-w-[628px]"
+                className="mt-4 sm:mt-5 font-inter font-normal text-black text-sm sm:text-base lg:text-2xl lg:leading-[29px] max-w-[628px]"
               >
                 Clean, effective &amp; honest skincare and haircare enriched with
                 natural ingredients &amp; powerful herbs for real, visible results.
@@ -110,11 +105,10 @@ export default function HeroCarousel() {
                     onClick={() => setActiveIndex(index)}
                     aria-label={`Show slide ${index + 1}`}
                     aria-current={index === activeIndex ? "true" : undefined}
-                    className={`relative h-[42px] w-[42px] sm:h-[55px] sm:w-[55px] shrink-0 overflow-hidden rounded-[8px] sm:rounded-[10px] border transition-all ${
-                      index === activeIndex
-                        ? "border-[#1A3026] border-2 shadow-md -translate-y-0.5"
-                        : "border-[#1A3026] border-[1.5px] opacity-90 hover:opacity-100"
-                    }`}
+                    className={`relative h-[42px] w-[42px] sm:h-[55px] sm:w-[55px] shrink-0 overflow-hidden rounded-[8px] sm:rounded-[10px] border transition-all ${index === activeIndex
+                      ? "border-[#1A3026] border-2 shadow-md -translate-y-0.5"
+                      : "border-[#1A3026] border-[1.5px] opacity-90 hover:opacity-100"
+                      }`}
                   >
                     <Image
                       src={slide.image}
