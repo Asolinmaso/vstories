@@ -48,7 +48,7 @@ const defaultReviews = [
 
 function LeafIcon({ flipped = false }: { flipped?: boolean }) {
   return (
-    <div className="relative w-6 h-6">
+    <div className="relative w-[16px] h-[16px]">
       <Image 
         src={flipped ? "/images/icons/leafright.png" : "/images/icons/leafleft.png"} 
         alt="Leaf" 
@@ -81,10 +81,10 @@ export default function CustomerLoveMobile({ testimonials = [], title, subtitle 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-end gap-4 sm:gap-6 mb-4"
+            className="flex items-center gap-2 mb-3"
           >
             <LeafIcon />
-            <span className="font-playfair font-normal text-[#000000] text-lg lg:text-2xl lg:leading-8">
+            <span className="font-playfair font-normal text-[#2E2E2E] text-[12px] sm:text-[14px]">
               Real Experiences, Real Confidence
             </span>
             <LeafIcon flipped />
@@ -95,9 +95,9 @@ export default function CustomerLoveMobile({ testimonials = [], title, subtitle 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px] max-w-[774px]"
+            className="font-playfair font-semibold text-[#2E2E2E] text-[26px] leading-[1.2] max-w-[774px]"
           >
-            {title || "Trusted By Thousands Across India"}
+            {title ? title : <>Trusted By Thousands<br />Across India</>}
           </motion.h2>
 
           <motion.p
@@ -105,7 +105,7 @@ export default function CustomerLoveMobile({ testimonials = [], title, subtitle 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-4 text-base sm:text-lg lg:text-xl lg:leading-7 max-w-[768px]"
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-3 text-[13px] leading-[1.4] max-w-[300px]"
           >
             {subtitle || "Thousands across India trust Vstories for gentle, plant-powered skincare and haircare that truly works with their everyday routines."}
           </motion.p>
