@@ -5,7 +5,7 @@ import Image from "next/image";
 
 function LeafIcon({ flipped = false }: { flipped?: boolean }) {
   return (
-    <div className="relative w-[12px] h-[12px]">
+    <div className="relative w-[16px] h-[16px]">
       <Image 
         src={flipped ? "/images/icons/leafright.png" : "/images/icons/leafleft.png"} 
         alt="Leaf" 
@@ -44,10 +44,10 @@ export default function CleanBeautyMobile() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-center justify-center gap-2 mb-2"
+            className="flex items-center justify-center gap-2 mb-3"
           >
             <LeafIcon />
-            <span className="font-playfair font-normal text-[#000000] whitespace-nowrap text-center text-[10px]">
+            <span className="font-playfair font-normal text-[#2E2E2E] whitespace-nowrap text-center text-[12px] sm:text-[14px]">
               Safe Ingredients. Visible Results.
             </span>
             <LeafIcon flipped />
@@ -58,7 +58,7 @@ export default function CleanBeautyMobile() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#2E2E2E] text-[18px]"
+            className="font-playfair font-semibold text-[#2E2E2E] text-[26px] leading-[1.2]"
           >
             Clean Beauty Essentials
           </motion.h2>
@@ -68,7 +68,7 @@ export default function CleanBeautyMobile() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 text-[10px] leading-[1.4] max-w-[280px]"
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-3 text-[13px] leading-[1.4] max-w-[320px]"
           >
             Designed with skin-safe ingredients and modern skincare science to deliver care you can trust.
           </motion.p>
@@ -86,7 +86,7 @@ export default function CleanBeautyMobile() {
               className="flex flex-col items-center gap-2 w-full max-w-[240px]"
             >
               {/* Icon Image */}
-              <div className="relative flex-shrink-0 w-[64px] h-[64px]">
+              <div className="relative flex-shrink-0 w-[80px] h-[80px]">
                 <Image
                   src={cert.image}
                   alt={cert.name}
@@ -95,12 +95,12 @@ export default function CleanBeautyMobile() {
                 />
               </div>
 
-              <h4 className="font-inter font-semibold text-[#2E2E2E] text-center text-[13px]">
+              <h4 className="font-inter font-semibold text-[#2E2E2E] text-center text-[15px] mt-1">
                 {cert.name}
               </h4>
 
               <p
-                className="font-inter font-normal text-[#2E2E2E] text-center text-[10px] leading-[1.4]"
+                className="font-inter font-normal text-[#2E2E2E] text-center text-[12px] leading-[1.4]"
               >
                 {cert.desc}
               </p>

@@ -120,43 +120,34 @@ function ComparisonCard({ testimonial }: { testimonial: typeof testimonials[0] }
       </div>
 
       {/* Content section */}
-      <div className="flex flex-col flex-grow justify-between p-6">
+      <div className="flex flex-col flex-grow justify-between p-5">
         <div>
           {/* Name + Stars */}
-          <div className="flex items-center justify-between mb-3">
-            <span className="font-inter font-bold text-[#2E2E2E]" style={{ fontSize: "16px", lineHeight: "19px" }}>
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-inter font-bold text-[#2E2E2E] text-[13px]">
               {testimonial.name}
             </span>
             <div className="flex items-center gap-0.5">
               {[...Array(testimonial.rating)].map((_, i) => (
-                <Star key={i} size={15} fill="#CBA45A" color="#CBA45A" />
+                <Star key={i} size={12} fill="#E8BF72" color="#E8BF72" strokeWidth={1} />
               ))}
             </div>
           </div>
 
           {/* Quote */}
           <p
-            className="font-inter font-normal text-[#4A4A4A] text-sm leading-relaxed"
-            style={{ fontSize: "14px", lineHeight: "20px" }}
+            className="font-inter font-normal text-[#4A4A4A] text-[12px] leading-[1.4]"
           >
             &ldquo;{testimonial.quote}&rdquo;
           </p>
         </div>
 
         {/* Product badge */}
-        <div className="mt-4">
+        <div className="mt-3">
           <Link
             href={`/product/${testimonial.productSlug}`}
-            className="inline-flex items-center justify-center font-inter font-semibold transition-all hover:opacity-90"
-            style={{
-              background: "#1D3B29",
-              color: "#FFFFFF",
-              borderRadius: "24px",
-              padding: "6px 16px",
-              fontSize: "12px",
-              lineHeight: "15px",
-              width: "fit-content",
-            }}
+            className="inline-flex items-center justify-center font-inter font-medium transition-all hover:opacity-90 bg-[#1D3B29] rounded-full px-4 py-1.5 text-[11px]"
+            style={{ color: "#FFFFFF" }}
           >
             Using {testimonial.productName}
           </Link>
@@ -168,7 +159,7 @@ function ComparisonCard({ testimonial }: { testimonial: typeof testimonials[0] }
 
 function LeafIcon({ flipped = false }: { flipped?: boolean }) {
   return (
-    <div className="relative w-6 h-6">
+    <div className="relative w-[16px] h-[16px]">
       <Image
         src={flipped ? "/images/icons/leafright.png" : "/images/icons/leafleft.png"}
         alt="Leaf"
@@ -193,15 +184,15 @@ export default function RealResultsMobile() {
 
       <div className="relative z-10 w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-12">
+        <div className="flex flex-col items-center text-center mb-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-center justify-center gap-3 mb-4"
+            className="flex items-center justify-center gap-2 mb-2"
           >
             <LeafIcon />
-            <span className="font-playfair font-normal text-[#1D3B29]" style={{ fontSize: "24px", lineHeight: "32px" }}>
+            <span className="font-playfair font-normal text-[#1D3B29] text-[14px]">
               Transformation
             </span>
             <LeafIcon flipped />
@@ -222,10 +213,9 @@ export default function RealResultsMobile() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#4A4A4A] mt-4"
-            style={{ fontSize: "18px", lineHeight: "26px", maxWidth: "650px" }}
+            className="font-inter font-normal text-[#4A4A4A] mt-2 text-[13px] leading-[1.4]"
           >
-            See the transformations our customers have experienced
+            See the transformations our customers<br />have experienced
           </motion.p>
         </div>
 

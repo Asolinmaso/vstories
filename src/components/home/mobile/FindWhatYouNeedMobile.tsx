@@ -104,8 +104,8 @@ function ProductCard({ product }: { product: Product }) {
             <Heart
               size={20}
               strokeWidth={1.5}
-              color={isLiked ? "#EF4444" : "#2E2E2E"}
-              fill={isLiked ? "#EF4444" : "transparent"}
+              color={isLiked ? "#778E6B" : "#2E2E2E"}
+              fill={isLiked ? "#778E6B" : "transparent"}
               className="transition-colors duration-300"
             />
           </button>

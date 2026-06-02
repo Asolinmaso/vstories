@@ -14,7 +14,7 @@ interface FeaturedBestsellersProps {
 
 function LeafIcon({ flipped = false }: { flipped?: boolean }) {
   return (
-    <div className="relative w-[12px] h-[12px]">
+    <div className="relative w-[18px] h-[18px]">
       <Image
         src={flipped ? "/images/icons/leafright.png" : "/images/icons/leafleft.png"}
         alt="Leaf"
@@ -171,7 +171,8 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
         {/* Shop Now Button */}
         <Link
           href={`/product/${product.slug || product.id}`}
-          className="font-inter font-medium flex items-center justify-center bg-[#1A3E25] text-[#F7EDE2] rounded-[4px] hover:opacity-90 transition-all text-[11px] px-4 py-1.5 w-fit"
+          className="font-inter font-medium flex items-center justify-center bg-[#1A3E25] rounded-[4px] hover:opacity-90 transition-all text-[11px] px-4 py-1.5 w-fit"
+          style={{ color: "#F7EDE2" }}
         >
           Shop Now
         </Link>
@@ -203,11 +204,11 @@ export default function FeaturedBestsellersMobile({ dbProducts = [], hideHeader 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex items-center gap-2 mb-2"
+              className="flex items-center gap-3 mb-2"
             >
               <LeafIcon />
               <span
-                className="font-playfair font-normal text-[#2E2E2E] text-[10px]"
+                className="font-playfair font-normal text-[#2E2E2E] text-[14px]"
               >
                 Our Bestsellers
               </span>
@@ -219,7 +220,7 @@ export default function FeaturedBestsellersMobile({ dbProducts = [], hideHeader 
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="font-playfair font-semibold text-[#2E2E2E] text-[18px] leading-[1.3] mb-2"
+              className="font-playfair font-semibold text-[#2E2E2E] text-[24px] leading-[1.3] mb-2"
             >
               Real Ingredients,<br />Real Results
             </motion.h2>
@@ -229,14 +230,15 @@ export default function FeaturedBestsellersMobile({ dbProducts = [], hideHeader 
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="font-inter font-normal text-[#2E2E2E] text-center text-[10px] leading-[1.4] max-w-[240px] mb-4"
+              className="font-inter font-normal text-[#2E2E2E] text-center text-[13px] leading-[1.4] max-w-[280px] mb-5 mt-2"
             >
               Handpicked by thousands of happy customers across India
             </motion.p>
 
             <Link
               href="/shop"
-              className="font-inter font-medium inline-flex items-center justify-center bg-[#1D3B29] text-[#F7EDE2] rounded-[6px] hover:opacity-90 transition-all text-[11px] px-6 py-2"
+              className="font-inter font-medium inline-flex items-center justify-center bg-[#1D3B29] rounded-[6px] hover:opacity-90 transition-all text-[11px] px-6 py-2"
+              style={{ color: "#F7EDE2" }}
             >
               View All
             </Link>
