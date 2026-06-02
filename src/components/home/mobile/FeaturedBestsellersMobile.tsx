@@ -14,7 +14,7 @@ interface FeaturedBestsellersProps {
 
 function LeafIcon({ flipped = false }: { flipped?: boolean }) {
   return (
-    <div className="relative w-6 h-6">
+    <div className="relative w-[12px] h-[12px]">
       <Image
         src={flipped ? "/images/icons/leafright.png" : "/images/icons/leafleft.png"}
         alt="Leaf"
@@ -27,7 +27,7 @@ function LeafIcon({ flipped = false }: { flipped?: boolean }) {
 
 function StarIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="#E8BF72" xmlns="http://www.w3.org/2000/svg">
+    <svg width="12" height="12" viewBox="0 0 28 28" fill="#E8BF72" xmlns="http://www.w3.org/2000/svg">
       <path d="M14 0L17.0623 9.44286H26.9656L19.2016 15.2857L22.2639 24.7286L14.5 18.8857L6.73607 24.7286L9.79837 15.2857L2.03444 9.44286H12.0377L14 0Z" />
     </svg>
   );
@@ -114,9 +114,9 @@ const fallbackProducts: Product[] = [
 
 function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
   return (
-    <div className="flex flex-col w-full max-w-[400px] mx-auto gap-6">
-      {/* Image box — full width on mobile per Figma */}
-      <div className="relative w-full bg-[#EAEAEA] rounded-lg overflow-hidden" style={{ height: "303px" }}>
+    <div className="flex flex-col w-full max-w-[400px] mx-auto gap-3">
+      {/* Image box — landscape on mobile per Figma */}
+      <div className="relative w-full bg-[#EAEAEA] rounded-[8px] overflow-hidden aspect-[4/3] sm:aspect-[3/2]">
         <Image
           src={product.images?.[0] || "/images/products/prophetic-face-serum.png"}
           alt={product.name}
@@ -126,15 +126,12 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
         {/* Badge */}
         {badge && (
           <div
-            className="absolute font-inter font-normal text-[#1D3B29]"
+            className="absolute font-inter font-medium text-[#1D3B29] bg-[#F7EDE2] rounded-full px-[8px] py-[4px]"
             style={{
-              top: "16px",
-              right: "16px",
-              background: "#F7EDE2",
-              borderRadius: "24px",
-              padding: "10px",
-              fontSize: "16px",
-              lineHeight: "19px",
+              top: "8px",
+              right: "8px",
+              fontSize: "10px",
+              lineHeight: "1.2",
             }}
           >
             {badge}
@@ -143,29 +140,29 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
       </div>
 
       {/* Info */}
-      <div className="flex flex-col gap-3 w-full">
-        <h3 className="font-inter font-semibold text-[#2E2E2E] text-lg lg:text-2xl lg:leading-[29px]">
+      <div className="flex flex-col gap-2 w-full">
+        <h3 className="font-inter font-medium text-[#2E2E2E] text-[13px] leading-tight">
           {product.name}
         </h3>
 
         {/* Price + Rating row */}
-        <div className="flex flex-wrap items-center justify-between gap-2 w-full">
-          <div className="flex items-center gap-2">
-            <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: "24px", lineHeight: "29px" }}>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-1.5">
+            <span className="font-inter font-semibold text-[#2E2E2E] text-[13px]">
               ₹{product.price}
             </span>
             {product.original_price && (
-              <span className="font-inter font-normal text-[#2E2E2E] line-through" style={{ fontSize: "16px" }}>
+              <span className="font-inter font-normal text-[#2E2E2E]/60 line-through text-[11px]">
                 (₹{product.original_price})
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <StarIcon />
-            <span className="font-inter font-semibold text-[#2E2E2E]" style={{ fontSize: "24px", lineHeight: "29px" }}>
+            <span className="font-inter font-medium text-[#2E2E2E] text-[12px]">
               {product.rating || 4.8}
             </span>
-            <span className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: "16px", lineHeight: "19px" }}>
+            <span className="font-inter font-normal text-[#2E2E2E]/60 text-[11px]">
               ({product.reviews_count || product.review_count || 120})
             </span>
           </div>
@@ -174,16 +171,7 @@ function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
         {/* Shop Now Button */}
         <Link
           href={`/product/${product.slug || product.id}`}
-          className="font-inter font-medium hover:opacity-90 transition-all flex items-center justify-center"
-          style={{
-            width: "111px",
-            height: "43px",
-            background: "#1A3E25",
-            color: "#F7EDE2",
-            borderRadius: "8px",
-            fontSize: "16px",
-            lineHeight: "19px",
-          }}
+          className="font-inter font-medium flex items-center justify-center bg-[#1A3E25] text-[#F7EDE2] rounded-[4px] hover:opacity-90 transition-all text-[11px] px-4 py-1.5 w-fit"
         >
           Shop Now
         </Link>
@@ -206,21 +194,20 @@ export default function FeaturedBestsellersMobile({ dbProducts = [], hideHeader 
   }));
 
   return (
-    <section className="py-12 lg:py-20" style={{ background: "#FCFAF4" }}>
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
+    <section className="py-10" style={{ background: "#FCFAF4" }}>
+      <div className="w-full max-w-[1440px] mx-auto px-4">
         {/* Section Header */}
         {!hideHeader && (
-          <div className="flex flex-col items-center text-center mb-12">
+          <div className="flex flex-col items-center text-center mb-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex items-end gap-6 mb-4"
+              className="flex items-center gap-2 mb-2"
             >
               <LeafIcon />
               <span
-                className="font-playfair font-normal text-[#2E2E2E]"
-                style={{ fontSize: "24px", lineHeight: "32px" }}
+                className="font-playfair font-normal text-[#2E2E2E] text-[10px]"
               >
                 Our Bestsellers
               </span>
@@ -232,9 +219,9 @@ export default function FeaturedBestsellersMobile({ dbProducts = [], hideHeader 
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl lg:text-[32px] lg:leading-[43px]"
+              className="font-playfair font-semibold text-[#2E2E2E] text-[18px] leading-[1.3] mb-2"
             >
-              Real Ingredients, Real Results
+              Real Ingredients,<br />Real Results
             </motion.h2>
 
             <motion.p
@@ -242,38 +229,30 @@ export default function FeaturedBestsellersMobile({ dbProducts = [], hideHeader 
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="font-inter font-normal text-[#2E2E2E] text-center mt-2 mb-8 text-base leading-[19px] max-w-[671px]"
+              className="font-inter font-normal text-[#2E2E2E] text-center text-[10px] leading-[1.4] max-w-[240px] mb-4"
             >
               Handpicked by thousands of happy customers across India
             </motion.p>
 
             <Link
               href="/shop"
-              className="font-inter font-medium inline-flex items-center justify-center hover:opacity-90 transition-all"
-              style={{
-                width: "127px",
-                height: "43px",
-                background: "#1D3B29",
-                color: "#F7EDE2",
-                borderRadius: "8px",
-                fontSize: "16px",
-                lineHeight: "19px",
-              }}
+              className="font-inter font-medium inline-flex items-center justify-center bg-[#1D3B29] text-[#F7EDE2] rounded-[6px] hover:opacity-90 transition-all text-[11px] px-6 py-2"
             >
               View All
             </Link>
           </div>
         )}
 
-        {/* Products — vertical stack on mobile, 4-col grid on desktop */}
-        <div className="flex flex-col items-center gap-6 lg:grid lg:grid-cols-4 lg:gap-6">
+        {/* Products — vertical stack on mobile */}
+        <div className="flex flex-col items-center gap-8">
           {displayProducts.map((product: any, index: number) => (
             <motion.div
               key={product.id}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
+              className="w-full"
             >
               <BestsellerCard product={product} badge={product.badge} />
             </motion.div>
