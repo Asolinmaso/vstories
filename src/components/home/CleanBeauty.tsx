@@ -44,10 +44,10 @@ export default function CleanBeauty() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-end gap-6 mb-4"
+            className="flex items-center justify-center gap-3 sm:gap-6 mb-4"
           >
             <LeafIcon />
-            <span className="font-playfair font-normal text-[#000000]" style={{ fontSize: "24px", lineHeight: "32px" }}>
+            <span className="font-playfair font-normal text-[#000000] whitespace-nowrap text-center" style={{ fontSize: "24px", lineHeight: "32px" }}>
               Safe Ingredients. Visible Results.
             </span>
             <LeafIcon flipped />

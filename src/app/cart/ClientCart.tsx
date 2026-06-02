@@ -49,15 +49,27 @@ export default function ClientCart() {
     <div className="w-full" style={{ background: "#FDFCF8", minHeight: "100vh", paddingBottom: 60 }}>
       {/* ── Cart Section ── */}
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-[100px] pt-12 pb-16">
-        <h1
-          className="font-playfair font-semibold text-[#2E2E2E] mb-2"
-          style={{ fontSize: 42, lineHeight: "56px" }}
-        >
-          My Cart ({items.length.toString().padStart(2, "0")})
-        </h1>
-        <p className="font-inter font-normal text-[#2E2E2E] mb-10" style={{ fontSize: 16 }}>
-          Review your selected products and proceed to secure checkout.
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-10 gap-4">
+          <div>
+            <h1
+              className="font-playfair font-semibold text-[#2E2E2E] mb-2"
+              style={{ fontSize: 42, lineHeight: "56px" }}
+            >
+              My Cart ({items.length.toString().padStart(2, "0")})
+            </h1>
+            <p className="font-inter font-normal text-[#2E2E2E]" style={{ fontSize: 16 }}>
+              Review your selected products and proceed to secure checkout.
+            </p>
+          </div>
+          {items.length > 0 && (
+            <button
+              onClick={() => useCartStore.getState().clearCart()}
+              className="text-[#2E2E2E]/60 hover:text-red-500 font-inter font-medium text-[14px] transition-colors border border-[#2E2E2E]/20 rounded-md px-4 py-2 shrink-0 bg-white"
+            >
+              Clear Cart
+            </button>
+          )}
+        </div>
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center bg-white rounded-xl border border-[#D9D9D9] py-20 text-center">

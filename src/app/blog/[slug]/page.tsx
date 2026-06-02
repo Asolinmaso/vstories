@@ -19,33 +19,33 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="bg-[#FCFAF4] min-h-screen py-10 md:py-16">
-      <div className="w-full max-w-[1200px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-12">
+      <div className="w-full max-w-[1200px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1fr_340px] lg:grid-rows-[auto_1fr] gap-12 lg:items-start">
         {/* 1. Search & Categories (visible at the top on mobile) */}
-        <div className="lg:col-start-2 lg:row-start-1">
+        <div className="lg:col-start-2 lg:row-start-1 flex flex-col gap-6">
           {/* Search */}
-          <div className="bg-[#F3EFE6] p-6 rounded-xl mb-8">
-            <h3 className="font-inter text-xl md:text-2xl font-semibold text-[#2E2E2E] mb-4">Search Articles</h3>
+          <div className="bg-[#F4F0EC] p-5 rounded-[12px]">
+            <h3 className="font-inter text-[16px] md:text-[18px] font-medium text-[#2E2E2E] mb-3">Search Articles</h3>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#2E2E2E]/60" size={16} />
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-full pl-10 pr-4 py-2 rounded border border-[#D9D9D9] bg-transparent text-[#2E2E2E] focus:outline-none focus:border-[#1D3B29]"
+                className="w-full pl-9 pr-4 py-2 text-[13px] md:text-[14px] rounded-[6px] border border-[#2E2E2E]/30 bg-transparent text-[#2E2E2E] focus:outline-none focus:border-[#1D3B29]"
               />
             </div>
           </div>
 
           {/* Categories */}
-          <div className="bg-[#F3EFE6] p-6 rounded-xl">
-            <h3 className="font-inter text-xl md:text-2xl font-semibold text-[#2E2E2E] mb-4">Categories</h3>
-            <ul className="space-y-2">
+          <div className="bg-[#F4F0EC] p-5 rounded-[12px]">
+            <h3 className="font-inter text-[16px] md:text-[18px] font-medium text-[#2E2E2E] mb-3">Categories</h3>
+            <ul className="space-y-1">
               {["All Articles", "Hair Care", "Skin Care", "Sustainability", "Wellness"].map((cat) => (
                 <li key={cat}>
                   <Link
                     href="/blog"
-                    className={`block px-3 py-2 rounded transition ${article.category === cat
-                      ? "bg-[#E8DFCF] text-[#2E2E2E] font-medium"
-                      : "hover:bg-[#e8dfcf] text-[#2E2E2E]"
+                    className={`block px-3 py-2.5 rounded-[6px] text-[13px] md:text-[14px] transition ${article.category === cat
+                      ? "bg-[#EBE2D4] text-[#2E2E2E] font-medium"
+                      : "hover:bg-[#EBE2D4]/50 text-[#2E2E2E]"
                       }`}
                   >
                     {cat}
@@ -80,8 +80,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             <div className="text-[#2E2E2E] text-sm">
               By Vstories Team &bull; May 15, 2024 &bull; {article.readTime}
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 text-[#2E2E2E] text-sm hover:opacity-80 transition border border-[#767676] rounded-[8px] w-fit">
-              <Image src="/images/icons/share.png" alt="Share" width={16} height={16} className="object-contain" />
+            <button 
+              className="flex items-center gap-2 px-4 py-1.5 text-[#2E2E2E] text-[12px] md:text-[13px] font-normal hover:bg-[#F5F5F5] transition rounded-[4px] w-fit"
+              style={{ border: "1px solid #767676" }}
+            >
+              <Image src="/images/icons/share.png" alt="Share" width={14} height={14} className="object-contain" />
               Share this article
             </button>
           </div>
@@ -118,35 +121,37 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           {/* Feedback & Share Footer */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-t border-[#D9D9D9] pt-6 mt-8 gap-6 sm:gap-4">
             <ArticleFeedback />
-            <button className="flex items-center gap-2 px-4 py-2 text-[#2E2E2E] text-sm hover:opacity-80 transition border border-[#767676] rounded-[8px] w-fit">
-              <Image src="/images/icons/share.png" alt="Share" width={16} height={16} className="object-contain" />
+            <button 
+              className="flex items-center gap-2 px-4 py-1.5 text-[#2E2E2E] text-[12px] md:text-[13px] font-normal hover:bg-[#F5F5F5] transition rounded-[4px] w-fit"
+              style={{ border: "1px solid #767676" }}
+            >
+              <Image src="/images/icons/share.png" alt="Share" width={14} height={14} className="object-contain" />
               Share this article
             </button>
           </div>
         </article>
 
         {/* 3. Latest Articles (visible at the bottom on mobile) */}
-        <div className="lg:col-start-2 lg:row-start-2">
-          <h3 className="font-inter text-xl md:text-2xl font-semibold text-[#2E2E2E] mb-6">Latest Articles</h3>
-          <div className="flex flex-col gap-6">
+        <div className="lg:col-start-2 lg:row-start-2 mt-2 lg:mt-0">
+          <h3 className="font-inter text-[16px] md:text-[18px] font-medium text-[#2E2E2E] mb-4">Latest Articles</h3>
+          <div className="flex flex-col gap-4">
             {latestArticles.map((latest) => (
-              <Link key={latest.id} href={`/blog/${latest.slug}`} className="flex gap-4 group">
-                <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden">
+              <Link key={latest.id} href={`/blog/${latest.slug}`} className="flex gap-4 group items-start">
+                <div className="relative w-[60px] h-[60px] md:w-[70px] md:h-[70px] flex-shrink-0 rounded-[4px] md:rounded-[8px] overflow-hidden">
                   <Image
                     src={latest.image}
                     alt={latest.title}
                     fill
-                    className="object-cover object-top group-hover:scale-105 transition duration-300"
+                    className="object-cover object-center group-hover:scale-105 transition duration-300"
                   />
                 </div>
-                <div>
+                <div className="flex flex-col justify-start gap-1">
                   <h4
-                    className="font-medium text-[#2E2E2E] mb-1 group-hover:text-[#1D3B29] transition line-clamp-2"
-                    style={{ fontSize: "16px", lineHeight: "1.3" }}
+                    className="font-inter font-medium text-[#2E2E2E] group-hover:text-[#1D3B29] transition line-clamp-2 text-[13px] md:text-[14px] leading-[1.3]"
                   >
                     {latest.title}
                   </h4>
-                  <p className="text-xs text-gray-500">{latest.date}</p>
+                  <p className="font-inter text-[11px] md:text-[12px] text-[#2E2E2E]/70">{latest.date}</p>
                 </div>
               </Link>
             ))}

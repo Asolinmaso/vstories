@@ -27,17 +27,19 @@ export default function ArticleFeedback() {
         <button
           onClick={() => handleVote("yes")}
           disabled={hasVoted !== null}
-          className={`flex items-center gap-2 px-4 py-2 rounded-[8px] border border-[#767676] text-[#4B4B4B] text-sm transition ${hasVoted === null ? 'hover:bg-[#f0ece1] cursor-pointer' : hasVoted === 'yes' ? 'bg-[#f0ece1] font-medium border-[#2E2E2E] text-[#2E2E2E]' : 'opacity-50 cursor-default'}`}
+          className={`flex items-center gap-2 px-4 py-1.5 rounded-[4px] text-[#2E2E2E] text-[14px] transition ${hasVoted === null ? 'hover:bg-[#F5F5F5] cursor-pointer' : hasVoted === 'yes' ? 'bg-[#F5F5F5] font-medium' : 'opacity-50 cursor-default'}`}
+          style={{ border: "1px solid #2E2E2E" }}
         >
-          <Image src="/images/icons/yes.png" alt="Yes" width={16} height={16} className="object-contain" />
+          <Image src="/images/icons/yes.png" alt="Yes" width={18} height={18} className="object-contain" />
           Yes ({yesCount})
         </button>
         <button
           onClick={() => handleVote("no")}
           disabled={hasVoted !== null}
-          className={`flex items-center gap-2 px-4 py-2 rounded-[8px] border border-[#767676] text-[#4B4B4B] text-sm transition ${hasVoted === null ? 'hover:bg-[#f0ece1] cursor-pointer' : hasVoted === 'no' ? 'bg-[#f0ece1] font-medium border-[#2E2E2E] text-[#2E2E2E]' : 'opacity-50 cursor-default'}`}
+          className={`flex items-center gap-2 px-4 py-1.5 rounded-[4px] text-[#2E2E2E] text-[14px] transition ${hasVoted === null ? 'hover:bg-[#F5F5F5] cursor-pointer' : hasVoted === 'no' ? 'bg-[#F5F5F5] font-medium' : 'opacity-50 cursor-default'}`}
+          style={{ border: "1px solid #2E2E2E" }}
         >
-          <Image src="/images/icons/no.png" alt="No" width={16} height={16} className="object-contain" />
+          <Image src="/images/icons/no.png" alt="No" width={18} height={18} className="object-contain" />
           No ({noCount < 10 ? `0${noCount}` : noCount})
         </button>
       </div>

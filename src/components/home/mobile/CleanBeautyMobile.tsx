@@ -5,7 +5,7 @@ import Image from "next/image";
 
 function LeafIcon({ flipped = false }: { flipped?: boolean }) {
   return (
-    <div className="relative w-6 h-6">
+    <div className="relative w-[12px] h-[12px]">
       <Image 
         src={flipped ? "/images/icons/leafright.png" : "/images/icons/leafleft.png"} 
         alt="Leaf" 
@@ -36,18 +36,18 @@ export default function CleanBeautyMobile() {
   ];
 
   return (
-    <section className="py-12 lg:py-20" style={{ background: "#FCFAF4" }}>
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-[100px]">
+    <section className="py-10" style={{ background: "#FCFAF4" }}>
+      <div className="w-full max-w-[1440px] mx-auto px-4">
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-16">
+        <div className="flex flex-col items-center text-center mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-end gap-6 mb-4"
+            className="flex items-center justify-center gap-2 mb-2"
           >
             <LeafIcon />
-            <span className="font-playfair font-normal text-[#000000]" style={{ fontSize: "24px", lineHeight: "32px" }}>
+            <span className="font-playfair font-normal text-[#000000] whitespace-nowrap text-center text-[10px]">
               Safe Ingredients. Visible Results.
             </span>
             <LeafIcon flipped />
@@ -58,7 +58,7 @@ export default function CleanBeautyMobile() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl md:text-4xl lg:text-[48px] lg:leading-[64px] max-w-[518px]"
+            className="font-playfair font-semibold text-[#2E2E2E] text-[18px]"
           >
             Clean Beauty Essentials
           </motion.h2>
@@ -68,14 +68,14 @@ export default function CleanBeautyMobile() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-4 text-base sm:text-lg lg:text-2xl lg:leading-[29px] max-w-[768px]"
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 text-[10px] leading-[1.4] max-w-[280px]"
           >
             Designed with skin-safe ingredients and modern skincare science to deliver care you can trust.
           </motion.p>
         </div>
 
         {/* Certification Icons Row */}
-        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-8 sm:gap-12 lg:gap-20">
+        <div className="flex flex-col items-center justify-center gap-8">
           {certifications.map((cert, idx) => (
             <motion.div
               key={idx}
@@ -83,10 +83,10 @@ export default function CleanBeautyMobile() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              className="flex flex-col items-center gap-4 w-full max-w-[320px] px-4"
+              className="flex flex-col items-center gap-2 w-full max-w-[240px]"
             >
               {/* Icon Image */}
-              <div className="relative flex-shrink-0 w-28 h-28 sm:w-36 sm:h-36 lg:w-[180px] lg:h-[180px]">
+              <div className="relative flex-shrink-0 w-[64px] h-[64px]">
                 <Image
                   src={cert.image}
                   alt={cert.name}
@@ -95,13 +95,12 @@ export default function CleanBeautyMobile() {
                 />
               </div>
 
-              <h4 className="font-inter font-semibold text-[#2E2E2E] text-center mt-4 text-lg lg:text-2xl lg:leading-[29px]">
+              <h4 className="font-inter font-semibold text-[#2E2E2E] text-center text-[13px]">
                 {cert.name}
               </h4>
 
               <p
-                className="font-inter font-normal text-[#2E2E2E] text-center"
-                style={{ fontSize: "16px", lineHeight: "19px" }}
+                className="font-inter font-normal text-[#2E2E2E] text-center text-[10px] leading-[1.4]"
               >
                 {cert.desc}
               </p>

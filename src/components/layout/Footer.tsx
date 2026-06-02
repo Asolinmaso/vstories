@@ -64,7 +64,7 @@ export default function Footer() {
             <div className="w-full max-w-[1440px] mx-auto px-6 md:px-[100px]">
                 <div className="flex flex-col lg:flex-row lg:justify-between gap-8 md:gap-12 lg:gap-8 mb-12 md:mb-20">
                     {/* Column 1: Brand */}
-                    <div className="flex flex-col gap-4 md:gap-8 lg:col-span-1">
+                    <div className="flex flex-col gap-4 md:gap-8 lg:col-span-1 lg:max-w-[280px]">
                         <Link href="/" className="w-[120px] md:w-[180px]">
                             <Image
                                 src="/images/icons/vstore logo.png"
@@ -75,7 +75,7 @@ export default function Footer() {
                                 style={{ width: "auto", height: "auto" }}
                             />
                         </Link>
-                        <p className="font-inter text-[11px] md:text-base font-normal leading-[1.6] max-w-[280px] text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>
+                        <p className="font-inter text-[11px] md:text-sm font-normal leading-[1.6] text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>
                             Reviving ancient herbal practices with modern standards. 100% natural, chemical-free products crafted with love.
                         </p>
                         <div className="flex gap-3 md:gap-4 mt-2 md:mt-2">
@@ -86,12 +86,12 @@ export default function Footer() {
                     </div>
 
                     {/* Column 2: Quick Links */}
-                    <div className="flex flex-col gap-4 md:gap-8">
-                        <h4 className="font-inter text-[14px] md:text-[18px] font-medium text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>Quick Links</h4>
+                    <div className="flex flex-col gap-4 md:gap-6">
+                        <h4 className="font-inter text-[14px] md:text-base font-medium text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>Quick Links</h4>
                         <ul className="flex flex-col gap-3 md:gap-4">
                             {quickLinks.map((link) => (
                                 <li key={link.label}>
-                                    <Link href={link.href} className="font-inter text-[11px] md:text-[16px] font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors" style={{ color: '#F7EDE2' }}>
+                                    <Link href={link.href} className="font-inter text-[11px] md:text-sm font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors" style={{ color: '#F7EDE2' }}>
                                         {link.label}
                                     </Link>
                                 </li>
@@ -100,12 +100,12 @@ export default function Footer() {
                     </div>
 
                     {/* Column 3: Categories */}
-                    <div className="flex flex-col gap-4 md:gap-8">
-                        <h4 className="font-inter text-[14px] md:text-[18px] font-medium text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>Categories</h4>
+                    <div className="flex flex-col gap-4 md:gap-6">
+                        <h4 className="font-inter text-[14px] md:text-base font-medium text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>Categories</h4>
                         <ul className="flex flex-col gap-3 md:gap-4">
                             {categories.map((link) => (
                                 <li key={link.label}>
-                                    <Link href={link.href} className="font-inter text-[11px] md:text-[16px] font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors" style={{ color: '#F7EDE2' }}>
+                                    <Link href={link.href} className="font-inter text-[11px] md:text-sm font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors" style={{ color: '#F7EDE2' }}>
                                         {link.label}
                                     </Link>
                                 </li>
@@ -113,19 +113,9 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    {/* Column 5: Contact Us (Moved up for mobile match) */}
-                    <div className="flex flex-col gap-4 md:gap-8">
-                        <h4 className="font-inter text-[14px] md:text-[18px] font-medium text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>Contact Us</h4>
-                        <div className="flex flex-col gap-3 md:gap-4">
-                            <ContactItem iconSrc="/images/icons/phone-foot.png" text="+91 6383921957" href="tel:+916383921957" />
-                            <ContactItem iconSrc="/images/icons/mail-foot.png" text="hello@vstories.in" href="mailto:hello@vstories.in" />
-                            <ContactItem iconSrc="/images/icons/location-foot.png" text="Kilakarai, Tamil Nadu" />
-                        </div>
-                    </div>
-
                     {/* Column 4: Policies */}
-                    <div className="flex flex-col gap-4 md:gap-8">
-                        <h4 className="font-inter text-[14px] md:text-[18px] font-medium text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>Policies</h4>
+                    <div className="flex flex-col gap-4 md:gap-6">
+                        <h4 className="font-inter text-[14px] md:text-base font-medium text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>Policies</h4>
                         <ul className="flex flex-col gap-3 md:gap-4">
                             {policies.map((link) => (
                                 <li key={link.label}>
@@ -133,7 +123,7 @@ export default function Footer() {
                                         href={link.href}
                                         target={link.href.startsWith('http') ? '_blank' : undefined}
                                         rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                                        className="font-inter text-[11px] md:text-[16px] font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors"
+                                        className="font-inter text-[11px] md:text-sm font-normal text-[#F7EDE2] hover:text-[#E8BF72] transition-colors"
                                         style={{ color: '#F7EDE2' }}
                                     >
                                         {link.label}
@@ -143,20 +133,31 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    {/* Column 6: Join Our Community (Separated for mobile match) */}
-                    <div className="flex flex-col gap-4 md:gap-8 lg:col-span-1">
-                        <h5 className="font-inter text-[14px] md:text-[18px] font-medium text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>Join Our Community</h5>
-                        <a
-                            href="https://wa.me/916383921957"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-[#E8BF72] flex items-center justify-center hover:bg-[#E8BF72] transition-all duration-300 group"
-                            aria-label="WhatsApp"
-                        >
-                            <div className="relative w-3.5 h-3.5 md:w-5 md:h-5">
-                                <Image src="/images/icons/whatsapp.png" alt="WhatsApp" fill className="object-contain transition-all duration-300 group-hover:brightness-0" />
+                    {/* Column 5: Contact Us & Community */}
+                    <div className="flex flex-col gap-8 md:gap-10">
+                        <div className="flex flex-col gap-4 md:gap-6">
+                            <h4 className="font-inter text-[14px] md:text-base font-medium text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>Contact Us</h4>
+                            <div className="flex flex-col gap-3 md:gap-4">
+                                <ContactItem iconSrc="/images/icons/phone-foot.png" text="+91 6383921957" href="tel:+916383921957" />
+                                <ContactItem iconSrc="/images/icons/mail-foot.png" text="hello@vstories.in" href="mailto:hello@vstories.in" />
+                                <ContactItem iconSrc="/images/icons/location-foot.png" text="Kilakarai, Tamil Nadu" />
                             </div>
-                        </a>
+                        </div>
+
+                        <div className="flex flex-col gap-4 md:gap-6">
+                            <h5 className="font-inter text-[14px] md:text-base font-medium text-[#F7EDE2]" style={{ color: '#F7EDE2' }}>Join Our Community</h5>
+                            <a
+                                href="https://wa.me/916383921957"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-[#E8BF72] flex items-center justify-center hover:bg-[#E8BF72] transition-all duration-300 group"
+                                aria-label="WhatsApp"
+                            >
+                                <div className="relative w-3.5 h-3.5 md:w-5 md:h-5">
+                                    <Image src="/images/icons/whatsapp.png" alt="WhatsApp" fill className="object-contain transition-all duration-300 group-hover:brightness-0" />
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -51,10 +51,10 @@ export default function OffersSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-end gap-6 mb-4"
+            className="flex items-center gap-4 mb-3"
           >
             <LeafIcon />
-            <span className="font-playfair font-normal text-[#2E2E2E]" style={{ fontSize: "24px", lineHeight: "32px" }}>
+            <span className="font-playfair font-normal text-[#2E2E2E]" style={{ fontSize: "16px", lineHeight: "24px" }}>
               Exclusive Benefits
             </span>
             <LeafIcon flipped />
@@ -65,7 +65,7 @@ export default function OffersSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-playfair font-semibold text-[#2E2E2E] text-2xl sm:text-3xl lg:text-[32px] lg:leading-[43px]"
+            className="font-playfair font-semibold text-[#2E2E2E] text-3xl sm:text-4xl lg:text-[40px] lg:leading-[48px]"
           >
             Offers Crafted for You
           </motion.h2>
@@ -75,7 +75,7 @@ export default function OffersSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="font-inter font-normal text-[#2E2E2E] text-center mt-2 text-base leading-[19px] max-w-[400px]"
+            className="font-inter font-normal text-[#2E2E2E] text-center mt-4 text-base leading-[24px] max-w-none"
           >
             Enjoy thoughtful savings on skincare and haircare made for Indian skin and everyday needs.
           </motion.p>
