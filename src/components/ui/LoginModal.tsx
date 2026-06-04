@@ -80,6 +80,7 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [fullName, setFullName] = useState("");
+    const [agreeToTerms, setAgreeToTerms] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -115,6 +116,7 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
         setPassword("");
         setConfirmPassword("");
         setFullName("");
+        setAgreeToTerms(false);
         setError(null);
         setSuccess(null);
         setFieldErrors({});
@@ -190,6 +192,11 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
         const errors = validateSignupForm(fullName, email, password, confirmPassword);
         setFieldErrors(errors);
         if (hasFieldErrors(errors)) return;
+
+        if (!agreeToTerms) {
+            setError("Please agree to the Terms & Conditions and Privacy Policy to continue.");
+            return;
+        }
 
         setLoading(true);
         setError(null);
@@ -335,7 +342,7 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
         tab === "forgot"
             ? "Reset Your Password"
             : tab === "signup"
-              ? "Create Your Account"
+              ? "Get Started"
               : welcomeName
                 ? `Welcome Back ${welcomeName}!`
                 : "Welcome Back!";
@@ -402,7 +409,7 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
 
                         <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain min-h-0">
                             <div className="flex flex-1 flex-col justify-start px-4 pb-6 pt-14 sm:justify-center sm:px-10 sm:py-10 md:px-12 lg:px-14">
-                                <div className="mx-auto flex w-full max-w-[461px] flex-col gap-5 sm:gap-8">
+                                <div className="mx-auto flex w-full max-w-[461px] flex-col gap-6 sm:gap-8">
                                     {tab === "forgot" && (
                                         <button
                                             type="button"
@@ -465,10 +472,10 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
                                                       ? handleVerifyOtp
                                                       : handleResetPassword
                                         }
-                                        className="flex flex-col gap-5 sm:gap-8"
+                                        className="flex flex-col gap-6 sm:gap-8"
                                     >
-                                        <div className="flex flex-col gap-4 sm:gap-6">
-                                            <div className="flex flex-col gap-4 sm:gap-6">
+                                        <div className="flex flex-col gap-5 sm:gap-6">
+                                            <div className="flex flex-col gap-5 sm:gap-6">
                                                 {tab === "signup" && (
                                                     <UnderlineInput
                                                         placeholder="Full Name"
@@ -602,27 +609,59 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
                                                         </div>
 
                                                         {tab === "signup" && (
-                                                            <div className="relative">
-                                                                <UnderlineInput
-                                                                    type={showConfirmPassword ? "text" : "password"}
-                                                                    placeholder="Confirm Password"
-                                                                    value={confirmPassword}
-                                                                    onChange={(v) => {
-                                                                        setConfirmPassword(v);
-                                                                        clearFieldError("confirmPassword");
-                                                                    }}
-                                                                    error={fieldErrors.confirmPassword}
-                                                                    autoComplete="new-password"
-                                                                />
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => setShowConfirmPassword((p) => !p)}
-                                                                    className="absolute right-2 top-3 text-[#8F8F8F]"
-                                                                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                                                                >
-                                                                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                                                </button>
-                                                            </div>
+                                                            <>
+                                                                <div className="relative">
+                                                                    <UnderlineInput
+                                                                        type={showConfirmPassword ? "text" : "password"}
+                                                                        placeholder="Confirm Password"
+                                                                        value={confirmPassword}
+                                                                        onChange={(v) => {
+                                                                            setConfirmPassword(v);
+                                                                            clearFieldError("confirmPassword");
+                                                                        }}
+                                                                        error={fieldErrors.confirmPassword}
+                                                                        autoComplete="new-password"
+                                                                    />
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setShowConfirmPassword((p) => !p)}
+                                                                        className="absolute right-2 top-3 text-[#8F8F8F]"
+                                                                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                                                                    >
+                                                                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                                    </button>
+                                                                </div>
+                                                                {/* Terms & Conditions Checkbox */}
+                                                                <label className="flex items-start gap-2.5 cursor-pointer group">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={agreeToTerms}
+                                                                        onChange={(e) => {
+                                                                            setAgreeToTerms(e.target.checked);
+                                                                            if (e.target.checked) setError(null);
+                                                                        }}
+                                                                        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-[#1D3B29] rounded"
+                                                                    />
+                                                                    <span className="text-xs sm:text-sm leading-relaxed text-black/70 font-[family-name:var(--font-inter)] group-hover:text-black/90 transition-colors">
+                                                                        I agree to the{" "}
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => window.open("/terms", "_blank")}
+                                                                            className="underline underline-offset-2 text-[#1D3B29] hover:text-[#2A4F38] transition-colors"
+                                                                        >
+                                                                            Terms &amp; Conditions
+                                                                        </button>
+                                                                        {" "}and{" "}
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => window.open("/privacy", "_blank")}
+                                                                            className="underline underline-offset-2 text-[#1D3B29] hover:text-[#2A4F38] transition-colors"
+                                                                        >
+                                                                            Privacy Policy
+                                                                        </button>
+                                                                    </span>
+                                                                </label>
+                                                            </>
                                                         )}
                                                     </>
                                                 )}
@@ -654,8 +693,8 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
                                                 type="button"
                                                 onClick={handleGoogle}
                                                 disabled={loading}
-                                                className="flex h-11 sm:h-12 w-full items-center justify-center gap-3 rounded-xl border border-[#8F8F8F] px-2.5 transition-colors hover:bg-gray-50 disabled:opacity-60"
-                                                style={{ backgroundColor: "#FFFFFF", color: "#000000" }}
+                                                className="flex h-11 sm:h-12 w-full items-center justify-center gap-3 rounded-xl px-2.5 transition-colors hover:bg-gray-50 disabled:opacity-60"
+                                                style={{ backgroundColor: "#FFFFFF", color: "#000000", border: "1.5px solid #8F8F8F" }}
                                             >
                                                 <GoogleIcon />
                                                 <span className="text-sm sm:text-base leading-6 text-black font-[family-name:var(--font-poppins)]">

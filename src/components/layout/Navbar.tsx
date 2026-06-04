@@ -207,30 +207,43 @@ export default function Navbar({ announcement }: NavbarProps) {
                                 </div>
                             </form>
 
-                            <Link href="/wishlist" className="p-2 hover:scale-110 active:scale-95 transition-transform group">
-                                <Heart className={`w-6 h-6 transition-colors ${pathname === '/wishlist' ? 'fill-[#778E6B] text-[#778E6B]' : 'text-[#778E6B] group-active:fill-[#778E6B]'}`} strokeWidth={1.5} />
-                            </Link>
+                            {user ? (
+                                <>
+                                    <Link href="/wishlist" className="p-2 hover:scale-110 active:scale-95 transition-transform group">
+                                        <Heart className={`w-6 h-6 transition-colors ${pathname === '/wishlist' ? 'fill-[#778E6B] text-[#778E6B]' : 'text-[#778E6B] group-active:fill-[#778E6B]'}`} strokeWidth={1.5} />
+                                    </Link>
 
-                            <Link
-                                href="/cart"
-                                className="relative p-2 text-black hover:scale-110 transition-transform"
-                                aria-label="Cart"
-                            >
-                                <Image src="/images/icons/cart.png" alt="Cart" width={24} height={24} className="w-6 h-6 object-contain" />
-                                {cartCount > 0 && (
-                                    <motion.span
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-[var(--highlight)] text-white text-[10px] font-bold rounded-full border-2 border-white"
+                                    <Link
+                                        href="/cart"
+                                        className="relative p-2 text-black hover:scale-110 transition-transform"
+                                        aria-label="Cart"
                                     >
-                                        {cartCount}
-                                    </motion.span>
-                                )}
-                            </Link>
+                                        <Image src="/images/icons/cart.png" alt="Cart" width={24} height={24} className="w-6 h-6 object-contain" />
+                                        {cartCount > 0 && (
+                                            <motion.span
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-[var(--highlight)] text-white text-[10px] font-bold rounded-full border-2 border-white"
+                                            >
+                                                {cartCount}
+                                            </motion.span>
+                                        )}
+                                    </Link>
 
-                            <Link href="/profile" className="p-2 text-black hover:scale-110 transition-transform">
-                                <User className="w-6 h-6" strokeWidth={2} />
-                            </Link>
+                                    <Link href="/profile" className="p-2 text-black hover:scale-110 transition-transform">
+                                        <User className="w-6 h-6" strokeWidth={2} />
+                                    </Link>
+                                </>
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={() => openLoginModal("login")}
+                                    className="flex items-center justify-center px-5 py-2 rounded-lg text-[15px] font-semibold transition-all hover:opacity-90 font-inter"
+                                    style={{ backgroundColor: "#1D3B29", color: "#F7EDE2" }}
+                                >
+                                    Login
+                                </button>
+                            )}
                         </div>
 
                         {/* Mobile Controls */}
@@ -283,29 +296,42 @@ export default function Navbar({ announcement }: NavbarProps) {
                                             <Search className="w-5 h-5" strokeWidth={1.5} />
                                         </button>
 
-                                        {/* Wishlist */}
-                                        <Link href="/wishlist" className="flex h-10 w-10 items-center justify-center hover:scale-105 active:scale-95 transition-transform group" aria-label="Wishlist">
-                                            <Heart className={`w-5 h-5 transition-colors ${pathname === '/wishlist' ? 'fill-[#778E6B] text-[#778E6B]' : 'text-[#778E6B] group-active:fill-[#778E6B]'}`} strokeWidth={1.5} />
-                                        </Link>
+                                        {user ? (
+                                            <>
+                                                {/* Wishlist */}
+                                                <Link href="/wishlist" className="flex h-10 w-10 items-center justify-center hover:scale-105 active:scale-95 transition-transform group" aria-label="Wishlist">
+                                                    <Heart className={`w-5 h-5 transition-colors ${pathname === '/wishlist' ? 'fill-[#778E6B] text-[#778E6B]' : 'text-[#778E6B] group-active:fill-[#778E6B]'}`} strokeWidth={1.5} />
+                                                </Link>
 
-                                        {/* Cart */}
-                                        <Link
-                                            href="/cart"
-                                            className="relative flex h-10 w-10 items-center justify-center text-black hover:scale-105 transition-transform"
-                                            aria-label="Cart"
-                                        >
-                                            <Image src="/images/icons/cart.png" alt="Cart" width={20} height={20} className="w-5 h-5 object-contain" />
-                                            {cartCount > 0 && (
-                                                <span className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center bg-[var(--highlight)] text-white text-[9px] font-bold rounded-full">
-                                                    {cartCount}
-                                                </span>
-                                            )}
-                                        </Link>
+                                                {/* Cart */}
+                                                <Link
+                                                    href="/cart"
+                                                    className="relative flex h-10 w-10 items-center justify-center text-black hover:scale-105 transition-transform"
+                                                    aria-label="Cart"
+                                                >
+                                                    <Image src="/images/icons/cart.png" alt="Cart" width={20} height={20} className="w-5 h-5 object-contain" />
+                                                    {cartCount > 0 && (
+                                                        <span className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center bg-[var(--highlight)] text-white text-[9px] font-bold rounded-full">
+                                                            {cartCount}
+                                                        </span>
+                                                    )}
+                                                </Link>
 
-                                        {/* Profile */}
-                                        <Link href="/profile" className="flex h-10 w-10 items-center justify-center text-black hover:scale-105 transition-transform" aria-label="Profile">
-                                            <User className="w-5 h-5" strokeWidth={1.5} />
-                                        </Link>
+                                                {/* Profile */}
+                                                <Link href="/profile" className="flex h-10 w-10 items-center justify-center text-black hover:scale-105 transition-transform" aria-label="Profile">
+                                                    <User className="w-5 h-5" strokeWidth={1.5} />
+                                                </Link>
+                                            </>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                onClick={() => openLoginModal("login")}
+                                                className="flex items-center justify-center px-3 py-1.5 rounded-lg text-[13px] font-semibold transition-all hover:opacity-90 font-inter mr-1"
+                                                style={{ backgroundColor: "#1D3B29", color: "#F7EDE2" }}
+                                            >
+                                                Login
+                                            </button>
+                                        )}
 
                                         {/* Hamburger Menu */}
                                         <button
