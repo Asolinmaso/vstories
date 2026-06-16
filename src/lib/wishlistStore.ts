@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { supabase } from "@/lib/supabase-browser";
+import { isUuid } from "@/lib/uuid";
 
 export interface WishlistItem {
     id: string; // product_id
@@ -62,7 +63,7 @@ export const useWishlistStore = create<WishlistStore>()(
                 });
 
                 const { userId } = get();
-                if (userId) {
+                if (userId && isUuid(item.id)) {
                     await supabase
                         .from("wishlist")
                         .upsert({
@@ -78,7 +79,7 @@ export const useWishlistStore = create<WishlistStore>()(
                 }));
 
                 const { userId } = get();
-                if (userId) {
+                if (userId && isUuid(id)) {
                     await supabase
                         .from("wishlist")
                         .delete()
@@ -97,6 +98,13 @@ export const useWishlistStore = create<WishlistStore>()(
         }),
         {
             name: "vstories-wishlist",
+            onRehydrateStorage: () => (state) => {
+                if (!state?.items?.length) return;
+                const validItems = state.items.filter((item) => isUuid(item.id));
+                if (validItems.length !== state.items.length) {
+                    state.items = validItems;
+                }
+            },
         }
     )
 );

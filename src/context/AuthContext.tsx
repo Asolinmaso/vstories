@@ -82,7 +82,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                         }
 
                         if (event === "SIGNED_OUT") {
-                            useCartStore.getState().clearCart();
+                            useCartStore.getState().setUserId(null);
+                            useCartStore.setState({ items: [] });
+                            useWishlistStore.getState().setUserId(null);
                             useWishlistStore.getState().clearWishlist();
                             setProfile(null);
                             router.push("/");
@@ -145,7 +147,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const signOut = async () => {
-        await supabase.auth.signOut();
+        const cartUserId = useCartStore.getState().userId;
+
+        setUser(null);
+        setSession(null);
+        setProfile(null);
+        setLoading(false);
+
+        if (cartUserId) {
+            await supabase.from("cart_items").delete().eq("user_id", cartUserId);
+        }
+
+        useCartStore.getState().setUserId(null);
+        useCartStore.setState({ items: [] });
+        useWishlistStore.getState().setUserId(null);
+        useWishlistStore.getState().clearWishlist();
+
+        await supabase.auth.signOut({ scope: "global" });
+        router.push("/");
+        router.refresh();
     };
 
     const isAdmin = profile?.role === "admin";

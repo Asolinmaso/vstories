@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { supabase } from "@/lib/supabase-browser";
+import { isUuid } from "@/lib/uuid";
 
 export interface CartItem {
     id: string; // product_id
@@ -61,8 +62,13 @@ export const useCartStore = create<CartStore>()(
                 const { userId, items: localItems } = get();
                 if (!userId) return;
 
+                const validLocalItems = localItems.filter((item) => isUuid(item.id));
+                if (validLocalItems.length !== localItems.length) {
+                    set({ items: validLocalItems });
+                }
+
                 // Push guest/local items to Supabase before fetching remote cart
-                for (const item of localItems) {
+                for (const item of validLocalItems) {
                     const { data: existingRows } = await supabase
                         .from("cart_items")
                         .select("id")
@@ -166,7 +172,7 @@ export const useCartStore = create<CartStore>()(
                 });
 
                 const { userId, items } = get();
-                if (userId) {
+                if (userId && isUuid(item.id)) {
                     const currentItem = items.find(
                         (i) => i.id === item.id && i.size === item.size
                     );
@@ -274,6 +280,13 @@ export const useCartStore = create<CartStore>()(
         }),
         {
             name: "vstories-cart",
+            onRehydrateStorage: () => (state) => {
+                if (!state?.items?.length) return;
+                const validItems = state.items.filter((item) => isUuid(item.id));
+                if (validItems.length !== state.items.length) {
+                    state.items = validItems;
+                }
+            },
         }
     )
 );

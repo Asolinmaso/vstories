@@ -9,6 +9,7 @@ import { Product } from "@/lib/services/product.service";
 import { useCartStore } from "@/lib/store";
 import { useWishlistStore } from "@/lib/wishlistStore";
 import { toast } from "sonner";
+import { isUuid } from "@/lib/uuid";
 
 interface FindWhatYouNeedProps {
   products: Product[];
@@ -60,11 +61,16 @@ function ProductCard({ product }: { product: Product }) {
   };
 
   const handleAddToCart = () => {
+    if (!isUuid(product.id)) {
+      toast.error("This product is unavailable. Please refresh and try again.");
+      return;
+    }
     addItem({
       id: product.id,
       name: product.name,
       price: product.price,
       image: product.images?.[0] || "",
+      size: product.sizes?.[0]?.label,
     });
     toast.success(`${product.name} added to cart`);
   };
@@ -174,75 +180,13 @@ function ProductCard({ product }: { product: Product }) {
   );
 }
 
-// Fallback product cards for when db products don't have matching categories
-const fallbackProducts: Product[] = [
-  {
-    id: "1",
-    name: "Prophetic-Face Serum",
-    price: 250,
-    original_price: 280,
-    description: "A lightweight, day-use herbal formula that gently reduces dark spots and restores natural glow.",
-    short_description: "Gentle daily serum",
-    images: ["/images/products/serum.png"],
-    rating: 4.8,
-    reviews_count: 120,
-    slug: "prophetic-face-serum",
-    category_id: "skin",
-    is_bestseller: true,
-    stock: 100,
-    is_new: false,
-    tags: [],
-    ingredients: [],
-    how_to_use: "",
-  },
-  {
-    id: "2",
-    name: "Herbal Facepack",
-    price: 180,
-    original_price: 280,
-    description: "A gentle yet powerful herbal blend that deeply cleanses and restores skin's natural radiance.",
-    short_description: "Deep cleansing face pack",
-    images: ["/images/products/facepack.png"],
-    rating: 4.8,
-    reviews_count: 120,
-    slug: "herbal-facepack",
-    category_id: "skin",
-    is_bestseller: true,
-    stock: 100,
-    is_new: false,
-    tags: [],
-    ingredients: [],
-    how_to_use: "",
-  },
-  {
-    id: "3",
-    name: "Hibiscus Shampoo",
-    price: 250,
-    original_price: 280,
-    description: "A gentle cleanser enriched with hibiscus extract for stronger, healthier hair growth.",
-    short_description: "Herbal hair cleanser",
-    images: ["/images/products/shampoo.png"],
-    rating: 4.8,
-    reviews_count: 120,
-    slug: "hibiscus-shampoo",
-    category_id: "hair",
-    is_bestseller: false,
-    stock: 100,
-    is_new: false,
-    tags: [],
-    ingredients: [],
-    how_to_use: "",
-  },
-];
-
 export default function FindWhatYouNeedMobile({ products }: FindWhatYouNeedProps) {
   const [activeTab, setActiveTab] = useState("Skin Care");
   const tabs = ["Skin Care", "Hair Care", "Combo & Gift Packs", "Sample Packs"];
 
   const filteredProducts = (() => {
-    // Prefer real db products, fall back to static data
-    const source = products && products.length > 0 ? products : fallbackProducts;
-    return source.filter((p) => {
+    if (!products || products.length === 0) return [];
+    return products.filter((p) => {
       // Safely handle both array and object for categories (depending on Supabase join type)
       const catSlug = (Array.isArray(p.categories) ? p.categories[0]?.slug : p.categories?.slug) || p.category_id;
       

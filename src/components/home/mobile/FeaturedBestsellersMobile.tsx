@@ -33,84 +33,7 @@ function StarIcon() {
   );
 }
 
-const fallbackProducts: Product[] = [
-  {
-    id: "1",
-    name: "Prophetic-Face Serum",
-    price: 250,
-    original_price: 280,
-    images: ["/images/products/serum.png"],
-    rating: 4.8,
-    reviews_count: 120,
-    slug: "herbal-face-serum",
-    is_bestseller: true,
-    description: "A lightweight, day-use herbal formula.",
-    short_description: "",
-    category_id: "skin",
-    stock: 100,
-    is_new: false,
-    tags: [],
-    ingredients: [],
-    how_to_use: "",
-  },
-  {
-    id: "2",
-    name: "Herbal Facepack",
-    price: 180,
-    original_price: 200,
-    images: ["/images/products/facepack.png"],
-    rating: 4.8,
-    reviews_count: 120,
-    slug: "herbal-facepack",
-    is_bestseller: true,
-    description: "A gentle yet powerful herbal blend.",
-    short_description: "",
-    category_id: "skin",
-    stock: 100,
-    is_new: false,
-    tags: [],
-    ingredients: [],
-    how_to_use: "",
-  },
-  {
-    id: "3",
-    name: "Hibiscus Shampoo",
-    price: 250,
-    original_price: 280,
-    images: ["/images/products/shampoo.png"],
-    rating: 4.8,
-    reviews_count: 120,
-    slug: "hibiscus-shampoo",
-    is_bestseller: false,
-    description: "A gentle cleanser enriched with hibiscus.",
-    short_description: "",
-    category_id: "hair",
-    stock: 100,
-    is_new: false,
-    tags: [],
-    ingredients: [],
-    how_to_use: "",
-  },
-  {
-    id: "4",
-    name: "V Herbal Hair Oil",
-    price: 230,
-    original_price: 250,
-    images: ["/images/products/hari oil.png"],
-    rating: 4.8,
-    reviews_count: 120,
-    slug: "herbal-hair-oil",
-    is_bestseller: false,
-    description: "Nourishing herbal hair oil.",
-    short_description: "",
-    category_id: "hair",
-    stock: 100,
-    is_new: false,
-    tags: [],
-    ingredients: [],
-    how_to_use: "",
-  },
-];
+const fallbackProducts: Product[] = [];
 
 function BestsellerCard({ product, badge }: { product: any; badge?: string }) {
   return (
@@ -247,18 +170,24 @@ export default function FeaturedBestsellersMobile({ dbProducts = [], hideHeader 
 
         {/* Products — vertical stack on mobile */}
         <div className="flex flex-col items-center gap-8">
-          {displayProducts.map((product: any, index: number) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="w-full"
-            >
-              <BestsellerCard product={product} badge={product.badge} />
-            </motion.div>
-          ))}
+          {displayProducts.length > 0 ? (
+            displayProducts.map((product: any, index: number) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="w-full"
+              >
+                <BestsellerCard product={product} badge={product.badge} />
+              </motion.div>
+            ))
+          ) : (
+            <p className="text-[#2E2E2E] font-inter text-sm text-center">
+              Our bestsellers are loading. Visit the shop to browse all products.
+            </p>
+          )}
         </div>
 
       </div>
