@@ -52,7 +52,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ announcement }: NavbarProps) {
-    const { user, signOut } = useAuth();
+    const { user, signOut, isAdmin } = useAuth();
     const { open: openLoginModal } = useLoginModal();
     const router = useRouter();
     const pathname = usePathname();
@@ -230,6 +230,11 @@ export default function Navbar({ announcement }: NavbarProps) {
                                         )}
                                     </Link>
 
+                                    {isAdmin && (
+                                        <Link href="/admin" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-[#1D3B29] text-[#F7EDE2] hover:opacity-90">
+                                            Admin
+                                        </Link>
+                                    )}
                                     <Link href="/profile" className="p-2 text-black hover:scale-110 transition-transform">
                                         <User className="w-6 h-6" strokeWidth={2} />
                                     </Link>
@@ -317,6 +322,11 @@ export default function Navbar({ announcement }: NavbarProps) {
                                                     )}
                                                 </Link>
 
+                                                {isAdmin && (
+                                                    <Link href="/admin" className="px-2 py-1 rounded-md text-xs font-semibold bg-[#1D3B29] text-[#F7EDE2]">
+                                                        Admin
+                                                    </Link>
+                                                )}
                                                 {/* Profile */}
                                                 <Link href="/profile" className="flex h-10 w-10 items-center justify-center text-black hover:scale-105 transition-transform" aria-label="Profile">
                                                     <User className="w-5 h-5" strokeWidth={1.5} />

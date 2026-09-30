@@ -97,22 +97,14 @@ export default async function proxy(request: NextRequest) {
             return NextResponse.redirect(redirectUrl);
         }
 
-        // Protect admin routes
-        if (isAdminRoute) {
-            if (!user) {
-                return NextResponse.redirect(new URL('/', request.url));
-            }
-
-            // Fetch user profile to check role
-            const { data: profile } = await supabase
-                .from('profiles')
-                .select('role')
-                .eq('id', user.id)
-                .single();
-
-            if (profile?.role !== 'admin') {
-                return NextResponse.redirect(new URL('/', request.url));
-            }
+        // Admin routes: only require a session here. The role check happens
+        // in app/admin/layout.tsx (server-side, service key) so an RLS or
+        // cookie hiccup in the proxy can never lock admins out.
+        if (isAdminRoute && !user) {
+            const redirectUrl = new URL('/', request.url);
+            redirectUrl.searchParams.set('login', '1');
+            redirectUrl.searchParams.set('redirect', pathname);
+            return NextResponse.redirect(redirectUrl);
         }
     }
 

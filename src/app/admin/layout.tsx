@@ -1,22 +1,16 @@
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { getAdminUser } from "@/lib/admin-auth";
 import AdminShell from "@/components/admin/AdminShell";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-    const supabase = await createSupabaseServerClient();
+    const { user, isAdmin } = await getAdminUser();
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-        redirect("/login");
+    if (!user) {
+        redirect("/?login=1&redirect=/admin");
     }
-
-    const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", session.user.id)
-        .single();
-
-    if (profile?.role !== "admin") {
+    if (!isAdmin) {
         redirect("/");
     }
 

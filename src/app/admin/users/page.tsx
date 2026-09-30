@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase-browser";
 import { Trash2, Shield, ShieldOff, Search } from "lucide-react";
 
 interface Profile {
     id: string;
     full_name: string;
+    email?: string | null;
     role: 'user' | 'admin';
     created_at: string;
 }
@@ -22,15 +22,13 @@ export default function AdminUsersPage() {
 
     const fetchUsers = async () => {
         setLoading(true);
-        const { data, error } = await supabase
-            .from("profiles")
-            .select("*")
-            .order("created_at", { ascending: false });
-
-        if (error) {
+        try {
+            const res = await fetch("/api/admin/users", { cache: "no-store" });
+            const json = await res.json();
+            if (!res.ok) throw new Error(json.error);
+            setUsers(json.users || []);
+        } catch (error) {
             console.error("Error fetching users:", error);
-        } else {
-            setUsers(data || []);
         }
         setLoading(false);
     };
@@ -40,22 +38,23 @@ export default function AdminUsersPage() {
         if (!confirm(`Are you sure you want to make this user ${newRole === 'admin' ? 'an ADMIN' : 'a USER'}?`)) return;
 
         try {
-            const { error } = await supabase
-                .from("profiles")
-                .update({ role: newRole })
-                .eq("id", id);
-
-            if (error) throw error;
+            const res = await fetch("/api/admin/users", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id, role: newRole }),
+            });
+            const json = await res.json();
+            if (!res.ok) throw new Error(json.error);
 
             setUsers(users.map(u => u.id === id ? { ...u, role: newRole } : u));
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error updating role:", error);
-            alert("Failed to update user role");
+            alert(error.message || "Failed to update user role");
         }
     };
 
     const filteredUsers = users.filter((user) =>
-        (user.full_name || "User").toLowerCase().includes(searchTerm.toLowerCase())
+        `${user.full_name || "User"} ${user.email || ""}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -110,7 +109,7 @@ export default function AdminUsersPage() {
                                                 </div>
                                                 <div>
                                                     <div className="font-medium text-gray-900">{user.full_name || "User"}</div>
-                                                    <div className="text-xs text-gray-500 max-w-[150px] truncate">{user.id}</div>
+                                                    <div className="text-xs text-gray-500 max-w-[220px] truncate">{user.email || user.id}</div>
                                                 </div>
                                             </div>
                                         </td>
