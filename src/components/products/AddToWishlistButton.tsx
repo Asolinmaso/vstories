@@ -37,8 +37,8 @@ export default function AddToWishlistButton({ product, className = "" }: { produ
         <button
             onClick={toggleWishlist}
             className={`flex items-center justify-center p-1 rounded-full transition-all duration-300 ${isWishlisted
-                ? "text-[var(--primary)]"
-                : "text-gray-400 hover:text-[var(--primary)]"
+                ? "text-red-500"
+                : "text-gray-400 hover:text-red-500"
                 } ${className}`}
             aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
         >

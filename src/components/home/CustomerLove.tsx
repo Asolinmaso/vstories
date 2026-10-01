@@ -112,7 +112,7 @@ export default function CustomerLove({ testimonials = [], title, subtitle }: Cus
         </div>
 
         {/* Review Cards */}
-        <div className="flex flex-col items-center sm:flex-row sm:flex-wrap sm:justify-center gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {displayReviews.slice(0, 3).map((review: any, index: number) => (
             <motion.div
               key={review.id}

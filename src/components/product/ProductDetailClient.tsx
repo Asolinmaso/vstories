@@ -8,8 +8,6 @@ import Image from "next/image";
 import {
     ChevronRight,
     ChevronDown,
-    Minus,
-    Plus,
     Share2,
     Truck,
     ShieldCheck,
@@ -116,7 +114,6 @@ export default function ProductDetailClient({
     relatedProducts?: Product[];
 }) {
     const [selectedSize, setSelectedSize] = useState(0);
-    const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState("description");
     const [selectedImage, setSelectedImage] = useState(0);
     const [resetKey, setResetKey] = useState(0);
@@ -153,7 +150,14 @@ export default function ProductDetailClient({
     const benefitsToShow = parsedBenefits.length > 0 ? parsedBenefits : defaultBenefits;
 
     const addItem = useCartStore((state) => state.addItem);
+    const cartItems = useCartStore((state) => state.items);
+
+    const isInCart = cartItems.some(
+        (item) => item.id === product.id
+    );
     const router = useRouter();
+
+
 
     const [reviews, setReviews] = useState<any[]>([]);
 
@@ -203,6 +207,15 @@ export default function ProductDetailClient({
         toast.success("Added to Cart", {
             description: `${product.name} has been added to your cart.`
         });
+    };
+
+    const handleCartButton = () => {
+        if (isInCart) {
+            router.push("/cart");
+            return;
+        }
+
+        handleAddToCart();
     };
 
     const handleBuyNow = () => {
@@ -512,34 +525,14 @@ export default function ProductDetailClient({
 
                             {/* Actions */}
                             <div className="flex gap-3 w-full max-w-[400px]">
-                                {/* Quantity */}
-                                <div className="inline-flex items-center justify-between rounded-[4px] px-2 h-9 w-[80px] md:w-[110px] bg-transparent shrink-0" style={{ border: '1px solid #1D3B29' }}>
-                                    <button
-                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                        className="hover:opacity-70 transition-opacity p-1"
-                                        style={{ color: '#1D3B29' }}
-                                    >
-                                        <Minus className="w-3.5 h-3.5" />
-                                    </button>
-                                    <span className="font-semibold text-[13px]" style={{ color: '#1D3B29' }}>
-                                        {quantity}
-                                    </span>
-                                    <button
-                                        onClick={() => setQuantity(quantity + 1)}
-                                        className="hover:opacity-70 transition-opacity p-1"
-                                        style={{ color: '#1D3B29' }}
-                                    >
-                                        <Plus className="w-3.5 h-3.5" />
-                                    </button>
-                                </div>
 
-                                {/* Add to Cart */}
+                                {/* Add to Cart / Go to Cart */}
                                 <button
-                                    onClick={handleAddToCart}
+                                    onClick={handleCartButton}
                                     className="flex-1 text-white text-[12px] md:text-[15px] font-medium rounded-[4px] transition-opacity hover:opacity-90 h-9"
                                     style={{ backgroundColor: '#1D3B29' }}
                                 >
-                                    Add to Cart
+                                    {isInCart ? "Go to Cart" : "Add to Cart"}
                                 </button>
 
                                 {/* Buy Now */}
@@ -550,6 +543,7 @@ export default function ProductDetailClient({
                                 >
                                     Buy Now
                                 </button>
+
                             </div>
                         </FadeIn>
                     </div>

@@ -70,7 +70,15 @@ export default function AddressSelection({ onSelect, selectedId }: AddressSelect
             });
             const data = await res.json();
             if (data.success) {
-                await fetchAddresses();
+                const savedAddress = data.address;
+
+                if (savedAddress) {
+                    setAddresses((prev) => [...prev, savedAddress]);
+                    onSelect(savedAddress);
+                } else {
+                    await fetchAddresses();
+                }
+
                 setShowNewForm(false);
                 setNewAddress({
                     name: "",
