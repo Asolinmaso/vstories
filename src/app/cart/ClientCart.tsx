@@ -6,6 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCartStore, getCartItemKey } from "@/lib/store";
+import { supabase } from "@/lib/supabase-browser";
+import { Product } from "@/lib/services/product.service";
 import { useAuth } from "@/context/AuthContext";
 import { useLoginModal } from "@/context/LoginModalContext";
 import { Trash2, Plus, Minus } from "lucide-react";
@@ -14,13 +16,14 @@ import YouMayAlsoLike from "@/components/products/YouMayAlsoLike";
 function DropletIcon() {
   return (
     <svg width="10" height="13" viewBox="0 0 10 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4.61864 0.655866C4.78318 0.439396 5.11181 0.439395 5.27635 0.655865L9.12469 5.7208C9.55938 6.29286 9.77443 6.99433 9.73602 7.70889C9.69762 8.42345 9.40822 9.10825 8.9137 9.65089C8.41918 10.1935 7.74836 10.5619 7.00845 10.6976C6.26853 10.8333 5.50198 10.7291 4.83063 10.4022C4.15928 10.0754 3.62145 9.54471 3.30327 8.8953C2.98509 8.24589 2.90515 7.51613 3.07849 6.82236L4.61864 0.655866Z" fill="#E8BF72"/>
+      <path d="M4.61864 0.655866C4.78318 0.439396 5.11181 0.439395 5.27635 0.655865L9.12469 5.7208C9.55938 6.29286 9.77443 6.99433 9.73602 7.70889C9.69762 8.42345 9.40822 9.10825 8.9137 9.65089C8.41918 10.1935 7.74836 10.5619 7.00845 10.6976C6.26853 10.8333 5.50198 10.7291 4.83063 10.4022C4.15928 10.0754 3.62145 9.54471 3.30327 8.8953C2.98509 8.24589 2.90515 7.51613 3.07849 6.82236L4.61864 0.655866Z" fill="#E8BF72" />
     </svg>
   );
 }
 
 export default function ClientCart() {
   const [mounted, setMounted] = useState(false);
+  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
   const { items, removeItem, updateQuantity, getTotal } = useCartStore();
   const { user } = useAuth();
   const { open: openLoginModal } = useLoginModal();
@@ -29,6 +32,33 @@ export default function ClientCart() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    const fetchRecommendedProducts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("products")
+          .select(`*, sizes:product_sizes(id, label, price)`);
+
+        if (error) throw error;
+
+        const cartIds = items.map((item) => item.id);
+
+        const recommendations = (data || [])
+          .filter((product) => !cartIds.includes(product.id))
+          .slice(0, 4);
+
+        setRecommendedProducts(recommendations as Product[]);
+      } catch (error) {
+        console.error("Error fetching recommended products:", error);
+        setRecommendedProducts([]);
+      }
+    };
+
+    fetchRecommendedProducts();
+  }, [mounted, items]);
 
   const handleCheckout = () => {
     if (!user) {
@@ -190,9 +220,9 @@ export default function ClientCart() {
             {/* Right: Order Summary */}
             <div className="w-full lg:w-[380px] bg-transparent flex-shrink-0">
               <div className="rounded-[16px] border border-[#2E2E2E]/20 p-5 md:p-6 bg-[#FDFCF8]">
-                <div 
-                  role="heading" 
-                  aria-level={2} 
+                <div
+                  role="heading"
+                  aria-level={2}
                   className="font-inter font-bold text-[18px] md:text-[20px] text-[#2E2E2E] mb-6"
                 >
                   Order Summary
@@ -258,7 +288,7 @@ export default function ClientCart() {
       </div>
 
       {/* ── You May Also Like ── */}
-      <YouMayAlsoLike />
+      <YouMayAlsoLike products={recommendedProducts} />
     </div>
   );
 }

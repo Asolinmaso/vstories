@@ -15,14 +15,43 @@ export default function WishlistClient() {
     const [mounted, setMounted] = useState(false);
     const { items, clearWishlist } = useWishlistStore();
     const { addItem } = useCartStore();
-    
+
     const [wishlistProducts, setWishlistProducts] = useState<Product[]>([]);
+
+    const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
 
     const itemIds = items.map(i => i.id).sort().join(',');
 
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    useEffect(() => {
+        if (!mounted) return;
+
+        const fetchRecommendedProducts = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from("products")
+                    .select(`*, sizes:product_sizes(id, label, price)`);
+
+                if (error) throw error;
+
+                const wishlistIds = items.map((item) => item.id);
+
+                const recommendations = (data || [])
+                    .filter((product) => !wishlistIds.includes(product.id))
+                    .slice(0, 4);
+
+                setRecommendedProducts(recommendations as Product[]);
+            } catch (error) {
+                console.error("Error fetching recommended products:", error);
+                setRecommendedProducts([]);
+            }
+        };
+
+        fetchRecommendedProducts();
+    }, [mounted, itemIds]);
 
     // Set initial fallback products instantly so UI never blocks
     useEffect(() => {
@@ -59,13 +88,13 @@ export default function WishlistClient() {
             try {
                 const ids = items.map(i => i?.id).filter(Boolean);
                 const validIds = ids.filter(id => id && id.length > 20);
-                
+
                 if (validIds.length > 0) {
                     const { data } = await supabase
                         .from("products")
                         .select(`*, sizes:product_sizes(id, label, price)`)
                         .in("id", validIds);
-                        
+
                     if (data && data.length > 0) {
                         setWishlistProducts(prev => prev.map(fb => {
                             const dbMatch = data.find(db => db.id === fb.id);
@@ -92,7 +121,7 @@ export default function WishlistClient() {
                 size: primarySize?.label || "200 ml",
             });
         });
-        
+
         toast.success("Moved all items to cart");
     };
 
@@ -112,7 +141,7 @@ export default function WishlistClient() {
 
             <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-[100px] pb-16">
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
-                    
+
                     {/* Left Column - Products List */}
                     <div className="flex-1 w-full">
                         {wishlistProducts.length > 0 ? (
@@ -138,14 +167,14 @@ export default function WishlistClient() {
                     {/* Right Column - Summary Box */}
                     {wishlistProducts.length > 0 && (
                         <div className="w-full lg:w-[360px] shrink-0">
-                            <div 
+                            <div
                                 className="sticky top-24 bg-white rounded-xl flex flex-col items-center text-center px-8 py-10"
                                 style={{ border: "1px solid #D9D9D9" }}
                             >
                                 <p className="font-inter font-semibold text-[#2E2E2E] text-xs mb-6">
                                     Wishlist Summary
                                 </p>
-                                
+
                                 <div className="w-14 h-14 bg-[#EBEFE6] rounded-full flex items-center justify-center mb-6">
                                     <Heart className="w-6 h-6 text-[#98B582]" fill="#98B582" strokeWidth={1} />
                                 </div>
@@ -172,7 +201,7 @@ export default function WishlistClient() {
             </div>
 
             {/* You May Also Like Section */}
-            <YouMayAlsoLike />
+            <YouMayAlsoLike products={recommendedProducts} />
         </div>
     );
 }

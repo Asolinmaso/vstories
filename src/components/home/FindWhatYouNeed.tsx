@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -31,6 +32,12 @@ function LeafIcon({ flipped = false }: { flipped?: boolean }) {
 
 function ProductCard({ product }: { product: Product }) {
   const addItem = useCartStore((s) => s.addItem);
+  const cartItems = useCartStore((s) => s.items);
+  const router = useRouter();
+
+  const isInCart = cartItems.some(
+    (item) => item.id === product.id
+  );
 
   const { hasItem, addItem: addWishlistItem, removeItem: removeWishlistItem, items: wishlistItems } = useWishlistStore();
   const [isLiked, setIsLiked] = useState(false);
@@ -75,9 +82,18 @@ function ProductCard({ product }: { product: Product }) {
     toast.success(`${product.name} added to cart`);
   };
 
+  const handleCartButton = () => {
+    if (isInCart) {
+      router.push("/cart");
+      return;
+    }
+
+    handleAddToCart();
+  };
+
   return (
     <div
-      className="relative flex flex-col bg-[#FCFAF4] w-full sm:max-w-[396px]"
+      className="relative flex flex-col bg-[#FCFAF4] w-full"
       style={{
         border: "1px solid #D9D9D9",
         boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.08)",
@@ -110,8 +126,8 @@ function ProductCard({ product }: { product: Product }) {
             <Heart
               size={20}
               strokeWidth={1.5}
-              color={isLiked ? "#778E6B" : "#2E2E2E"}
-              fill={isLiked ? "#778E6B" : "transparent"}
+              color={isLiked ? "#EF4444" : "#2E2E2E"}
+              fill={isLiked ? "#EF4444" : "transparent"}
               className="transition-colors duration-300"
             />
           </button>
@@ -152,15 +168,17 @@ function ProductCard({ product }: { product: Product }) {
         {/* CTA Buttons */}
         <div className="flex items-center gap-[8px] sm:gap-[10px] mt-auto">
           <button
-            onClick={handleAddToCart}
-            className="flex flex-1 items-center justify-center font-inter font-medium text-[#1D3B29] transition-all hover:bg-[#F4F0EC] text-[13px] sm:text-[16px]"
+            onClick={handleCartButton}
+            className="flex flex-1 items-center justify-center font-inter font-medium transition-all hover:opacity-90 text-[13px] sm:text-[16px]"
             style={{
               height: "40px",
               border: "1px solid #1D3B29",
               borderRadius: "8px",
+              background: isInCart ? "#1D3B29" : "transparent",
+              color: isInCart ? "#F7EDE2" : "#1D3B29",
             }}
           >
-            Add to cart
+            {isInCart ? "Go to Cart" : "Add to cart"}
           </button>
           <Link
             href={`/product/${product.slug || product.id}`}
@@ -296,7 +314,7 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
         </div>
 
         {/* Product Cards */}
-        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-5 sm:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
           {activeTab === "Combo & Gift Packs" || activeTab === "Sample Packs" ? (
             <p className="text-[#2E2E2E] font-inter text-lg text-center">
               Coming Soon!

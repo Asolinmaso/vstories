@@ -20,11 +20,40 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, titleClassName, titleStyle }: ProductCardProps) {
     const addItem = useCartStore((state) => state.addItem);
+    const cartItems = useCartStore((state) => state.items);
+
     const router = useRouter();
+
+
+    const isInCart = cartItems.some(
+        (item) => item.id === product.id
+    );
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
+        addItem({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.images[0],
+            size: product.sizes?.[0]?.label,
+        });
+
+        toast.success("Added to Cart", {
+            description: `${product.name} has been added to your cart.`
+        });
+    };
+
+    const handleCartButton = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (isInCart) {
+            router.push("/cart");
+            return;
+        }
+
         addItem({
             id: product.id,
             name: product.name,
@@ -97,7 +126,7 @@ export default function ProductCard({ product, titleClassName, titleStyle }: Pro
                                     image: product.images[0],
                                     slug: product.slug
                                 }}
-                                className="text-gray-400 hover:text-[var(--primary)] -mr-2"
+                                className="-mr-2"
                             />
                         </div>
 
@@ -105,6 +134,12 @@ export default function ProductCard({ product, titleClassName, titleStyle }: Pro
                             <p className="text-[13px] md:text-[14px] text-[#4B5563] line-clamp-2 leading-[20px] min-h-[40px] font-inter">
                                 {product.short_description}
                             </p>
+
+                            <span
+                                className="inline-block mt-2 text-[13px] font-medium text-[#1D3B29] hover:underline font-inter"
+                            >
+                                Read More →
+                            </span>
                         </div>
 
                         {/* Price & Rating */}
@@ -130,30 +165,39 @@ export default function ProductCard({ product, titleClassName, titleStyle }: Pro
 
                             {/* Buttons */}
                             <div className="flex flex-col 2xl:flex-row xl:flex-col lg:flex-row md:flex-row sm:flex-col items-stretch 2xl:items-center xl:items-stretch lg:items-center md:items-center sm:items-stretch gap-2 lg:gap-3 mt-2">
+
+                                {/* Add to Cart / Go to Cart */}
                                 <button
-                                    onClick={handleAddToCart}
-                                    className="flex-1 font-inter font-medium text-[#1D3B29] transition-all hover:bg-[#1D3B29]/5"
+                                    onClick={handleCartButton}
+                                    className="flex-1 font-inter font-medium transition-all flex items-center justify-center"
                                     style={{
-                                        height: "32px",
+                                        height: "44px",
+                                        minHeight: "44px",
                                         border: "1px solid #1D3B29",
-                                        borderRadius: "4px",
-                                        fontSize: "13px",
+                                        borderRadius: "6px",
+                                        fontSize: "14px",
+                                        background: isInCart ? "#1D3B29" : "transparent",
+                                        color: isInCart ? "#FFFFFF" : "#1D3B29",
                                     }}
                                 >
-                                    Add to cart
+                                    {isInCart ? "Go to Cart" : "Add to cart"}
                                 </button>
+
+                                {/* Buy Now */}
                                 <button
                                     onClick={handleBuyNow}
                                     className="flex-1 font-inter font-medium text-white transition-all hover:opacity-90 flex items-center justify-center"
                                     style={{
-                                        height: "32px",
+                                        height: "40px",
+                                        minHeight: "40px",
                                         background: "#1D3B29",
-                                        borderRadius: "4px",
-                                        fontSize: "13px",
+                                        borderRadius: "6px",
+                                        fontSize: "14px",
                                     }}
                                 >
                                     Buy Now
                                 </button>
+
                             </div>
                         </div>
                     </div>

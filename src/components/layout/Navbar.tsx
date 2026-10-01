@@ -66,7 +66,7 @@ export default function Navbar({ announcement }: NavbarProps) {
     const cartItems = useCartStore((state) => state.items);
     const cartCount = isMounted ? cartItems.reduce((sum, item) => sum + item.quantity, 0) : 0;
     const wishlistItems = useWishlistStore((state) => state.items);
-    const hasWishlistItems = isMounted ? wishlistItems.length > 0 : false;
+    const wishlistCount = isMounted ? wishlistItems.length : 0;
 
     useEffect(() => {
         setIsMounted(true);
@@ -209,8 +209,28 @@ export default function Navbar({ announcement }: NavbarProps) {
 
                             {user ? (
                                 <>
-                                    <Link href="/wishlist" className="p-2 hover:scale-110 active:scale-95 transition-transform group">
-                                        <Heart className={`w-6 h-6 transition-colors ${pathname === '/wishlist' ? 'fill-[#778E6B] text-[#778E6B]' : 'text-[#778E6B] group-active:fill-[#778E6B]'}`} strokeWidth={1.5} />
+                                    <Link
+                                        href="/wishlist"
+                                        className="relative p-2 hover:scale-110 active:scale-95 transition-transform group"
+                                        aria-label="Wishlist"
+                                    >
+                                        <Heart
+                                            className={`w-6 h-6 transition-colors ${pathname === "/wishlist"
+                                                ? "fill-[#778E6B] text-[#778E6B]"
+                                                : "text-[#778E6B]"
+                                                }`}
+                                            strokeWidth={1.5}
+                                        />
+
+                                        {wishlistCount > 0 && (
+                                            <motion.span
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full border-2 border-white"
+                                            >
+                                                {wishlistCount}
+                                            </motion.span>
+                                        )}
                                     </Link>
 
                                     <Link
@@ -304,8 +324,24 @@ export default function Navbar({ announcement }: NavbarProps) {
                                         {user ? (
                                             <>
                                                 {/* Wishlist */}
-                                                <Link href="/wishlist" className="flex h-10 w-10 items-center justify-center hover:scale-105 active:scale-95 transition-transform group" aria-label="Wishlist">
-                                                    <Heart className={`w-5 h-5 transition-colors ${pathname === '/wishlist' ? 'fill-[#778E6B] text-[#778E6B]' : 'text-[#778E6B] group-active:fill-[#778E6B]'}`} strokeWidth={1.5} />
+                                                <Link
+                                                    href="/wishlist"
+                                                    className="relative flex h-10 w-10 items-center justify-center hover:scale-105 active:scale-95 transition-transform group"
+                                                    aria-label="Wishlist"
+                                                >
+                                                    <Heart
+                                                        className={`w-5 h-5 transition-colors ${pathname === "/wishlist"
+                                                                ? "fill-[#778E6B] text-[#778E6B]"
+                                                                : "text-[#778E6B]"
+                                                            }`}
+                                                        strokeWidth={1.5}
+                                                    />
+
+                                                    {wishlistCount > 0 && (
+                                                        <span className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center bg-red-500 text-white text-[9px] font-bold rounded-full">
+                                                            {wishlistCount}
+                                                        </span>
+                                                    )}
                                                 </Link>
 
                                                 {/* Cart */}

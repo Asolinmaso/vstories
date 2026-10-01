@@ -78,7 +78,7 @@ function ValueOrb({
 /* ─── Desktop timeline item ───────────────────────────────── */
 function TimelineItem({ year, title, desc }: { year: string; title: string; desc: string }) {
   return (
-    <div className="relative flex flex-col items-center" style={{ width: 292 }}>
+    <div className="relative flex flex-col items-center w-full">
       <div
         className="flex items-center justify-center rounded-full relative z-20"
         style={{
@@ -95,7 +95,15 @@ function TimelineItem({ year, title, desc }: { year: string; title: string; desc
       </div>
       <div
         className="flex flex-col items-center justify-center text-center relative z-10"
-        style={{ width: 292, height: 177, paddingTop: 40, background: "#F3EEE9", borderRadius: 24, paddingLeft: 24, paddingRight: 24 }}
+        style={{
+          width: "100%",
+          height: 177,
+          paddingTop: 40,
+          background: "#F3EEE9",
+          borderRadius: 24,
+          paddingLeft: 24,
+          paddingRight: 24
+        }}
       >
         <span className="font-inter font-semibold text-[#1D3B29] mb-2" style={{ fontSize: 24, lineHeight: "29px" }}>
           {title}
@@ -217,11 +225,21 @@ export default function AboutContent() {
         {/* ── 3. VISION & MISSION ──────────────────────────────── */}
         <section className="py-16 bg-[#FCFAF4]">
           {/* Desktop cards */}
-          <div className="w-full max-w-[1440px] mx-auto" style={{ paddingLeft: 90 }}>
-            <div className="flex gap-6" style={{ width: 1240, height: 338 }}>
-              <div className="relative overflow-hidden" style={{ width: 608, height: 338, background: "#F9F6F1", borderRadius: 12, flexShrink: 0 }}>
+          <div className="w-full max-w-[1440px] mx-auto px-6 lg:px-[90px]">
+            <div className="grid grid-cols-2 gap-6 w-full h-[338px]">
+              <div
+                className="relative overflow-hidden min-w-0"
+                style={{ height: 338, background: "#F9F6F1", borderRadius: 12 }}
+              >
                 <Image src="/images/about/vission.png" alt="Our Vision" fill className="object-cover" />
-                <div className="absolute flex flex-col gap-4" style={{ left: 234, top: 35, width: 345 }}>
+                <div
+                  className="absolute flex flex-col gap-4 z-10"
+                  style={{
+                    left: "38%",
+                    right: "5%",
+                    top: 35,
+                  }}
+                >
                   <h3 className="font-playfair font-semibold text-[#2E2E2E]" style={{ fontSize: 32, lineHeight: "43px" }}>
                     Our Vision
                   </h3>
@@ -230,13 +248,29 @@ export default function AboutContent() {
                   </p>
                 </div>
               </div>
-              <div className="relative overflow-hidden" style={{ width: 608, height: 338, background: "#778E6B", borderRadius: 12, flexShrink: 0 }}>
+              <div
+                className="relative overflow-hidden min-w-0"
+                style={{ height: 338, background: "#778E6B", borderRadius: 12 }}
+              >
                 <Image src="/images/about/mission.png" alt="Our Mission" fill className="object-cover" />
-                <div className="absolute flex flex-col gap-4" style={{ left: 257, top: 16, width: 324 }}>
+                <div
+                  className="absolute flex flex-col gap-4 z-10"
+                  style={{
+                    left: "48%",
+                    right: "5%",
+                    top: 10,
+                  }}
+                >
                   <h3 className="font-playfair font-semibold text-white" style={{ fontSize: 32, lineHeight: "43px" }}>
                     Our Mission
                   </h3>
-                  <p className="font-inter font-normal text-white" style={{ fontSize: 16, lineHeight: "19px" }}>
+                  <p
+                    className="font-inter font-normal text-white"
+                    style={{
+                      fontSize: 15,
+                      lineHeight: "18px",
+                    }}
+                  >
                     To craft honest herbal skincare and haircare for modern lifestyles, blending nature and science for safe, effective everyday wellness. We are committed to creating gentle, high-quality products using carefully selected herbal ingredients and skin-friendly formulations. Every V Stories product is designed to nourish, protect, and support healthy skin and hair while staying rooted in transparency, sustainability, and authentic Indian care traditions.
                   </p>
                 </div>
@@ -272,7 +306,7 @@ export default function AboutContent() {
                   paddingBottom: 10,
                 }}
               />
-              <div className="flex justify-between gap-6 relative z-10">
+              <div className="grid grid-cols-4 gap-6 relative z-10">
                 {TIMELINE.map((item) => (
                   <motion.div key={item.year} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
                     <TimelineItem {...item} />
@@ -285,46 +319,122 @@ export default function AboutContent() {
 
         {/* ── 5. FOUNDER'S STORY ───────────────────────────────── */}
         <section id="our-story" className="py-20 bg-[#FCFAF4]">
-          {/* Desktop founder */}
-          <div className="w-full max-w-[1440px] mx-auto" style={{ paddingLeft: 97, paddingRight: 97 }}>
-            <div className="relative w-[1225px] h-[617px] mx-auto">
-              <div className="absolute" style={{ left: 0, top: 0, width: 491, height: 589 }}>
-                <div className="absolute overflow-hidden" style={{ width: 489, height: 584, left: 0, top: 15 }}>
-                  <Image src="/images/about/founder.png" alt="Founder" fill className="object-cover" />
+          <div className="w-full max-w-[1240px] mx-auto px-6">
+            <div
+              className="relative mx-auto"
+              style={{
+                width: "100%",
+                maxWidth: 1025,
+                height: 520,
+              }}
+            >
+              {/* Founder Image */}
+              <div
+                className="absolute"
+                style={{
+                  left: 0,
+                  top: 0,
+                  width: 411,
+                  height: 493,
+                }}
+              >
+                <div
+                  className="absolute overflow-hidden"
+                  style={{
+                    width: 409,
+                    height: 489,
+                    left: 0,
+                    top: 4,
+                  }}
+                >
+                  <Image
+                    src="/images/about/founder.png"
+                    alt="Founder"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               </div>
 
-              <div className="absolute flex flex-col items-start" style={{ left: 533, top: 47 }}>
+              {/* Founder Content */}
+              <div
+                className="absolute flex flex-col items-start"
+                style={{
+                  left: 450,
+                  top: 43,
+                  width: 575,
+                }}
+              >
                 <SectionTag label="Founder's Message" />
-                <h2 className="font-playfair font-semibold text-[#2E2E2E] mt-[23px]" style={{ fontSize: 48, lineHeight: "58px", width: 294 }}>
+
+                <h2
+                  className="font-playfair font-semibold text-[#2E2E2E] mt-5"
+                  style={{
+                    fontSize: 40,
+                    lineHeight: "48px",
+                    width: 360,
+                  }}
+                >
                   Our Story,
                   <br />
                   Our Promise.
                 </h2>
-                <p className="font-inter font-normal text-[#2E2E2E] mt-[28px]" style={{ fontSize: 16, lineHeight: "19px", width: 692 }}>
-                  <strong>From Keelakarai to the Entire Globe - carrying the wisdom of nature beyond borders.</strong>
+
+                <p
+                  className="font-inter font-normal text-[#2E2E2E] mt-6"
+                  style={{
+                    fontSize: 14,
+                    lineHeight: "18px",
+                    width: 575,
+                  }}
+                >
+                  <strong>
+                    From Keelakarai to the Entire Globe - carrying the wisdom of nature beyond borders.
+                  </strong>
+
                   <br />
                   <br />
+
                   V STORIES began with a personal experience.
+
                   <br />
                   <br />
+
                   My late mother had sensitive skin and struggled with skin issues for years. The products she used often made things worse instead of better.
+
                   <br />
+
                   That experience led me to question why skincare wasn&apos;t designed for real needs — for Indian skin, climate, and concerns.
+
                   <br />
                   <br />
+
                   V STORIES was created to change that.
+
                   <br />
                   <br />
+
                   We craft skincare and haircare that is rooted in nature, refined by science, and made for Indian conditions — gentle, effective, and honest.
+
                   <br />
                   <br />
-                  <strong>From Keelakarai to the Entire Globe, our mission is to share clean, conscious beauty inspired by tradition and trusted by modern lifestyles.</strong>
+
+                  <strong>
+                    From Keelakarai to the Entire Globe, our mission is to share clean, conscious beauty inspired by tradition and trusted by modern lifestyles.
+                  </strong>
                 </p>
+
                 <Link
                   href="/shop"
-                  className="inline-flex items-center justify-center font-inter font-medium hover:opacity-90 transition-all mt-[24px]"
-                  style={{ width: 211, height: 43, background: "#1D3B29", borderRadius: 8, fontSize: 16, color: "#FFFFFF" }}
+                  className="inline-flex items-center justify-center font-inter font-medium hover:opacity-90 transition-all mt-5"
+                  style={{
+                    width: 179,
+                    height: 38,
+                    background: "#1D3B29",
+                    borderRadius: 7,
+                    fontSize: 14,
+                    color: "#FFFFFF",
+                  }}
                 >
                   Explore Our Products
                 </Link>

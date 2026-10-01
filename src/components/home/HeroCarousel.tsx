@@ -34,96 +34,252 @@ export default function HeroCarousel() {
 
   return (
     <section className="relative w-full overflow-hidden bg-[#F4EEE2]">
-      <div className="relative w-full h-[480px] xs:h-[520px] sm:h-[560px] lg:h-[764px]">
-        {/* Full-width background image */}
+      {/* Hero */}
+      <div className="relative w-full h-[480px] xs:h-[520px] sm:h-[560px] lg:h-[560px]">
+
+        {/* Background / Hero Image */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSlide.id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
+            transition={{
+              duration: 0.6,
+              ease: "easeInOut",
+            }}
             className="absolute inset-0"
           >
             <Image
               src={activeSlide.image}
               alt={activeSlide.alt}
               fill
-              className="object-cover object-[-450px] lg:object-right"
               priority={activeIndex === 0}
               sizes="100vw"
+              className="
+                object-cover
+                object-[-450px]
+                sm:object-[-300px]
+                md:object-[-180px]
+                lg:object-right
+              "
             />
           </motion.div>
         </AnimatePresence>
 
-        {/* Mobile gradient overlay — left side for text readability */}
-        <div className="absolute inset-0 lg:hidden bg-gradient-to-r from-black/40 via-black/20 to-transparent pointer-events-none" />
+        {/* Mobile Overlay */}
+        <div
+          className="
+            absolute inset-0
+            lg:hidden
+            bg-gradient-to-r
+            from-black/40
+            via-black/20
+            to-transparent
+            pointer-events-none
+          "
+        />
 
-        {/* Text overlay */}
-        <div className="relative z-10 flex h-full items-start lg:items-center">
-          <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-[100px]">
-            <div className="max-w-[628px] pt-8 sm:pt-10 lg:pt-[100px] pb-24 sm:pb-28 lg:pb-[120px]">
+        {/* Hero Content */}
+        <div className="relative z-10 h-full">
+          <div
+            className="
+              w-full
+              max-w-[1440px]
+              h-full
+              mx-auto
+              px-4
+              sm:px-6
+              lg:px-[94px]
+            "
+          >
+            {/* Desktop content is positioned similar to Figma */}
+            <div
+              className="
+                w-full
+                max-w-[560px]
+                pt-8
+                sm:pt-10
+                lg:pt-[96px]
+              "
+            >
+              {/* Heading */}
               <motion.h1
                 key={`title-${activeIndex}`}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="font-playfair font-semibold text-white lg:text-black text-[26px] sm:text-[34px] leading-[1.15] md:text-5xl lg:text-[64px] lg:leading-[85px] max-w-[280px] sm:max-w-full"
+                initial={{
+                  opacity: 0,
+                  y: 24,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                transition={{
+                  duration: 0.6,
+                  ease: "easeOut",
+                }}
+                className="
+                  font-playfair
+                  font-semibold
+                  text-white
+                  lg:text-black
+                  text-[26px]
+                  sm:text-[34px]
+                  md:text-5xl
+                  lg:text-[60px]
+                  leading-[1.15]
+                  lg:leading-[1.18]
+                  max-w-[300px]
+                  sm:max-w-[520px]
+                "
               >
-                Nature&apos;s Goodness<br />Clinically Crafted
+                Nature&apos;s Goodness
+                <br />
+                Clinically Crafted
               </motion.h1>
 
+              {/* Description */}
               <motion.p
                 key={`desc-${activeIndex}`}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-                className="mt-3 sm:mt-5 font-inter font-normal text-white lg:text-black text-[13px] sm:text-base lg:text-2xl lg:leading-[29px] max-w-[290px] sm:max-w-[628px] leading-[20px]"
+                initial={{
+                  opacity: 0,
+                  y: 16,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.1,
+                  ease: "easeOut",
+                }}
+                className="
+                  mt-4
+                  sm:mt-5
+                  font-inter
+                  font-normal
+                  text-white
+                  lg:text-black
+                  text-[13px]
+                  sm:text-base
+                  lg:text-[20px]
+                  leading-[20px]
+                  lg:leading-[28px]
+                  max-w-[300px]
+                  sm:max-w-[520px]
+                "
               >
-                Clean, effective &amp; honest skincare and haircare enriched with
-                natural ingredients &amp; powerful herbs for real, visible results.
+                Clean, effective &amp; honest skincare and haircare enriched
+                with natural ingredients &amp; powerful herbs for real, visible
+                results.
               </motion.p>
 
+              {/* Explore Products */}
               <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-                className="mt-4 sm:mt-6"
+                initial={{
+                  opacity: 0,
+                  y: 16,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.2,
+                  ease: "easeOut",
+                }}
+                className="mt-5 sm:mt-6"
               >
                 <Link
                   href="/shop"
-                  className="inline-flex h-[40px] sm:h-[43px] min-w-[150px] sm:min-w-[179px] items-center justify-center rounded-[8px] px-5 sm:px-6 font-inter text-[13px] sm:text-base font-medium transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: "#1D3B29", color: "#F7EDE2" }}
+                  className="
+                    inline-flex
+                    h-[40px]
+                    sm:h-[43px]
+                    min-w-[150px]
+                    sm:min-w-[151px]
+                    items-center
+                    justify-center
+                    rounded-[7px]
+                    px-5
+                    sm:px-6
+                    font-inter
+                    text-[13px]
+                    sm:text-base
+                    font-medium
+                    transition-opacity
+                    hover:opacity-90
+                  "
+                  style={{
+                    backgroundColor: "#1D3B29",
+                    color: "#F7EDE2",
+                  }}
                 >
                   Explore Products
                 </Link>
               </motion.div>
 
-              {/* Thumbnail navigation */}
-              <div className="hidden lg:flex mt-5 sm:mt-7 items-end gap-2 sm:gap-4">
+              {/* Thumbnail Navigation */}
+              <div
+                className="
+    hidden
+    lg:flex
+    mt-7
+    items-start
+    gap-4
+  "
+              >
                 {slides.map((slide, index) => (
-                  <button
+                  <div
                     key={slide.id}
-                    type="button"
-                    onClick={() => setActiveIndex(index)}
-                    aria-label={`Show slide ${index + 1}`}
-                    aria-current={index === activeIndex ? "true" : undefined}
-                    className={`relative h-[36px] w-[36px] sm:h-[55px] sm:w-[55px] shrink-0 overflow-hidden rounded-[6px] sm:rounded-[10px] border transition-all ${index === activeIndex
-                      ? "border-white lg:border-[#1A3026] border-2 shadow-md -translate-y-0.5"
-                      : "border-white/70 lg:border-[#1A3026] border-[1.5px] opacity-70 hover:opacity-100"
-                      }`}
+                    className="relative flex flex-col items-center"
                   >
-                    <Image
-                      src={slide.image}
-                      alt=""
-                      fill
-                      className="object-cover object-center"
-                      sizes="55px"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setActiveIndex(index)}
+                      aria-label={`Show slide ${index + 1}`}
+                      aria-current={
+                        index === activeIndex ? "true" : undefined
+                      }
+                      className={`
+          relative
+          h-[55px]
+          w-[55px]
+          shrink-0
+          overflow-hidden
+          rounded-[9px]
+          border
+          transition-all
+          ${index === activeIndex
+                          ? "border-[#1A3026] border-2 shadow-md"
+                          : "border-[#1A3026] border-[1.5px] opacity-70 hover:opacity-100"
+                        }
+        `}
+                    >
+                      <Image
+                        src={slide.image}
+                        alt=""
+                        fill
+                        sizes="55px"
+                        className="object-cover object-center"
+                      />
+                    </button>
+
+                    {/* Active thumbnail indicator */}
                     {index === activeIndex && (
-                      <span className="absolute -bottom-2 left-1/2 h-[3px] w-4 sm:w-8 -translate-x-1/2 rounded-full bg-white lg:bg-[#1A3026]" />
+                      <span
+                        className="
+            mt-2
+            h-[2px]
+            w-[26px]
+            rounded-full
+            bg-[#1A3026]
+          "
+                      />
                     )}
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
