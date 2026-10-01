@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 }
 
                 const { data: { subscription: sub } } = supabase.auth.onAuthStateChange(
-                    async (event, session) => {
+                    (event, session) => {
                         if (!mounted) return;
 
                         setSession(session);
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                             useWishlistStore.getState().setUserId(session.user.id);
                             useWishlistStore.getState().syncWishlist();
 
-                            await fetchProfile(session.user.id);
+                            fetchProfile(session.user.id);
                         } else {
                             useCartStore.getState().setUserId(null);
                             useWishlistStore.getState().setUserId(null);

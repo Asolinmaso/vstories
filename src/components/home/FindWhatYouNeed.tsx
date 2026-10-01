@@ -186,16 +186,53 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
 
   const filteredProducts = (() => {
     if (!products || products.length === 0) return [];
+
     return products.filter((p) => {
-      // Safely handle both array and object for categories (depending on Supabase join type)
-      const catSlug = (Array.isArray(p.categories) ? p.categories[0]?.slug : p.categories?.slug) || p.category_id;
-      
-      if (activeTab === "Skin Care") return catSlug === "skin" || catSlug === "face";
-      if (activeTab === "Hair Care") return catSlug === "hair";
-      if (activeTab === "Combo & Gift Packs") return catSlug === "combos" || catSlug === "combo" || catSlug === "gifts" || (p.combo_product_ids && p.combo_product_ids.length > 0);
-      if (activeTab === "Sample Packs") return catSlug === "samples";
+      const category = Array.isArray(p.categories)
+        ? p.categories[0]
+        : p.categories;
+
+      const categorySlug = category?.slug?.toLowerCase() || "";
+      const categoryName = category?.name?.toLowerCase() || "";
+
+      if (activeTab === "Skin Care") {
+        return (
+          categorySlug === "skin" ||
+          categorySlug === "face" ||
+          categorySlug === "skin-care" ||
+          categoryName === "skin care" ||
+          categoryName === "skincare"
+        );
+      }
+
+      if (activeTab === "Hair Care") {
+        return (
+          categorySlug === "hair" ||
+          categorySlug === "hair-care" ||
+          categoryName === "hair care" ||
+          categoryName === "haircare"
+        );
+      }
+
+      if (activeTab === "Combo & Gift Packs") {
+        return (
+          categorySlug === "combos" ||
+          categorySlug === "combo" ||
+          categorySlug === "gifts" ||
+          categoryName === "combo & gift packs" ||
+          (p.combo_product_ids && p.combo_product_ids.length > 0)
+        );
+      }
+
+      if (activeTab === "Sample Packs") {
+        return (
+          categorySlug === "samples" ||
+          categoryName === "sample packs"
+        );
+      }
+
       return true;
-    }).slice(0, 3) as any[];
+    }).slice(0, 3);
   })();
 
   return (
@@ -260,12 +297,16 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
 
         {/* Product Cards */}
         <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-5 sm:gap-8">
-          {filteredProducts.length > 0 ? (
+          {activeTab === "Combo & Gift Packs" || activeTab === "Sample Packs" ? (
+            <p className="text-[#2E2E2E] font-inter text-lg text-center">
+              Coming Soon!
+            </p>
+          ) : filteredProducts.length > 0 ? (
             filteredProducts.map((product: any) => (
               <ProductCard key={product.id} product={product} />
             ))
           ) : (
-            <p className="text-[#2E2E2E] font-inter text-lg">
+            <p className="text-[#2E2E2E] font-inter text-lg text-center">
               No products found in this category. Check back soon!
             </p>
           )}

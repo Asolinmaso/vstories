@@ -155,8 +155,36 @@ export default function CategoryClient({ categorySlug, initialProducts }: Catego
         }
     });
 
+    const isComingSoon =
+        categorySlug.toLowerCase() === "combo" ||
+        categorySlug.toLowerCase() === "combos" ||
+        categorySlug.toLowerCase() === "sample-packs";
+
+    if (isComingSoon) {
+        return (
+            <div className="bg-[var(--background)] min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8">
+                <section className="w-full max-w-2xl text-center py-20 sm:py-24 md:py-32">
+                    <h1
+                        className="text-3xl sm:text-4xl md:text-5xl font-semibold text-[var(--primary)] mb-4"
+                        style={{ fontFamily: "var(--font-peachi)" }}
+                    >
+                        Coming Soon
+                    </h1>
+
+                    <p className="text-sm sm:text-base md:text-lg text-[var(--text-secondary)] leading-relaxed">
+                        {categorySlug.toLowerCase() === "sample-packs"
+                            ? "Our sample packs are coming soon. Stay tuned!"
+                            : "Exciting combo offers are coming soon. Stay tuned!"}
+                    </p>
+                </section>
+            </div>
+        );
+    }
+
     return (
+
         <div className="bg-[var(--background)] min-h-screen">
+
 
 
             {/* Products Section */}

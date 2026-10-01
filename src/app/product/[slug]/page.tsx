@@ -1,5 +1,4 @@
-import { getProductBySlug, getProductsByIds } from "@/lib/services/product.service";
-import ProductDetailClient from "@/components/product/ProductDetailClient";
+import { getProductBySlug, getProductsByIds, getProducts } from "@/lib/services/product.service"; import ProductDetailClient from "@/components/product/ProductDetailClient";
 import Link from "next/link";
 
 import { Metadata } from "next";
@@ -52,6 +51,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         );
     }
 
+    const allProducts = await getProducts();
+
+    const relatedProducts = allProducts.filter(
+        (item) =>
+            item.categories?.slug === product.categories?.slug &&
+            item.slug !== product.slug
+    );
+
     // Fetch included products if it's a combo
     let includedProducts: any[] = [];
     if (product.combo_product_ids && product.combo_product_ids.length > 0) {
@@ -85,7 +92,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
-            <ProductDetailClient product={product} includedProducts={includedProducts} />
+            <ProductDetailClient
+                product={product}
+                includedProducts={includedProducts}
+                relatedProducts={relatedProducts}
+            />
         </>
     );
 }
