@@ -22,6 +22,7 @@ export default function NewProductPage() {
         original_price: "",
         short_description: "",
         description: "",
+        how_to_use: "",
         category: "", // Will default to first category loaded
         stock: "100",
         size: "",
@@ -129,36 +130,39 @@ export default function NewProductPage() {
         });
     };
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
         if (!e.target.files || e.target.files.length === 0) return;
 
         setUploading(true);
+
         const file = e.target.files[0];
-        // Sanitize filename and prepend timestamp
-        const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '');
+        const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "");
         const fileName = `${Date.now()}-${sanitizedName}`;
         const filePath = `product-images/${fileName}`;
 
         try {
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('path', filePath);
+            const { error: uploadError } = await supabase.storage
+                .from("products")
+                .upload(filePath, file, {
+                    contentType: file.type,
+                    upsert: true,
+                });
 
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData,
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Upload failed');
+            if (uploadError) {
+                throw new Error(uploadError.message);
             }
 
-            setImages([...images, data.url]);
+            const { data } = supabase.storage
+                .from("products")
+                .getPublicUrl(filePath);
 
+            setImages((prev) => [...prev, data.publicUrl]);
+
+            toast.success("Image uploaded successfully!");
         } catch (error: any) {
-            console.error("Error uploading image:", error);
+            console.error("Direct storage upload error:", error);
             toast.error(`Error uploading image: ${error.message}`);
         } finally {
             setUploading(false);
@@ -195,21 +199,30 @@ export default function NewProductPage() {
         e.preventDefault();
         setLoading(true);
 
+        console.log("STEP 1: Submit started");
+
         try {
             // 1. Get Category ID
-            const { data: categoryData } = await supabase
-                .from("categories")
-                .select("id")
-                .eq("slug", formData.category)
-                .single();
+            const categoryData = categories.find(
+                (category) => category.slug === formData.category
+            );
 
-            if (!categoryData) throw new Error("Invalid category selected");
+            console.log("STEP 2: Category result", categoryData);
+
+            if (!categoryData) {
+                throw new Error("Invalid category selected");
+            }
 
             // Format Description to include Benefits if they exist
             let finalDescription = formData.description;
+
             if (formData.benefits.length > 0) {
-                finalDescription += `\n\nBenefits:\n` + formData.benefits.map(b => `• ${b}`).join('\n');
+                finalDescription +=
+                    `\n\nBenefits:\n` +
+                    formData.benefits.map((b) => `• ${b}`).join("\n");
             }
+
+            console.log("STEP 3: About to insert product");
 
             // 2. Insert Product
             const { data: productData, error: productError } = await supabase
@@ -219,23 +232,37 @@ export default function NewProductPage() {
                     slug: formData.slug,
                     short_description: formData.short_description,
                     description: finalDescription,
+                    how_to_use: formData.how_to_use,
                     price: parseFloat(formData.price),
-                    original_price: formData.original_price ? parseFloat(formData.original_price) : null,
+                    original_price: formData.original_price
+                        ? parseFloat(formData.original_price)
+                        : null,
                     stock: parseInt(formData.stock),
                     category_id: categoryData.id,
                     images: images,
                     is_new: formData.is_new,
                     is_bestseller: formData.is_bestseller,
                     ingredients: formData.ingredients,
-                    combo_product_ids: (formData.category === 'combos' || formData.category === 'combo') ? formData.combo_products : null,
+                    // combo_product_ids:
+                    //     formData.category === "combos" ||
+                    //         formData.category === "combo"
+                    //         ? formData.combo_products
+                    //         : null,
                 })
                 .select()
                 .single();
+
+            console.log("STEP 4: Product insert finished", {
+                productData,
+                productError,
+            });
 
             if (productError) throw productError;
 
             // 3. Insert Product Size (if provided)
             if (formData.size) {
+                console.log("STEP 5: Adding product size");
+
                 const { error: sizeError } = await supabase
                     .from("product_sizes")
                     .insert({
@@ -249,16 +276,17 @@ export default function NewProductPage() {
                 }
             }
 
-            // Use window.location to force a hard refresh which might be safer than next/router in some abort cases
-            // But strict standard is router.push then refresh
+            console.log("STEP 6: Product creation completed");
+
             router.push("/admin/products");
             router.refresh();
-            toast.success("Product created successfully!");
 
+            toast.success("Product created successfully!");
         } catch (error: any) {
-            console.error("Error creating product:", error);
+            console.error("ERROR CREATING PRODUCT:", error);
             toast.error(error.message || "Failed to create product");
         } finally {
+            console.log("STEP 7: Loading finished");
             setLoading(false);
         }
     };
@@ -321,6 +349,20 @@ export default function NewProductPage() {
                                     rows={4}
                                     className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
                                     placeholder="Product description..."
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    How to Use
+                                </label>
+
+                                <textarea
+                                    name="how_to_use"
+                                    value={formData.how_to_use}
+                                    onChange={handleChange}
+                                    rows={4}
+                                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                    placeholder="How should the customer use this product?"
                                 />
                             </div>
                         </div>

@@ -10,7 +10,6 @@ import {
     ChevronDown,
     Minus,
     Plus,
-    Heart,
     Share2,
     Truck,
     ShieldCheck,
@@ -107,7 +106,15 @@ const formatDescription = (text: string) => {
     });
 };
 
-export default function ProductDetailClient({ product, includedProducts = [] }: { product: Product; includedProducts?: Product[] }) {
+export default function ProductDetailClient({
+    product,
+    includedProducts = [],
+    relatedProducts = [],
+}: {
+    product: Product;
+    includedProducts?: Product[];
+    relatedProducts?: Product[];
+}) {
     const [selectedSize, setSelectedSize] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState("description");
@@ -116,7 +123,6 @@ export default function ProductDetailClient({ product, includedProducts = [] }: 
     const [reviewCount, setReviewCount] = useState<number | null>(null);
     const [avgRating, setAvgRating] = useState<number>(0);
     const [copied, setCopied] = useState(false);
-    const [isLiked, setIsLiked] = useState(false);
     const reviewsSectionRef = useRef<HTMLDivElement>(null);
 
     // Parse description and benefits
@@ -217,9 +223,28 @@ export default function ProductDetailClient({ product, includedProducts = [] }: 
         setTimeout(() => setCopied(false), 2000);
     };
 
-    // Related Products - Ideally fetched from props or another service
-    // For now we can skip or pass empty array since they need separate fetching
-    const relatedProducts: any[] = [];
+    const handleShare = async () => {
+        const shareData = {
+            title: product.name,
+            text: product.short_description || `Check out ${product.name} on V STORIES`,
+            url: window.location.href,
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(window.location.href);
+                toast.success("Product link copied!");
+            }
+        } catch (error) {
+            // User cancelled the share dialog
+            if ((error as Error).name !== "AbortError") {
+                toast.error("Unable to share the product");
+            }
+        }
+    };
+
 
     const tabs = [
         { id: "description", label: "Description" },
@@ -238,13 +263,21 @@ export default function ProductDetailClient({ product, includedProducts = [] }: 
                                 {product.categories?.name || "Hair Care"}
                             </span>
                             <div className="flex gap-4">
-                                <button
-                                    onClick={() => setIsLiked(!isLiked)}
+                                <AddToWishlistButton
+                                    product={{
+                                        id: product.id,
+                                        name: product.name,
+                                        price: product.price,
+                                        image: product.images[0],
+                                        slug: product.slug,
+                                    }}
                                     className="text-[#1D3B29] hover:opacity-70 transition-opacity"
+                                />
+                                <button
+                                    onClick={handleShare}
+                                    aria-label="Share product"
+                                    className="text-[#1D3B29] hover:opacity-70 transition-opacity flex items-center justify-center"
                                 >
-                                    <Heart className={`w-5 h-5 stroke-[1.5] ${isLiked ? "fill-[#93B481] stroke-[#93B481]" : ""}`} />
-                                </button>
-                                <button className="text-[#1D3B29] hover:opacity-70 transition-opacity flex items-center justify-center">
                                     <div className="relative w-5 h-5">
                                         <Image src="/images/icons/share.png" alt="Share" fill className="object-contain" />
                                     </div>
@@ -341,15 +374,28 @@ export default function ProductDetailClient({ product, includedProducts = [] }: 
                                         {product.categories?.name || "Hair Care"}
                                     </span>
                                     <div className="flex gap-4">
-                                        <button
-                                            onClick={() => setIsLiked(!isLiked)}
+                                        <AddToWishlistButton
+                                            product={{
+                                                id: product.id,
+                                                name: product.name,
+                                                price: product.price,
+                                                image: product.images[0],
+                                                slug: product.slug,
+                                            }}
                                             className="text-[#1D3B29] hover:opacity-70 transition-opacity"
+                                        />
+                                        <button
+                                            onClick={handleShare}
+                                            aria-label="Share product"
+                                            className="text-[#1D3B29] hover:opacity-70 transition-opacity flex items-center justify-center"
                                         >
-                                            <Heart className={`w-6 h-6 stroke-[1.5] ${isLiked ? "fill-[#93B481] stroke-[#93B481]" : ""}`} />
-                                        </button>
-                                        <button className="text-[#1D3B29] hover:opacity-70 transition-opacity flex items-center justify-center">
                                             <div className="relative w-6 h-6">
-                                                <Image src="/images/icons/share.png" alt="Share" fill className="object-contain" />
+                                                <Image
+                                                    src="/images/icons/share.png"
+                                                    alt="Share"
+                                                    fill
+                                                    className="object-contain"
+                                                />
                                             </div>
                                         </button>
                                     </div>
@@ -664,7 +710,7 @@ export default function ProductDetailClient({ product, includedProducts = [] }: 
             </div>
 
             {/* You May Also Like Section */}
-            <YouMayAlsoLike />
+            <YouMayAlsoLike products={relatedProducts} />
         </div>
     );
 }

@@ -11,13 +11,15 @@ import {
     LogOut,
     ShoppingBag,
     X,
-    Layers
+    Layers,
+    Receipt
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/products", label: "Products", icon: Package },
+    { href: "/admin/orders", label: "Orders", icon: Receipt },
     { href: "/admin/categories", label: "Categories", icon: Layers },
     { href: "/admin/users", label: "Users", icon: Users },
     { href: "/admin/coupons", label: "Coupons", icon: Tag },
@@ -72,7 +74,7 @@ export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarPr
 
                 <nav className="relative flex-1 py-8 px-4 space-y-2 overflow-y-auto custom-scrollbar">
                     {navItems.map((item) => {
-                        const isActive = pathname === item.href;
+                        const isActive = item.href === "/admin" ? pathname === "/admin" : pathname?.startsWith(item.href);
                         const Icon = item.icon;
 
                         return (

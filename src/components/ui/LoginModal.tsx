@@ -52,9 +52,8 @@ function UnderlineInput({
                 maxLength={maxLength}
                 autoComplete={autoComplete}
                 aria-invalid={!!error}
-                className={`w-full bg-transparent border-0 border-b px-2.5 py-2.5 text-base text-black placeholder:text-[#8F8F8F] outline-none font-[family-name:var(--font-poppins)] ${
-                    error ? "border-red-400" : "border-[#8F8F8F]"
-                } ${className}`}
+                className={`w-full bg-transparent border-0 border-b px-2.5 py-2.5 text-base text-black placeholder:text-[#8F8F8F] outline-none font-[family-name:var(--font-poppins)] ${error ? "border-red-400" : "border-[#8F8F8F]"
+                    } ${className}`}
             />
             {error && <p className="mt-1.5 text-xs text-red-600 font-[family-name:var(--font-inter)]">{error}</p>}
         </div>
@@ -252,6 +251,7 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
         if (loading) return;
 
         const emailError = validateEmailField(forgotEmail);
+
         if (emailError) {
             setFieldErrors({ email: emailError });
             return;
@@ -260,19 +260,29 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
         setLoading(true);
         setError(null);
         setFieldErrors({});
+
         try {
-            const { error: authError } = await supabase.auth.signInWithOtp({
-                email: forgotEmail.trim(),
-                options: { shouldCreateUser: false },
+            const response = await fetch("/api/auth/forgot-password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    action: "send",
+                    email: forgotEmail.trim(),
+                }),
             });
-            if (authError) throw authError;
-            setForgotStep("otp");
-        } catch (err: any) {
-            if (err.message?.toLowerCase().includes("user not found") || err.message?.toLowerCase().includes("no user")) {
-                setError("No account found with this email address.");
-            } else {
-                setError(err.message || "Failed to send OTP");
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Failed to send OTP");
             }
+
+            setForgotStep("otp");
+            setSuccess("OTP sent to your email.");
+        } catch (err: any) {
+            setError(err.message || "Failed to send OTP");
         } finally {
             setLoading(false);
         }
@@ -280,25 +290,42 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
 
     const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (loading) return;
-        if (otpCode.length < 6) {
-            setFieldErrors({ password: "Please enter the 6-digit code." });
+
+        if (!/^\d{6}$/.test(otpCode)) {
+            setError("Please enter the 6-digit code.");
             return;
         }
 
         setLoading(true);
         setError(null);
         setFieldErrors({});
+
         try {
-            const { error: authError } = await supabase.auth.verifyOtp({
-                email: forgotEmail.trim(),
-                token: otpCode,
-                type: "email",
+            const response = await fetch("/api/auth/forgot-password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    action: "verify",
+                    otp: otpCode,
+                }),
             });
-            if (authError) throw authError;
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Invalid OTP");
+            }
+
             setForgotStep("reset");
-        } catch {
-            setError("Invalid or expired code. Please check and try again.");
+            setSuccess("OTP verified successfully.");
+        } catch (err: any) {
+            setError(
+                err.message || "Invalid or expired code. Please try again."
+            );
         } finally {
             setLoading(false);
         }
@@ -306,34 +333,68 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
 
     const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (loading) return;
 
         const errors: AuthFieldErrors = {};
-        const passwordError = validatePasswordField(newPassword, "New password");
-        if (passwordError) errors.password = passwordError;
+
+        const passwordError = validatePasswordField(
+            newPassword,
+            "New password"
+        );
+
+        if (passwordError) {
+            errors.password = passwordError;
+        }
+
         if (!confirmNewPassword) {
-            errors.confirmPassword = "Please confirm your new password.";
+            errors.confirmPassword =
+                "Please confirm your new password.";
         } else if (newPassword !== confirmNewPassword) {
             errors.confirmPassword = "Passwords do not match.";
         }
 
         setFieldErrors(errors);
+
         if (hasFieldErrors(errors)) return;
 
         setLoading(true);
         setError(null);
+        setSuccess(null);
+
         try {
-            const { error: authError } = await supabase.auth.updateUser({ password: newPassword });
-            if (authError) throw authError;
+            const response = await fetch("/api/auth/forgot-password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    action: "reset",
+                    password: newPassword,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error || "Failed to update password"
+                );
+            }
+
             setSuccess("Password updated successfully!");
-            setTimeout(() => switchTab("login"), 1500);
+
+            setTimeout(() => {
+                switchTab("login");
+            }, 1500);
         } catch (err: any) {
-            setError(err.message || "Failed to update password");
+            setError(
+                err.message || "Failed to update password"
+            );
         } finally {
             setLoading(false);
         }
     };
-
     const welcomeName = email.includes("@")
         ? email.split("@")[0].charAt(0).toUpperCase() + email.split("@")[0].slice(1)
         : "";
@@ -342,28 +403,28 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
         tab === "forgot"
             ? "Reset Your Password"
             : tab === "signup"
-              ? "Get Started"
-              : welcomeName
-                ? `Welcome Back ${welcomeName}!`
-                : "Welcome Back!";
+                ? "Get Started"
+                : welcomeName
+                    ? `Welcome Back ${welcomeName}!`
+                    : "Welcome Back!";
 
     const subtitle =
         tab === "forgot"
             ? "Enter your email to receive a verification code."
             : tab === "signup"
-              ? "Create your account to continue."
-              : "Enter Your Credentials To Continue.";
+                ? "Create your account to continue."
+                : "Enter Your Credentials To Continue.";
 
     const primaryLabel =
         tab === "forgot"
             ? forgotStep === "email"
                 ? "Send OTP"
                 : forgotStep === "otp"
-                  ? "Verify Code"
-                  : "Update Password"
+                    ? "Verify Code"
+                    : "Update Password"
             : tab === "signup"
-              ? "Create Account"
-              : "Continue";
+                ? "Create Account"
+                : "Continue";
 
     return (
         <AnimatePresence>
@@ -446,8 +507,8 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
                                                     {resendStatus === "sending"
                                                         ? "Sending..."
                                                         : resendStatus === "sent"
-                                                          ? "Confirmation email sent!"
-                                                          : "Resend confirmation email"}
+                                                            ? "Confirmation email sent!"
+                                                            : "Resend confirmation email"}
                                                 </button>
                                             )}
                                         </div>
@@ -465,12 +526,12 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
                                             tab === "login"
                                                 ? handleLogin
                                                 : tab === "signup"
-                                                  ? handleSignup
-                                                  : forgotStep === "email"
-                                                    ? handleSendOtp
-                                                    : forgotStep === "otp"
-                                                      ? handleVerifyOtp
-                                                      : handleResetPassword
+                                                    ? handleSignup
+                                                    : forgotStep === "email"
+                                                        ? handleSendOtp
+                                                        : forgotStep === "otp"
+                                                            ? handleVerifyOtp
+                                                            : handleResetPassword
                                         }
                                         className="flex flex-col gap-6 sm:gap-8"
                                     >

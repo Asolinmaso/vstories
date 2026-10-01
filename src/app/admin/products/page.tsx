@@ -32,8 +32,13 @@ export default function AdminProductsPage() {
             .order("created_at", { ascending: false });
 
         if (error) {
-            console.error("Error fetching products:", error);
-        } else {
+    console.error("Error fetching products:", {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+    });
+}else {
             setProducts(data || []);
         }
         setLoading(false);

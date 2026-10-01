@@ -134,7 +134,7 @@ export default function ProductCard({ product, titleClassName, titleStyle }: Pro
                                     onClick={handleAddToCart}
                                     className="flex-1 font-inter font-medium text-[#1D3B29] transition-all hover:bg-[#1D3B29]/5"
                                     style={{
-                                        height: "36px",
+                                        height: "32px",
                                         border: "1px solid #1D3B29",
                                         borderRadius: "4px",
                                         fontSize: "13px",
@@ -146,7 +146,7 @@ export default function ProductCard({ product, titleClassName, titleStyle }: Pro
                                     onClick={handleBuyNow}
                                     className="flex-1 font-inter font-medium text-white transition-all hover:opacity-90 flex items-center justify-center"
                                     style={{
-                                        height: "36px",
+                                        height: "32px",
                                         background: "#1D3B29",
                                         borderRadius: "4px",
                                         fontSize: "13px",

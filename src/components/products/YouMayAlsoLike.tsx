@@ -3,8 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
+import { Product } from "@/lib/services/product.service";
 
-export default function YouMayAlsoLike() {
+interface YouMayAlsoLikeProps {
+    products?: Product[];
+}
+
+export default function YouMayAlsoLike({
+    products = [],
+}: YouMayAlsoLikeProps) {
     return (
         <div className="relative z-10 py-16 mt-8 md:mt-16 bg-[#FCFAF4] w-full">
             {/* Background Image */}
@@ -39,23 +46,19 @@ export default function YouMayAlsoLike() {
                             display: none;
                         }
                     `}} />
-                    {[
-                        { name: "Prophetic-Face Serum", original: 280, price: 250, img: "/images/products/serum.png", slug: "herbal-face-serum" },
-                        { name: "Herbal Facepack", original: 200, price: 180, img: "/images/products/facepack.png", slug: "herbal-facepack" },
-                        { name: "Hibiscus Shampoo", original: 280, price: 250, img: "/images/products/shampoo.png", slug: "hibiscus-shampoo" },
-                        { name: "V Herbal Hair Oil", original: 250, price: 230, img: "/images/products/hair oil.png", slug: "herbal-hair-oil" },
-                    ].map((prod, i) => (
-                        <Link href={`/product/${prod.slug}`} key={i} className="flex-none w-[260px] sm:w-[280px] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col group cursor-pointer block">
+                    {products.map((prod) => (
+                        <Link
+                            href={`/product/${prod.slug}`}
+                            key={prod.id} className="flex-none w-[260px] sm:w-[280px] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col group cursor-pointer block">
                             <div className="bg-[#EBE7DF] rounded-xl overflow-hidden relative aspect-square mb-4 transition-transform duration-300 group-hover:scale-[1.02]">
-                                <Image
-                                    src={prod.img}
-                                    alt={prod.name}
-                                    fill
-                                    className="object-cover"
-                                    onError={(e) => {
-                                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?q=80&w=600&auto=format&fit=crop';
-                                    }}
-                                />
+                                {prod.images?.[0] && (
+                                    <Image
+                                        src={prod.images[0]}
+                                        alt={prod.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                )}
                             </div>
                             <h3 className="font-inter font-semibold text-[var(--primary)] mb-1" style={{ fontSize: "26px", lineHeight: "1.2" }}>
                                 {prod.name}
@@ -63,12 +66,20 @@ export default function YouMayAlsoLike() {
                             <div className="flex justify-between items-center mb-4">
                                 <div className="flex items-center gap-2">
                                     <span className="text-[14px] font-bold text-[var(--primary)] tracking-tight">₹{prod.price}</span>
-                                    <span className="text-[13px] text-[var(--primary)] opacity-60 line-through font-medium">₹{prod.original}</span>
+                                    {prod.original_price && (
+                                        <span className="text-[13px] text-[var(--primary)] opacity-60 line-through font-medium">
+                                            ₹{prod.original_price}
+                                        </span>
+                                    )}
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <Star className="w-4 h-4 fill-[var(--highlight)] text-[var(--highlight)]" />
-                                    <span className="text-[13px] font-bold text-[var(--primary)]">4.8</span>
-                                    <span className="text-[11px] text-[var(--primary)] opacity-60 font-medium">(120)</span>
+                                    <span className="text-[13px] font-bold text-[var(--primary)]">
+                                        {prod.rating || "4.8"}
+                                    </span>
+                                    <span className="text-[11px] text-[var(--primary)] opacity-60 font-medium">
+                                        ({prod.reviews_count || "120"})
+                                    </span>
                                 </div>
                             </div>
                             <div className="mt-auto">

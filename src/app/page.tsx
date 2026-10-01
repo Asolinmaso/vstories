@@ -15,7 +15,7 @@ import { getWebsiteConfig } from "@/lib/services/website.service";
 
 // Use revalidation to keep content fresh but cached
 // Revalidate every 60 seconds
-export const revalidate = 60;
+export const revalidate = 0;
 
 
 const trustItems = [

@@ -27,6 +27,7 @@ export default function EditProductPage() {
         original_price: "",
         short_description: "",
         description: "",
+        how_to_use: "",
         category: "", // Will default to first category loaded
         stock: "100",
         size: "", // Added size
@@ -117,6 +118,7 @@ export default function EditProductPage() {
                 original_price: product.original_price?.toString() || "",
                 short_description: product.short_description || "",
                 description: mainDescription,
+                how_to_use: product.how_to_use || "",
                 category: product.category_id,
                 stock: product.stock?.toString() || "0",
                 size: currentSize,
@@ -124,7 +126,7 @@ export default function EditProductPage() {
                 is_new: product.is_new || false,
                 ingredients: product.ingredients || [],
                 benefits: extractedBenefits,
-                combo_products: product.combo_product_ids || []
+                combo_products: []
             });
             setSizeId(currentSizeId);
 
@@ -292,6 +294,7 @@ export default function EditProductPage() {
                 slug: formData.slug,
                 short_description: formData.short_description,
                 description: finalDescription,
+                how_to_use: formData.how_to_use,
                 price: parseFloat(formData.price),
                 original_price: formData.original_price ? parseFloat(formData.original_price) : null,
                 stock: parseInt(formData.stock),
@@ -300,7 +303,7 @@ export default function EditProductPage() {
                 is_bestseller: formData.is_bestseller,
                 ingredients: formData.ingredients,
                 images: images,
-                combo_product_ids: (formData.category === 'combos' || formData.category === 'combo') ? formData.combo_products : null,
+                // combo_product_ids: (formData.category === 'combos' || formData.category === 'combo') ? formData.combo_products : null,
             }).eq("id", id);
 
             if (error) throw error;
@@ -415,6 +418,19 @@ export default function EditProductPage() {
                                     onChange={handleChange}
                                     rows={4}
                                     className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    How to Use
+                                </label>
+                                <textarea
+                                    name="how_to_use"
+                                    value={formData.how_to_use}
+                                    onChange={handleChange}
+                                    rows={4}
+                                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                    placeholder="Enter instructions for using this product..."
                                 />
                             </div>
                         </div>
