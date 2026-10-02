@@ -1,4 +1,5 @@
 
+import { getAdminMailbox } from '@/lib/mailer';
 import { NextResponse } from 'next/server';
 import { sendEmail, getAdminNotificationHTML, getUserWelcomeHTML } from '@/lib/email';
 import { sanitizeContactForm } from '@/lib/sanitize';
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
 
         // 1. Send notification email to admin
         const adminEmail = await sendEmail({
-            to: process.env.EMAIL_USER as string,
+            to: getAdminMailbox(),
             subject: `New Contact Form Submission from ${formData.name}`,
             html: getAdminNotificationHTML(formData),
         });

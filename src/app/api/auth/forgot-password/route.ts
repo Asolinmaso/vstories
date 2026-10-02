@@ -4,6 +4,7 @@ import crypto from "crypto";
 
 import { supabaseAdmin } from "@/lib/supabase";
 import { sendEmail } from "@/lib/email";
+import { isMailConfigured } from "@/lib/mailer";
 
 const OTP_COOKIE = "vstories_password_reset";
 const OTP_EXPIRY_MINUTES = 10;
@@ -92,25 +93,41 @@ export async function POST(request: Request) {
                 );
             }
 
-            // Find the Supabase Auth user
-            const { data: usersData, error: usersError } =
-                await supabaseAdmin.auth.admin.listUsers({
-                    page: 1,
-                    perPage: 1000,
-                });
-
-            if (usersError) {
-                console.error("Error finding user:", usersError);
+            if (!isMailConfigured()) {
+                console.error("Password reset requested but email is not configured (EMAIL_USER / EMAIL_PASSWORD).");
 
                 return NextResponse.json(
-                    { error: "Unable to process request." },
-                    { status: 500 }
+                    { error: "We can't send emails right now. Please contact support at hello@vstories.in." },
+                    { status: 503 }
                 );
             }
 
-            const user = usersData.users.find(
-                (item) => item.email?.toLowerCase() === email
-            );
+            // Find the Supabase Auth user (the admin API has no lookup by
+            // email, so walk the pages until we find them)
+            let user: { id: string; email?: string } | undefined;
+
+            for (let page = 1; page <= 50 && !user; page++) {
+                const { data: usersData, error: usersError } =
+                    await supabaseAdmin.auth.admin.listUsers({
+                        page,
+                        perPage: 1000,
+                    });
+
+                if (usersError) {
+                    console.error("Error finding user:", usersError);
+
+                    return NextResponse.json(
+                        { error: "Unable to process request." },
+                        { status: 500 }
+                    );
+                }
+
+                user = usersData.users.find(
+                    (item) => item.email?.toLowerCase() === email
+                );
+
+                if (usersData.users.length < 1000) break;
+            }
 
             if (!user) {
                 return NextResponse.json(
@@ -196,12 +213,19 @@ export async function POST(request: Request) {
             if (!emailResult.success) {
                 console.error(
                     "OTP email failed:",
+                    emailResult.reason,
                     emailResult.error
                 );
 
+                // "auth" / "not-configured" are our configuration problem, not the customer's
+                const message =
+                    emailResult.reason === "rejected"
+                        ? "We couldn't deliver the email to this address. Please check it and try again."
+                        : "We couldn't send the verification email right now. Please try again in a few minutes.";
+
                 return NextResponse.json(
-                    { error: "Failed to send OTP email." },
-                    { status: 500 }
+                    { error: message },
+                    { status: emailResult.reason === "rejected" ? 400 : 503 }
                 );
             }
 

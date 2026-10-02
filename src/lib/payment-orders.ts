@@ -1,3 +1,4 @@
+import { after } from 'next/server';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { sendEmail, getOrderConfirmationHTML } from '@/lib/email-order';
 import { isUuid } from '@/lib/uuid';
@@ -102,12 +103,26 @@ export async function runOrderConfirmedSideEffects(
   const { error: cartError } = await db.from('cart_items').delete().eq('user_id', order.user_id);
   if (cartError) console.error('Failed to clear cart after order:', cartError.message);
 
+  // The email is sent after the response has gone out, so a slow or broken
+  // mail server can never delay or fail an order.
   if (customer.email) {
-    await sendEmail({
-      to: customer.email,
-      subject: `Order Confirmation - ${order.id}`,
-      html: getOrderConfirmationHTML(order, customer),
-    });
+    const sendConfirmation = async () => {
+      try {
+        const result = await sendEmail({
+          to: customer.email!,
+          subject: `Order Confirmation - ${order.id}`,
+          html: getOrderConfirmationHTML(order, customer),
+        });
+        if (!result.success) console.error('Order confirmation email not sent:', result.reason, result.error);
+      } catch (error) {
+        console.error('Order confirmation email error:', error);
+      }
+    };
+    try {
+      after(sendConfirmation);
+    } catch {
+      void sendConfirmation(); // not inside a request (should not happen)
+    }
   }
 }
 

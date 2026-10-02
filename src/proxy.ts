@@ -37,7 +37,9 @@ export default async function proxy(request: NextRequest) {
     }
 
     // CSRF Protection for mutation API routes (non-auth)
-    if (request.nextUrl.pathname.startsWith('/api/')) {
+    // /api/payment/callback receives Razorpay's own cross-site form POST; it is
+    // authenticated by the payment signature instead of the Origin header.
+    if (request.nextUrl.pathname.startsWith('/api/') && request.nextUrl.pathname !== '/api/payment/callback') {
         const origin = request.headers.get('origin');
         const host = request.headers.get('host');
 

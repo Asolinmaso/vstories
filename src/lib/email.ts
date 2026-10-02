@@ -1,14 +1,5 @@
 
-import nodemailer from 'nodemailer';
-
-// Create transporter with explicit SMTP configuration
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD?.replace(/\s/g, ''), // Remove any spaces if present
-    },
-});
+import { sendMail, type MailResult } from '@/lib/mailer';
 
 interface ContactFormData {
     name: string;
@@ -397,18 +388,6 @@ interface SendEmailParams {
     html: string;
 }
 
-export async function sendEmail({ to, subject, html }: SendEmailParams) {
-    try {
-        const info = await transporter.sendMail({
-            from: `"V Stories Support" <${process.env.EMAIL_USER}>`,
-            to,
-            subject,
-            html,
-        });
-        console.log('Email sent:', info.messageId);
-        return { success: true, messageId: info.messageId };
-    } catch (error: any) {
-        console.error('Error sending email:', error);
-        return { success: false, error: error.message };
-    }
+export async function sendEmail({ to, subject, html }: SendEmailParams): Promise<MailResult> {
+    return sendMail({ to, subject, html, fromName: 'V Stories Support' });
 }

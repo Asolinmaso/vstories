@@ -158,7 +158,14 @@ export default function CheckoutPage() {
 
             let paymentCompleted = false;
 
-            const options = {
+            // On phones, let Razorpay redirect back to us after paying. Switching to
+            // a UPI app or an in-app browser can lose the popup's JavaScript callback.
+            const useRedirect = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+            const options: Record<string, any> = {
+                ...(useRedirect
+                    ? { redirect: true, callback_url: `${window.location.origin}/api/payment/callback` }
+                    : {}),
                 key: data.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: data.amount,
                 currency: data.currency,

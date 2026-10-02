@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle, XCircle, Clock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import confetti from "canvas-confetti";
+import { useCartStore } from "@/lib/store";
 
 type OrderState = "loading" | "success" | "processing" | "failed" | "not-found";
 
@@ -98,6 +99,10 @@ function OrderSuccessContent() {
     // Celebrate and head home only for a confirmed order
     useEffect(() => {
         if (state !== "success") return;
+
+        // The customer may have come back from the payment page without passing
+        // through checkout, so make sure the cart is emptied here too
+        void useCartStore.getState().clearCart();
 
         confetti({
             particleCount: 100,
