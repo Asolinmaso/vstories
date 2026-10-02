@@ -8,6 +8,7 @@ import { ShoppingBag, Eye } from "lucide-react";
 import { Product } from "@/lib/services/product.service";
 import { useCartStore } from "@/lib/store";
 import { toast } from "sonner";
+import { useBuyNow } from "@/lib/useBuyNow";
 import AddToWishlistButton from "../products/AddToWishlistButton";
 
 import FadeIn from "./FadeIn";
@@ -23,6 +24,7 @@ export default function ProductCard({ product, titleClassName, titleStyle }: Pro
     const cartItems = useCartStore((state) => state.items);
 
     const router = useRouter();
+    const buyNow = useBuyNow();
 
 
     const isInCart = cartItems.some(
@@ -70,14 +72,13 @@ export default function ProductCard({ product, titleClassName, titleStyle }: Pro
     const handleBuyNow = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        addItem({
+        buyNow({
             id: product.id,
             name: product.name,
             price: product.price,
             image: product.images[0],
             size: product.sizes?.[0]?.label,
         });
-        router.push("/checkout");
     };
 
     return (

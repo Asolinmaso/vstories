@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { MapPin, Plus, Home, Briefcase, CheckCircle2, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 interface Address {
     id: string;
@@ -16,6 +17,17 @@ interface Address {
     label: string;
 }
 
+const EMPTY_ADDRESS = {
+    name: "",
+    phone: "",
+    address_line1: "",
+    address_line2: "",
+    city: "",
+    state: "",
+    pincode: "",
+    label: "Home",
+};
+
 interface AddressSelectionProps {
     onSelect: (address: Address) => void;
     selectedId?: string;
@@ -27,16 +39,7 @@ export default function AddressSelection({ onSelect, selectedId }: AddressSelect
     const [showNewForm, setShowNewForm] = useState(false);
     const [saving, setSaving] = useState(false);
 
-    const [newAddress, setNewAddress] = useState({
-        name: "",
-        phone: "",
-        address_line1: "",
-        address_line2: "",
-        city: "",
-        state: "",
-        pincode: "",
-        label: "Home",
-    });
+    const [newAddress, setNewAddress] = useState(EMPTY_ADDRESS);
 
     useEffect(() => {
         fetchAddresses();
@@ -46,14 +49,20 @@ export default function AddressSelection({ onSelect, selectedId }: AddressSelect
         try {
             const res = await fetch("/api/user/addresses");
             const data = await res.json();
-            if (data.addresses) {
-                setAddresses(data.addresses);
-                if (data.addresses.length > 0 && !selectedId) {
-                    onSelect(data.addresses[0]);
-                }
+            if (!res.ok) throw new Error(data.error || "Could not load your addresses");
+
+            const list: Address[] = data.addresses || [];
+            setAddresses(list);
+            if (list.length > 0 && !selectedId) {
+                onSelect(list[0]);
+            } else if (list.length === 0) {
+                // Nothing saved yet — go straight to the form
+                setShowNewForm(true);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to fetch addresses:", error);
+            toast.error(error.message || "Could not load your addresses");
+            setShowNewForm(true);
         } finally {
             setLoading(false);
         }
@@ -61,38 +70,56 @@ export default function AddressSelection({ onSelect, selectedId }: AddressSelect
 
     const handleSaveAddress = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const address = {
+            ...newAddress,
+            name: newAddress.name.trim(),
+            phone: newAddress.phone.replace(/[\s-]/g, ""),
+            address_line1: newAddress.address_line1.trim(),
+            city: newAddress.city.trim(),
+            state: newAddress.state.trim(),
+            pincode: newAddress.pincode.trim(),
+        };
+
+        if (!/^(\+91)?[6-9]\d{9}$/.test(address.phone)) {
+            toast.error("Please enter a valid 10-digit mobile number");
+            return;
+        }
+        if (!/^\d{6}$/.test(address.pincode)) {
+            toast.error("Please enter a valid 6-digit pincode");
+            return;
+        }
+
         setSaving(true);
         try {
             const res = await fetch("/api/user/addresses", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newAddress),
+                body: JSON.stringify(address),
             });
-            const data = await res.json();
-            if (data.success) {
-                const savedAddress = data.address;
+            const data = await res.json().catch(() => ({}));
 
-                if (savedAddress) {
-                    setAddresses((prev) => [...prev, savedAddress]);
-                    onSelect(savedAddress);
-                } else {
-                    await fetchAddresses();
-                }
-
-                setShowNewForm(false);
-                setNewAddress({
-                    name: "",
-                    phone: "",
-                    address_line1: "",
-                    address_line2: "",
-                    city: "",
-                    state: "",
-                    pincode: "",
-                    label: "Home",
-                });
+            let selected: Address;
+            if (res.ok && data.success && data.address) {
+                selected = data.address;
+            } else if (res.status === 400 || res.status === 401) {
+                toast.error(data.error || "Please check the address and try again");
+                return;
+            } else {
+                // The address book could not store it, but that must not block
+                // the purchase: deliver this order to the address just entered.
+                console.error("Address not saved, using it for this order only:", data.error);
+                selected = { ...address, id: `unsaved-${Date.now()}` };
+                toast.info("We'll deliver to this address. It couldn't be saved for next time.");
             }
+
+            setAddresses((prev) => [...prev, selected]);
+            onSelect(selected);
+            setShowNewForm(false);
+            setNewAddress(EMPTY_ADDRESS);
         } catch (error) {
             console.error("Failed to save address:", error);
+            toast.error("Could not save the address. Please check your connection and try again.");
         } finally {
             setSaving(false);
         }
@@ -130,7 +157,7 @@ export default function AddressSelection({ onSelect, selectedId }: AddressSelect
                         </div>
                         <p className="font-semibold text-gray-900 mb-1">{address.name}</p>
                         <p className="text-sm text-gray-600 line-clamp-2">
-                            {address.address_line1}, {address.city}
+                            {[address.address_line1, address.city, address.state].filter(Boolean).join(", ")}
                         </p>
                         <p className="text-sm text-gray-600">{address.pincode}</p>
                         <p className="text-sm font-medium mt-2">{address.phone}</p>
@@ -186,6 +213,9 @@ export default function AddressSelection({ onSelect, selectedId }: AddressSelect
                                     <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Phone</label>
                                     <input
                                         type="tel"
+                                        inputMode="tel"
+                                        autoComplete="tel"
+                                        placeholder="10-digit mobile number"
                                         required
                                         value={newAddress.phone}
                                         onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })}
@@ -214,9 +244,23 @@ export default function AddressSelection({ onSelect, selectedId }: AddressSelect
                                     />
                                 </div>
                                 <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">State</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        autoComplete="address-level1"
+                                        value={newAddress.state}
+                                        onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
+                                        className="w-full px-4 py-2 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-[var(--primary)]/20 outline-none"
+                                    />
+                                </div>
+                                <div>
                                     <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Pincode</label>
                                     <input
                                         type="text"
+                                        inputMode="numeric"
+                                        maxLength={6}
+                                        autoComplete="postal-code"
                                         required
                                         value={newAddress.pincode}
                                         onChange={(e) => setNewAddress({ ...newAddress, pincode: e.target.value })}

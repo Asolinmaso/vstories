@@ -21,6 +21,7 @@ import {
 import { toast } from "sonner";
 import FadeIn from "@/components/ui/FadeIn";
 import { useCartStore } from "@/lib/store";
+import { useBuyNow } from "@/lib/useBuyNow";
 import ProductCard from "@/components/ui/ProductCard";
 import ProductReviews from "@/components/product/ProductReviews";
 
@@ -156,6 +157,7 @@ export default function ProductDetailClient({
         (item) => item.id === product.id
     );
     const router = useRouter();
+    const buyNow = useBuyNow();
 
 
 
@@ -219,14 +221,13 @@ export default function ProductDetailClient({
     };
 
     const handleBuyNow = () => {
-        addItem({
+        buyNow({
             id: product.id,
             name: product.name,
             price: currentPrice,
             image: product.images[0],
             size: product.sizes && product.sizes.length > 0 ? product.sizes[selectedSize]?.label : undefined,
         });
-        router.push('/checkout');
     };
 
     const handleCopyCode = () => {

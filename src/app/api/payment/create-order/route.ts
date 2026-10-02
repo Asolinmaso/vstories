@@ -1,14 +1,28 @@
 import { NextResponse } from 'next/server';
+import { randomUUID } from 'crypto';
 import { createRazorpayOrder } from '@/lib/razorpay';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
-import { createClient } from '@supabase/supabase-js';
-import { sendEmail, getOrderConfirmationHTML } from '@/lib/email-order';
+import { supabaseAdmin } from '@/lib/supabase';
+import { calculateOrderTotal } from '@/lib/order-pricing';
+import { priceOrderItems, runOrderConfirmedSideEffects } from '@/lib/payment-orders';
 
-// Admin client for DB writes — bypasses RLS and works reliably in API routes
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const ADDRESS_FIELDS = ['label', 'name', 'phone', 'address_line1', 'address_line2', 'city', 'state', 'pincode', 'country'] as const;
+
+function cleanShippingAddress(raw: any): Record<string, string> | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const source = {
+    ...raw,
+    name: raw.name || raw.full_name,
+    pincode: raw.pincode || raw.postal_code,
+  };
+  const address: Record<string, string> = {};
+  for (const field of ADDRESS_FIELDS) {
+    const value = source[field];
+    if (typeof value === 'string' && value.trim()) address[field] = value.trim().slice(0, 200);
+  }
+  const complete = address.name && address.phone && address.address_line1 && address.city && address.pincode;
+  return complete ? address : null;
+}
 
 export async function POST(request: Request) {
   try {
@@ -18,98 +32,82 @@ export async function POST(request: Request) {
 
     if (userError || !user) {
       return NextResponse.json(
-        { error: 'Unauthorized - Please login' },
+        { error: 'Please login to place your order' },
         { status: 401 }
       );
     }
 
-    const body = await request.json();
-    const {
-      amount,
-      currency = 'INR',
-      items,
-      shippingAddress,
-      paymentMethod = 'razorpay',
-      shippingFee = 0,
-      discount = 0,
-    } = body;
-
-    // Validate amount
-    if (!amount || amount <= 0) {
-      return NextResponse.json({ error: 'Invalid amount' }, { status: 400 });
+    if (!supabaseAdmin) {
+      console.error('SUPABASE_SERVICE_ROLE_KEY is not configured');
+      return NextResponse.json({ error: 'Checkout is temporarily unavailable' }, { status: 500 });
     }
 
-    // Validate items
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
+    const body = await request.json().catch(() => null);
+    if (!body) {
+      return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
     }
 
-    // Validate shipping address
-    if (!shippingAddress?.name || !shippingAddress?.phone) {
-      return NextResponse.json({ error: 'Shipping address is required' }, { status: 400 });
+    const paymentMethod = body.paymentMethod === 'cod' ? 'cod' : 'razorpay';
+
+    const shippingAddress = cleanShippingAddress(body.shippingAddress);
+    if (!shippingAddress) {
+      return NextResponse.json({ error: 'Please provide a complete shipping address' }, { status: 400 });
     }
 
-    // Verify amount matches items + shipping - discount (prevent client-side tampering)
-    const subtotal = items.reduce((total: number, item: any) => {
-      return total + (item.price * item.quantity);
-    }, 0);
+    // Prices, shipping and the total are computed here from the database —
+    // amounts sent by the browser are never trusted.
+    const priced = await priceOrderItems(supabaseAdmin, body.items);
+    if (!priced.ok) {
+      return NextResponse.json({ error: priced.error }, { status: 400 });
+    }
 
-    const expectedTotal = subtotal + Number(shippingFee || 0) - Number(discount || 0);
+    const { shippingFee, total } = calculateOrderTotal(priced.subtotal);
 
-    if (Math.abs(expectedTotal - amount) > 1) {
+    // The customer must be charged exactly what the checkout page displayed
+    if (body.amount !== undefined && Math.abs(Number(body.amount) - total) > 0.01) {
       return NextResponse.json(
-        { error: 'Amount mismatch - possible tampering detected' },
-        { status: 400 }
+        {
+          error: 'Prices in your cart have changed. Please review your cart and try again.',
+          code: 'AMOUNT_MISMATCH',
+          expectedAmount: total,
+        },
+        { status: 409 }
       );
     }
 
     const orderPayload = {
       user_id: user.id,
-      amount,
-      currency,
-      status: paymentMethod === 'cod' ? 'confirmed' : 'pending',
-      items,
-      shipping_address: shippingAddress,
-      created_at: new Date().toISOString(),
+      amount: total,
+      currency: 'INR',
+      status: 'pending',
+      items: priced.items,
+      shipping_address: { ...shippingAddress, shipping_fee: shippingFee },
     };
 
-    // Cash on Delivery — skip Razorpay, create order directly
+    const customer = { email: user.email, name: user.user_metadata?.full_name || shippingAddress.name };
+
+    // Cash on Delivery — no gateway involved. The order is placed right away;
+    // it stays "pending" (payment due on delivery) until an admin marks it paid.
     if (paymentMethod === 'cod') {
       const { data: order, error: dbError } = await supabaseAdmin
         .from('orders')
         .insert({
           ...orderPayload,
-          razorpay_order_id: null,
+          razorpay_order_id: `cod_${randomUUID()}`,
+          payment_method: 'cod',
         })
         .select()
         .single();
 
-      if (dbError) {
+      if (dbError || !order) {
         console.error('Database error creating COD order:', JSON.stringify(dbError));
         const msg = process.env.NODE_ENV === 'development'
-          ? `DB error: ${dbError.message} (code: ${dbError.code})`
+          ? `DB error: ${dbError?.message} (code: ${dbError?.code})`
           : 'Failed to save order — please try again';
         return NextResponse.json({ error: msg }, { status: 500 });
       }
 
-      for (const item of items) {
-        await supabaseAdmin.rpc('decrement_stock', {
-          product_id: item.id,
-          quantity: item.quantity,
-        });
-      }
-
-      await supabaseAdmin.from('cart_items').delete().eq('user_id', user.id);
-
-      try {
-        await sendEmail({
-          to: user.email!,
-          subject: `Order Confirmation - ${order.id}`,
-          html: getOrderConfirmationHTML(order, user),
-        });
-      } catch (emailError) {
-        console.error('Failed to send COD confirmation email:', emailError);
-      }
+      await runOrderConfirmedSideEffects(supabaseAdmin, order, customer);
 
       return NextResponse.json({
         success: true,
@@ -120,17 +118,17 @@ export async function POST(request: Request) {
     }
 
     // Create Razorpay order for online payment
-    const result = await createRazorpayOrder(amount, currency);
+    const result = await createRazorpayOrder(total, 'INR', { user_id: user.id });
 
-    if (!result.success || !result.order) {
-      console.error('Razorpay error:', result.error);
+    if (!result.success) {
       return NextResponse.json(
-        { error: `Failed to create payment order: ${result.error || 'Unknown error'}` },
-        { status: 500 }
+        { error: 'Could not start the payment. Please try again in a moment.' },
+        { status: 502 }
       );
     }
 
-    // Store order in database using admin client (reliable, no RLS issues)
+    // The order only becomes "paid" once /api/payment/verify (or the webhook)
+    // confirms the payment with Razorpay.
     const { data: order, error: dbError } = await supabaseAdmin
       .from('orders')
       .insert({
@@ -140,10 +138,10 @@ export async function POST(request: Request) {
       .select()
       .single();
 
-    if (dbError) {
+    if (dbError || !order) {
       console.error('Database error creating order:', JSON.stringify(dbError));
       const msg = process.env.NODE_ENV === 'development'
-        ? `DB error: ${dbError.message} (code: ${dbError.code})`
+        ? `DB error: ${dbError?.message} (code: ${dbError?.code})`
         : 'Failed to save order — please try again';
       return NextResponse.json({ error: msg }, { status: 500 });
     }
@@ -154,10 +152,11 @@ export async function POST(request: Request) {
       amount: result.order.amount,
       currency: result.order.currency,
       dbOrderId: order.id,
+      keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
     });
 
   } catch (error: any) {
     console.error('Create order unhandled error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }

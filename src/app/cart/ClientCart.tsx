@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCartStore, getCartItemKey } from "@/lib/store";
+import { calculateOrderTotal } from "@/lib/order-pricing";
 import { supabase } from "@/lib/supabase-browser";
 import { Product } from "@/lib/services/product.service";
 import { useAuth } from "@/context/AuthContext";
@@ -62,16 +63,16 @@ export default function ClientCart() {
 
   const handleCheckout = () => {
     if (!user) {
-      openLoginModal();
+      // Continue to checkout as soon as the shopper signs in
+      openLoginModal("login", "/checkout");
       return;
     }
     router.push("/checkout");
   };
 
-  const discount = items.length > 0 ? 110.00 : 0;
-  const shipping = items.length > 0 ? 100.00 : 0;
+  // Same numbers the checkout page charges
   const subtotal = getTotal();
-  const total = subtotal - discount + shipping;
+  const { shippingFee: shipping, total } = calculateOrderTotal(subtotal);
 
   if (!mounted) return null;
 
@@ -234,12 +235,8 @@ export default function ClientCart() {
                     <span className="font-inter font-medium text-[13px] md:text-[14px] text-[#2E2E2E]/80">₹{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="font-inter font-bold text-[13px] md:text-[14px] text-[#2E2E2E]">Discount</span>
-                    <span className="font-inter font-medium text-[13px] md:text-[14px] text-[#2E2E2E]/80">-₹{discount.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
                     <span className="font-inter font-bold text-[13px] md:text-[14px] text-[#2E2E2E]">Shipping</span>
-                    <span className="font-inter font-medium text-[13px] md:text-[14px] text-[#2E2E2E]/80">₹{shipping.toFixed(2)}</span>
+                    <span className="font-inter font-medium text-[13px] md:text-[14px] text-[#2E2E2E]/80">{shipping === 0 ? "FREE" : `₹${shipping.toFixed(2)}`}</span>
                   </div>
                 </div>
 

@@ -5,7 +5,7 @@ import { useCartStore } from "@/lib/store";
 import { useWishlistStore } from "@/lib/wishlistStore";
 import { toast } from "sonner";
 import { Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useBuyNow } from "@/lib/useBuyNow";
 
 interface WishlistProductCardProps {
     product: Product;
@@ -22,7 +22,7 @@ function DropletIcon() {
 export default function WishlistProductCard({ product }: WishlistProductCardProps) {
     const { removeItem } = useWishlistStore();
     const { addItem } = useCartStore();
-    const router = useRouter();
+    const buyNow = useBuyNow();
 
     const primarySize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : null;
     const price = primarySize ? primarySize.price : product.price;
@@ -42,8 +42,13 @@ export default function WishlistProductCard({ product }: WishlistProductCardProp
     };
 
     const handleBuyNow = () => {
-        handleAddToCart();
-        router.push("/checkout");
+        buyNow({
+            id: product.id,
+            name: product.name,
+            price: price,
+            image: product.images[0],
+            size: primarySize?.label || "200 ml",
+        });
     };
 
     const handleRemove = async () => {

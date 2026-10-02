@@ -42,7 +42,9 @@ function mapRemoteCartItem(ri: any): CartItem {
     return {
         id: ri.product_id,
         name: ri.product?.name || "Unknown Product",
-        price: ri.product?.price || 0,
+        price: Number(
+            ri.product?.sizes?.find((s: any) => s.label === ri.size_label)?.price ?? ri.product?.price ?? 0
+        ),
         quantity: Math.min(99, Math.max(1, ri.quantity || 1)),
         image: ri.product?.images?.[0] || "",
         size: ri.size_label === 'default' ? undefined : (ri.size_label || undefined),
@@ -118,7 +120,7 @@ export const useCartStore = create<CartStore>()(
 
                 const { data: remoteItems } = await supabase
                     .from("cart_items")
-                    .select("id, product_id, quantity, size_label, product:products(name, price, images)")
+                    .select("id, product_id, quantity, size_label, product:products(name, price, images, sizes:product_sizes(label, price))")
                     .eq("user_id", userId);
 
                 if (remoteItems && remoteItems.length > 0) {

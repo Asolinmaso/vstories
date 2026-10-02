@@ -23,7 +23,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     const handleCheckout = () => {
         onClose();
         if (!user) {
-            openLoginModal();
+            openLoginModal("login", "/checkout");
             return;
         }
         router.push("/checkout");

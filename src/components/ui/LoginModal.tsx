@@ -18,6 +18,8 @@ import {
 interface LoginModalProps {
     onClose: () => void;
     initialTab?: "login" | "signup";
+    /** Where to go after a successful sign-in (falls back to ?redirect=) */
+    redirectTo?: string | null;
 }
 
 function UnderlineInput({
@@ -71,7 +73,7 @@ function GoogleIcon() {
     );
 }
 
-export default function LoginModal({ onClose, initialTab = "login" }: LoginModalProps) {
+export default function LoginModal({ onClose, initialTab = "login", redirectTo }: LoginModalProps) {
     const router = useRouter();
     const [tab, setTab] = useState<"login" | "signup" | "forgot">(initialTab);
 
@@ -166,7 +168,7 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
             }
             onClose();
             router.refresh();
-            const redirect = new URLSearchParams(window.location.search).get("redirect");
+            const redirect = redirectTo || new URLSearchParams(window.location.search).get("redirect");
             if (redirect && redirect.startsWith("/") && !redirect.startsWith("//")) {
                 router.push(redirect);
             }
@@ -224,7 +226,7 @@ export default function LoginModal({ onClose, initialTab = "login" }: LoginModal
     const handleGoogle = async () => {
         try {
             setLoading(true);
-            const redirect = new URLSearchParams(window.location.search).get("redirect");
+            const redirect = redirectTo || new URLSearchParams(window.location.search).get("redirect");
             const safeRedirect =
                 redirect && redirect.startsWith("/") && !redirect.startsWith("//")
                     ? redirect

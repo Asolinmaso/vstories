@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useCartStore } from "@/lib/store";
+import { calculateOrderTotal } from "@/lib/order-pricing";
 import { ShoppingBag, CreditCard, Loader2, Tag, ChevronLeft, Truck, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,67 +17,108 @@ declare global {
     }
 }
 
+const RAZORPAY_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
+
+// Resolves true once Razorpay Checkout is usable, false if it could not load
+// (offline, blocked by an ad blocker, etc.) so the caller can tell the user.
+function loadRazorpay(): Promise<boolean> {
+    return new Promise((resolve) => {
+        if (typeof window === "undefined") return resolve(false);
+        if (window.Razorpay) return resolve(true);
+
+        let script = document.querySelector<HTMLScriptElement>(`script[src="${RAZORPAY_SCRIPT}"]`);
+        if (!script) {
+            script = document.createElement("script");
+            script.src = RAZORPAY_SCRIPT;
+            script.async = true;
+            document.body.appendChild(script);
+        }
+        const el = script;
+        el.addEventListener("load", () => resolve(!!window.Razorpay));
+        el.addEventListener("error", () => {
+            el.remove(); // allow a clean retry on the next attempt
+            resolve(false);
+        });
+    });
+}
+
+// Tell the server a payment attempt did not go through, so the order is not
+// left "pending". The server double-checks with Razorpay and answers
+// { status: "paid" } if the money was in fact captured.
+async function reportUnpaid(
+    razorpayOrderId: string,
+    reason: "failed" | "cancelled"
+): Promise<{ status?: string; orderId?: string }> {
+    try {
+        const res = await fetch("/api/payment/fail", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ razorpay_order_id: razorpayOrderId, reason }),
+            keepalive: true,
+        });
+        return await res.json();
+    } catch {
+        return {};
+    }
+}
+
 export default function CheckoutPage() {
     const router = useRouter();
-    const { user } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const { items, getTotal, clearCart } = useCartStore();
-    
+
+    const [mounted, setMounted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState<any>(null);
     const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">("razorpay");
     const [couponCode, setCouponCode] = useState("");
-    const [discount, setDiscount] = useState(0);
+    // Set once an order is placed so emptying the cart doesn't flash the empty state
+    const orderPlacedRef = useRef(false);
 
     const subtotal = getTotal();
-    const shippingFee = subtotal >= 999 ? 0 : 60;
-    const total = subtotal + shippingFee - discount;
+    const { shippingFee, total } = calculateOrderTotal(subtotal);
+    const discount = 0;
 
     useEffect(() => {
+        setMounted(true);
+        // Warm up the payment script so the popup opens instantly on "Pay"
+        void loadRazorpay();
+    }, []);
+
+    // Wait for the session to be restored before deciding the user is signed out
+    useEffect(() => {
+        if (authLoading || orderPlacedRef.current) return;
         if (!user) {
-            router.push("/?login=1&redirect=/checkout");
-            return;
+            router.replace("/?login=1&redirect=/checkout");
         }
-        if (items.length === 0) {
-            router.push("/shop");
-            return;
-        }
+    }, [authLoading, user, router]);
 
-        const script = document.createElement("script");
-        script.src = "https://checkout.razorpay.com/v1/checkout.js";
-        script.async = true;
-        document.body.appendChild(script);
-
-        return () => {
-            if (document.body.contains(script)) {
-                document.body.removeChild(script);
-            }
-        };
-    }, [user, items, router]);
+    const finishOrder = async (orderId: string) => {
+        orderPlacedRef.current = true;
+        router.push(`/order-success?orderId=${orderId}`);
+        await clearCart();
+    };
 
     const handleCheckout = async () => {
+        if (loading) return;
+
         if (!selectedAddress) {
-            toast.error("Please select a shipping address");
+            toast.error("Please add a delivery address to continue");
             return;
         }
 
         setLoading(true);
 
         try {
-            // Step 1: Create order on server
+            // Step 1: Create order on server (prices are recalculated there)
             const response = await fetch("/api/payment/create-order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     amount: total,
-                    currency: "INR",
-                    shippingFee,
-                    discount,
                     items: items.map(item => ({
                         id: item.id,
-                        name: item.name,
-                        price: item.price,
                         quantity: item.quantity,
-                        image: item.image,
                         size: item.size,
                     })),
                     shippingAddress: selectedAddress,
@@ -84,29 +126,48 @@ export default function CheckoutPage() {
                 }),
             });
 
-            const data = await response.json();
+            const data = await response.json().catch(() => ({}));
+
+            if (response.status === 401) {
+                toast.error("Your session has expired. Please login again.");
+                router.replace("/?login=1&redirect=/checkout");
+                return;
+            }
+
+            if (response.status === 409 && data.code === "AMOUNT_MISMATCH") {
+                // Refresh cart prices from the server so the next attempt matches
+                await useCartStore.getState().syncCart();
+                throw new Error(data.error);
+            }
 
             if (!response.ok || !data.success) {
                 throw new Error(data.error || "Failed to create order");
             }
 
             if (paymentMethod === "cod") {
-                await clearCart();
-                router.push(`/order-success?orderId=${data.dbOrderId || data.orderId}`);
-                setLoading(false);
+                await finishOrder(data.dbOrderId || data.orderId);
                 return;
             }
 
-            // Step 2: Initialize Razorpay checkout
+            // Step 2: Open Razorpay checkout
+            const razorpayReady = await loadRazorpay();
+            if (!razorpayReady) {
+                void reportUnpaid(data.orderId, "cancelled");
+                throw new Error("Could not load the payment gateway. Please check your internet connection (or disable any ad blocker) and try again.");
+            }
+
+            let paymentCompleted = false;
+
             const options = {
-                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+                key: data.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: data.amount,
                 currency: data.currency,
                 name: "V STORIES",
                 description: "Premium Herbal Products",
-                image: "/images/logo.png",
+                image: `${window.location.origin}/images/logo.png`,
                 order_id: data.orderId,
                 handler: async function (response: any) {
+                    paymentCompleted = true;
                     try {
                         const verifyResponse = await fetch("/api/payment/verify", {
                             method: "POST",
@@ -118,34 +179,63 @@ export default function CheckoutPage() {
                             }),
                         });
 
-                        const verifyData = await verifyResponse.json();
+                        const verifyData = await verifyResponse.json().catch(() => ({}));
 
                         if (verifyResponse.ok && verifyData.success) {
-                            await clearCart();
-                            router.push(`/order-success?orderId=${verifyData.orderId}`);
-                        } else {
-                            throw new Error(verifyData.error || "Payment verification failed");
+                            await finishOrder(verifyData.orderId);
+                            return;
                         }
+
+                        if (verifyResponse.status >= 500) {
+                            // Paid, but we couldn't confirm it yet. The order page keeps
+                            // checking, so the customer is never told to pay twice.
+                            orderPlacedRef.current = true;
+                            router.push(`/order-success?orderId=${data.dbOrderId}`);
+                            return;
+                        }
+
+                        throw new Error(verifyData.error || "Payment verification failed");
                     } catch (error: any) {
-                        toast.error(error.message);
+                        toast.error(error.message || "Payment verification failed. If money was deducted, please contact us with your payment details.", { duration: 10000 });
+                        setLoading(false);
                     }
                 },
                 prefill: {
                     name: selectedAddress.name,
                     email: user?.email || "",
-                    contact: selectedAddress.phone,
+                    // Razorpay expects the country code; without a usable contact
+                    // it asks the customer to type the number again
+                    contact: /^\d{10}$/.test(selectedAddress.phone || "") ? `+91${selectedAddress.phone}` : selectedAddress.phone,
                 },
                 theme: {
                     color: "#1A3026",
                 },
                 modal: {
-                    ondismiss: function() {
+                    // Customer closed the popup without completing a payment
+                    ondismiss: async function () {
+                        if (paymentCompleted) return;
+                        const result = await reportUnpaid(data.orderId, "cancelled");
+                        if (paymentCompleted) return;
+                        if (result.status === "paid" && result.orderId) {
+                            // The payment went through even though the popup was closed
+                            await finishOrder(result.orderId);
+                            return;
+                        }
+                        toast.info("Payment cancelled. You have not been charged.");
                         setLoading(false);
                     }
                 }
             };
 
             const razorpay = new window.Razorpay(options);
+
+            // A failed attempt (declined card, wrong OTP, bank error...). The popup
+            // stays open so the customer can retry with another method.
+            razorpay.on("payment.failed", function (response: any) {
+                void reportUnpaid(data.orderId, "failed");
+                toast.error(response?.error?.description || "Payment failed. Please try again or use another payment method.");
+            });
+
             razorpay.open();
 
         } catch (error: any) {
@@ -155,7 +245,38 @@ export default function CheckoutPage() {
         }
     };
 
-    if (!user || items.length === 0) return null;
+    if (!mounted || authLoading || !user) {
+        return (
+            <div className="min-h-[60vh] flex items-center justify-center bg-[var(--background)]">
+                <Loader2 className="w-8 h-8 animate-spin text-[var(--primary)]" />
+            </div>
+        );
+    }
+
+    if (items.length === 0) {
+        // An order was just placed and we're on the way to the confirmation page
+        if (orderPlacedRef.current) {
+            return (
+                <div className="min-h-[60vh] flex items-center justify-center bg-[var(--background)]">
+                    <Loader2 className="w-8 h-8 animate-spin text-[var(--primary)]" />
+                </div>
+            );
+        }
+        return (
+            <div className="min-h-[60vh] flex items-center justify-center bg-[var(--background)] px-4">
+                <div className="text-center">
+                    <ShoppingBag className="w-12 h-12 text-[var(--primary)] mx-auto mb-4" />
+                    <h1 className="text-2xl font-bold text-[var(--primary)] mb-2" style={{ fontFamily: "var(--font-peachi)" }}>
+                        Your cart is empty
+                    </h1>
+                    <p className="text-gray-600 mb-6">Add a product to your cart to checkout.</p>
+                    <Link href="/shop" className="btn-primary px-8 py-3 inline-block">
+                        Browse Products
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[var(--background)] pb-20">

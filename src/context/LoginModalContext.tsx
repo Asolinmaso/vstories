@@ -8,7 +8,7 @@ import LoginModal from "@/components/ui/LoginModal";
 type AuthTab = "login" | "signup";
 
 interface LoginModalContextType {
-    open: (tab?: AuthTab) => void;
+    open: (tab?: AuthTab, redirectTo?: string) => void;
     close: () => void;
 }
 
@@ -21,15 +21,21 @@ export function useLoginModal() {
 export function LoginModalProvider({ children }: { children: ReactNode }) {
     const [isOpen, setIsOpen] = useState(false);
     const [initialTab, setInitialTab] = useState<AuthTab>("login");
+    const [redirectTo, setRedirectTo] = useState<string | null>(null);
     const { user } = useAuth();
     const pathname = usePathname();
 
-    const open = (tab: AuthTab = "login") => {
+    // redirectTo: page to continue to once the user has signed in (e.g. /checkout)
+    const open = (tab: AuthTab = "login", redirectTo?: string) => {
         setInitialTab(tab);
+        setRedirectTo(redirectTo ?? null);
         setIsOpen(true);
     };
 
-    const close = () => setIsOpen(false);
+    const close = () => {
+        setIsOpen(false);
+        setRedirectTo(null);
+    };
 
     // Open modal from URL params (?login=1 or ?signup=1)
     useEffect(() => {
@@ -69,7 +75,7 @@ export function LoginModalProvider({ children }: { children: ReactNode }) {
     return (
         <LoginModalContext.Provider value={{ open, close }}>
             {children}
-            {isOpen && <LoginModal onClose={close} initialTab={initialTab} />}
+            {isOpen && <LoginModal onClose={close} initialTab={initialTab} redirectTo={redirectTo} />}
         </LoginModalContext.Provider>
     );
 }

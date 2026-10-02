@@ -56,8 +56,11 @@ export default function ShopContent({
                 return isCombo || pSlug.includes('combo') || pName.includes('combo') || pSlug.includes('kit') || pSlug.includes('trio') || pSlug.includes('duo');
             }
 
-            // Match by category_id — try by slug match on the categories list
-            const matchedCat = initialCategories.find((c) => c.slug === selectedCategory);
+            // The filter uses short slugs ("skin", "hair") while the database
+            // stores "skin-care" / "hair-care" — match either form.
+            const matchedCat = initialCategories.find(
+                (c) => c.slug === selectedCategory || c.slug.startsWith(`${selectedCategory}-`)
+            );
             if (matchedCat) {
                 return product.category_id === matchedCat.id;
             }

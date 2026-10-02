@@ -11,6 +11,7 @@ import { useCartStore } from "@/lib/store";
 import { useWishlistStore } from "@/lib/wishlistStore";
 import { toast } from "sonner";
 import { isUuid } from "@/lib/uuid";
+import { useBuyNow } from "@/lib/useBuyNow";
 
 interface FindWhatYouNeedProps {
   products: Product[];
@@ -34,6 +35,7 @@ function ProductCard({ product }: { product: Product }) {
   const addItem = useCartStore((s) => s.addItem);
   const cartItems = useCartStore((s) => s.items);
   const router = useRouter();
+  const buyNow = useBuyNow();
 
   const isInCart = cartItems.some(
     (item) => item.id === product.id
@@ -89,6 +91,18 @@ function ProductCard({ product }: { product: Product }) {
     toast.success(`${product.name} added to cart`);
   };
 
+  const handleBuyNow = () => {
+    buyNow({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0] || "",
+      size: product.sizes?.[0]?.label,
+    });
+  };
+
+  const productHref = `/product/${product.slug || product.id}`;
+
   return (
     <div
       className="relative flex flex-col bg-[#FCFAF4] w-full sm:max-w-[396px]"
@@ -100,21 +114,21 @@ function ProductCard({ product }: { product: Product }) {
       }}
     >
       {/* Product Image */}
-      <div className="relative w-full aspect-[4/3] sm:h-[387px] sm:aspect-auto shrink-0 bg-[#FCFAF4]">
+      <Link href={productHref} className="relative block w-full aspect-[4/3] sm:h-[387px] sm:aspect-auto shrink-0 bg-[#FCFAF4]">
         <Image
           src={product.images?.[0] || "/images/home/hero2.png"}
           alt={product.name}
           fill
           className="object-cover"
         />
-      </div>
+      </Link>
 
       {/* Product Info */}
       <div className="relative flex flex-col flex-1 px-4 sm:px-6 pt-4 sm:pt-6 pb-4 sm:pb-6">
         {/* Name + Heart row */}
         <div className="flex items-start justify-between mb-2 sm:mb-3">
           <h3 className="font-inter font-bold text-[#2E2E2E] text-[18px] sm:text-[24px] leading-[24px] sm:leading-[29px] pr-2">
-            {product.name}
+            <Link href={productHref}>{product.name}</Link>
           </h3>
           <button
             onClick={toggleWishlist}
@@ -178,8 +192,8 @@ function ProductCard({ product }: { product: Product }) {
           >
             {isInCart ? "Go to Cart" : "Add to cart"}
           </button>
-          <Link
-            href={`/product/${product.slug || product.id}`}
+          <button
+            onClick={handleBuyNow}
             className="flex flex-1 items-center justify-center font-inter font-medium transition-all hover:opacity-90 text-[13px] sm:text-[16px]"
             style={{
               height: "40px",
@@ -189,7 +203,7 @@ function ProductCard({ product }: { product: Product }) {
             }}
           >
             Buy Now
-          </Link>
+          </button>
         </div>
       </div>
     </div>
