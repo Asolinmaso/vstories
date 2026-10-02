@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 import { Product } from "@/lib/services/product.service";
@@ -31,6 +32,12 @@ function LeafIcon({ flipped = false }: { flipped?: boolean }) {
 
 function ProductCard({ product }: { product: Product }) {
   const addItem = useCartStore((s) => s.addItem);
+  const cartItems = useCartStore((s) => s.items);
+  const router = useRouter();
+
+  const isInCart = cartItems.some(
+    (item) => item.id === product.id
+  );
 
   const { hasItem, addItem: addWishlistItem, removeItem: removeWishlistItem, items: wishlistItems } = useWishlistStore();
   const [isLiked, setIsLiked] = useState(false);
@@ -61,10 +68,16 @@ function ProductCard({ product }: { product: Product }) {
   };
 
   const handleAddToCart = () => {
+    if (isInCart) {
+      router.push("/cart");
+      return;
+    }
+
     if (!isUuid(product.id)) {
       toast.error("This product is unavailable. Please refresh and try again.");
       return;
     }
+
     addItem({
       id: product.id,
       name: product.name,
@@ -72,6 +85,7 @@ function ProductCard({ product }: { product: Product }) {
       image: product.images?.[0] || "",
       size: product.sizes?.[0]?.label,
     });
+
     toast.success(`${product.name} added to cart`);
   };
 
@@ -153,14 +167,16 @@ function ProductCard({ product }: { product: Product }) {
         <div className="flex items-center gap-[8px] sm:gap-[10px] mt-auto">
           <button
             onClick={handleAddToCart}
-            className="flex flex-1 items-center justify-center font-inter font-medium text-[#1D3B29] transition-all hover:bg-[#F4F0EC] text-[13px] sm:text-[16px]"
+            className="flex flex-1 items-center justify-center font-inter font-medium transition-all text-[13px] sm:text-[16px]"
             style={{
               height: "40px",
               border: "1px solid #1D3B29",
               borderRadius: "8px",
+              background: isInCart ? "#1D3B29" : "transparent",
+              color: isInCart ? "#FFFFFF" : "#1D3B29",
             }}
           >
-            Add to cart
+            {isInCart ? "Go to Cart" : "Add to cart"}
           </button>
           <Link
             href={`/product/${product.slug || product.id}`}
@@ -186,16 +202,61 @@ export default function FindWhatYouNeedMobile({ products }: FindWhatYouNeedProps
 
   const filteredProducts = (() => {
     if (!products || products.length === 0) return [];
-    return products.filter((p) => {
-      // Safely handle both array and object for categories (depending on Supabase join type)
-      const catSlug = (Array.isArray(p.categories) ? p.categories[0]?.slug : p.categories?.slug) || p.category_id;
-      
-      if (activeTab === "Skin Care") return catSlug === "skin" || catSlug === "face";
-      if (activeTab === "Hair Care") return catSlug === "hair";
-      if (activeTab === "Combo & Gift Packs") return catSlug === "combos" || catSlug === "combo" || catSlug === "gifts" || (p.combo_product_ids && p.combo_product_ids.length > 0);
-      if (activeTab === "Sample Packs") return catSlug === "samples";
-      return true;
-    }).slice(0, 3) as any[];
+
+    return products.filter((product) => {
+      const category = Array.isArray(product.categories)
+        ? product.categories[0]
+        : product.categories;
+
+      const categorySlug = String(category?.slug || "")
+        .trim()
+        .toLowerCase();
+
+      const categoryName = String(category?.name || "")
+        .trim()
+        .toLowerCase();
+
+      if (activeTab === "Skin Care") {
+        return (
+          categorySlug === "skin-care" ||
+          categorySlug === "skin" ||
+          categorySlug === "face" ||
+          categoryName === "skin care" ||
+          categoryName === "skincare"
+        );
+      }
+
+      if (activeTab === "Hair Care") {
+        return (
+          categorySlug === "hair-care" ||
+          categorySlug === "hair" ||
+          categoryName === "hair care" ||
+          categoryName === "haircare"
+        );
+      }
+
+      if (activeTab === "Combo & Gift Packs") {
+        return (
+          categorySlug === "combo" ||
+          categorySlug === "combos" ||
+          categorySlug === "gift" ||
+          categorySlug === "gifts" ||
+          categoryName === "combo & gift packs" ||
+          (product.combo_product_ids &&
+            product.combo_product_ids.length > 0)
+        );
+      }
+
+      if (activeTab === "Sample Packs") {
+        return (
+          categorySlug === "sample" ||
+          categorySlug === "samples" ||
+          categoryName === "sample packs"
+        );
+      }
+
+      return false;
+    }).slice(0, 3);
   })();
 
   return (
@@ -260,7 +321,13 @@ export default function FindWhatYouNeedMobile({ products }: FindWhatYouNeedProps
 
         {/* Product Cards */}
         <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-5 sm:gap-8">
-          {filteredProducts.length > 0 ? (
+          {activeTab === "Combo & Gift Packs" || activeTab === "Sample Packs" ? (
+            <div className="w-full flex items-center justify-center py-16">
+              <p className="font-inter text-[#2E2E2E] text-lg">
+                Coming Soon!
+              </p>
+            </div>
+          ) : filteredProducts.length > 0 ? (
             filteredProducts.map((product: any) => (
               <ProductCard key={product.id} product={product} />
             ))

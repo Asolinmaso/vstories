@@ -202,6 +202,7 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
   const [activeTab, setActiveTab] = useState("Skin Care");
   const tabs = ["Skin Care", "Hair Care", "Combo & Gift Packs", "Sample Packs"];
 
+
   const filteredProducts = (() => {
     if (!products || products.length === 0) return [];
 
@@ -250,7 +251,7 @@ export default function FindWhatYouNeed({ products }: FindWhatYouNeedProps) {
       }
 
       return true;
-    }).slice(0, 3);
+    }).slice(0, 3) as any[];
   })();
 
   return (
