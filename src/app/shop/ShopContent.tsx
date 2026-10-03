@@ -48,23 +48,60 @@ export default function ShopContent({
             if (!selectedCategory) return true;
             if (selectedCategory === "bestseller") return product.is_bestseller;
 
-            // Combos specific logic
-            if (selectedCategory === "combos" || selectedCategory === "combo") {
-                const isCombo = product.combo_product_ids && product.combo_product_ids.length > 0;
-                const pSlug = product.slug.toLowerCase();
-                const pName = product.name.toLowerCase();
-                return isCombo || pSlug.includes('combo') || pName.includes('combo') || pSlug.includes('kit') || pSlug.includes('trio') || pSlug.includes('duo');
-            }
+            // Match the selected Shop category with the actual Supabase category
+            const matchedCat = initialCategories.find((category) => {
+                const categorySlug = category.slug?.toLowerCase().trim();
+                const categoryName = category.name?.toLowerCase().trim();
 
-            // The filter uses short slugs ("skin", "hair") while the database
-            // stores "skin-care" / "hair-care" — match either form.
-            const matchedCat = initialCategories.find(
-                (c) => c.slug === selectedCategory || c.slug.startsWith(`${selectedCategory}-`)
-            );
+                if (selectedCategory === "skin") {
+                    return (
+                        categorySlug === "skin" ||
+                        categorySlug === "skin-care" ||
+                        categoryName === "skin care" ||
+                        categoryName === "skincare"
+                    );
+                }
+
+                if (selectedCategory === "hair") {
+                    return (
+                        categorySlug === "hair" ||
+                        categorySlug === "hair-care" ||
+                        categoryName === "hair care" ||
+                        categoryName === "haircare"
+                    );
+                }
+
+                if (selectedCategory === "combos" || selectedCategory === "combo") {
+                    return (
+                        categorySlug === "combo" ||
+                        categorySlug === "combos" ||
+                        categorySlug === "combo-gift-packs" ||
+                        categorySlug === "combo-gift-pack" ||
+                        categoryName === "combo / gift packs" ||
+                        categoryName === "combo & gift packs" ||
+                        categoryName === "combo and gift packs"
+                    );
+                }
+
+                if (selectedCategory === "sample-packs") {
+                    return (
+                        categorySlug === "sample-packs" ||
+                        categorySlug === "sample-pack" ||
+                        categorySlug === "sample" ||
+                        categorySlug === "samples" ||
+                        categoryName === "sample packs" ||
+                        categoryName === "sample pack"
+                    );
+                }
+
+                return categorySlug === selectedCategory;
+            });
+
             if (matchedCat) {
                 return product.category_id === matchedCat.id;
             }
-            return product.category_id === selectedCategory;
+
+            return false;
         })
         .sort((a, b) => {
             switch (sortBy) {
@@ -91,7 +128,7 @@ export default function ShopContent({
     return (
         <div className="bg-[var(--background)] min-h-screen">
             {/* Page Header */}
-            <header className="py-12 md:py-20 bg-white border-b border-gray-100">
+            <header className="py-4 md:py-6 bg-white border-b border-gray-100">
                 <div className="container-premium text-center">
                     <h1
                         className="text-4xl md:text-6xl font-bold text-[var(--primary)] mb-4"
@@ -105,7 +142,7 @@ export default function ShopContent({
                 </div>
             </header>
 
-            <section className="py-12 md:py-16">
+            <section className="py-0 md:py-2">
                 <div className="container-premium">
                     <div className="flex flex-col lg:flex-row gap-12">
 
@@ -158,7 +195,7 @@ export default function ShopContent({
                                     <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
                                         {filteredProducts.length} Results found
                                     </p>
-                                    
+
                                     {/* Mobile Filter Toggle */}
                                     <button
                                         onClick={() => setIsMobileFilterOpen(true)}
@@ -191,41 +228,52 @@ export default function ShopContent({
                             </div>
 
                             {/* Products Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-                                {filteredProducts.map((product, index) => (
-                                    <motion.div
-                                        key={product.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 0.4, delay: (index % 3) * 0.1 }}
-                                        className="h-full"
-                                    >
-                                        <ProductCard
-                                            product={product}
-                                        />
-                                    </motion.div>
-                                ))}
-                            </div>
-
-                            {/* Empty State */}
-                            {filteredProducts.length === 0 && (
-                                <div className="text-center py-32 bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
-                                    <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                                        <Filter className="w-10 h-10 text-gray-300" />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2">No products found</h3>
-                                    <p className="text-gray-500 mb-8">
-                                        Try adjusting your filters to find what you&apos;re looking for.
+                            {/* Products Grid */}
+                            {selectedCategory === "combos" || selectedCategory === "sample-packs" ? (
+                                <div className="flex items-center justify-center py-32 bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
+                                    <p className="text-[#2E2E2E] font-inter text-lg">
+                                        Coming Soon!
                                     </p>
-                                    <button
-                                        onClick={() => setSelectedCategory(null)}
-                                        className="btn-primary px-8 py-3"
-                                    >
-                                        Clear all filters
-                                    </button>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+                                    {filteredProducts.map((product, index) => (
+                                        <motion.div
+                                            key={product.id}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ duration: 0.4, delay: (index % 3) * 0.1 }}
+                                            className="h-full"
+                                        >
+                                            <ProductCard
+                                                product={product}
+                                            />
+                                        </motion.div>
+                                    ))}
                                 </div>
                             )}
+
+                            {/* Empty State */}
+                            {filteredProducts.length === 0 &&
+                                selectedCategory !== "combos" &&
+                                selectedCategory !== "sample-packs" && (
+                                    <div className="text-center py-32 bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
+                                        <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                            <Filter className="w-10 h-10 text-gray-300" />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-gray-900 mb-2">No products found</h3>
+                                        <p className="text-gray-500 mb-8">
+                                            Try adjusting your filters to find what you&apos;re looking for.
+                                        </p>
+                                        <button
+                                            onClick={() => setSelectedCategory(null)}
+                                            className="btn-primary px-8 py-3"
+                                        >
+                                            Clear all filters
+                                        </button>
+                                    </div>
+                                )}
                         </div>
                     </div>
                 </div>
