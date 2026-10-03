@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,40 +32,37 @@ export default function HeroCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeSlide = slides[activeIndex];
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((currentIndex) => (currentIndex + 1) % slides.length);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="relative w-full overflow-hidden bg-[#F4EEE2]">
       {/* Hero */}
       <div className="relative w-full h-[480px] xs:h-[520px] sm:h-[560px] lg:h-[560px]">
 
         {/* Background / Hero Image */}
-        <AnimatePresence mode="wait">
-          <motion.div
+        <div className="absolute inset-0">
+          <Image
             key={activeSlide.id}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{
-              duration: 0.6,
-              ease: "easeInOut",
-            }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={activeSlide.image}
-              alt={activeSlide.alt}
-              fill
-              priority={activeIndex === 0}
-              sizes="100vw"
-              className="
-                object-cover
-                object-[-450px]
-                sm:object-[-300px]
-                md:object-[-180px]
-                lg:object-right
-              "
-            />
-          </motion.div>
-        </AnimatePresence>
+            src={activeSlide.image}
+            alt={activeSlide.alt}
+            fill
+            priority
+            sizes="100vw"
+            className="
+      object-cover
+      object-[-450px]
+      sm:object-[-300px]
+      md:object-[-180px]
+      lg:object-right
+    "
+          />
+        </div>
 
         {/* Mobile Overlay */}
         <div

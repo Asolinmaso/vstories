@@ -156,7 +156,7 @@ export default function Navbar({ announcement }: NavbarProps) {
                                 >
                                     <Link
                                         href={link.href}
-                                        className={`flex items-center gap-1.5 text-[16px] leading-[19px] transition-all duration-300 font-inter ${(pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href)))
+                                        className={`flex items-center gap-1.5 whitespace-nowrap text-[16px] leading-[19px] transition-all duration-300 font-inter ${(pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href)))
                                             ? "font-semibold text-[var(--primary)]"
                                             : "font-normal text-black hover:text-[var(--primary)]"
                                             }`}
@@ -250,11 +250,6 @@ export default function Navbar({ announcement }: NavbarProps) {
                                         )}
                                     </Link>
 
-                                    {isAdmin && (
-                                        <Link href="/admin" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-[#1D3B29] text-[#F7EDE2] hover:opacity-90">
-                                            Admin
-                                        </Link>
-                                    )}
                                     <Link href="/profile" className="p-2 text-black hover:scale-110 transition-transform">
                                         <User className="w-6 h-6" strokeWidth={2} />
                                     </Link>

@@ -20,13 +20,12 @@ const categories = [
 ];
 
 const policies = [
-    { href: "https://docs.google.com/document/d/1bDH1icRD7yNGTE2o9QGW-P_JRlcmf9Cml8hFaoMMAEw/edit?usp=sharing", label: "Privacy Policies" },
-    { href: "https://docs.google.com/document/d/1bDH1icRD7yNGTE2o9QGW-P_JRlcmf9Cml8hFaoMMAEw/edit?usp=sharing", label: "Terms & Conditions" },
-    { href: "https://docs.google.com/document/d/1bDH1icRD7yNGTE2o9QGW-P_JRlcmf9Cml8hFaoMMAEw/edit?usp=sharing", label: "Shipping & Cancellations" },
-    { href: "https://docs.google.com/document/d/1bDH1icRD7yNGTE2o9QGW-P_JRlcmf9Cml8hFaoMMAEw/edit?usp=sharing", label: "Returns & Refunds" },
+    { href: "/privacy", label: "Privacy Policy" },
+    { href: "/terms", label: "Terms & Conditions" },
+    { href: "/shipping", label: "Shipping & Cancellations" },
+    { href: "/returns", label: "Returns & Refunds" },
     { href: "/contact", label: "Collaboration & Partnership" },
 ];
-
 function SocialIcon({ src, href, label }: { src: string; href: string; label: string }) {
     return (
         <a
