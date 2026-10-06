@@ -209,7 +209,7 @@ export default function Navbar({ announcement }: NavbarProps) {
 
                             {user && isAdmin ? (
                                 <>
-                                    <Link href="/admin" className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1D3B29] text-[#F7EDE2] hover:opacity-90">
+                                    <Link href="/admin" className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1D3B29] text-[#F7EDE2] hover:opacity-90" style={{ color: "#F7EDE2" }}>
                                         Admin Dashboard
                                     </Link>
                                     <button
@@ -330,7 +330,7 @@ export default function Navbar({ announcement }: NavbarProps) {
 
                                         {user && isAdmin ? (
                                             <>
-                                                <Link href="/admin" className="px-2.5 py-1.5 rounded-md text-xs font-semibold bg-[#1D3B29] text-[#F7EDE2] mr-1">
+                                                <Link href="/admin" className="px-2.5 py-1.5 rounded-md text-xs font-semibold bg-[#1D3B29] text-[#F7EDE2] mr-1" style={{ color: "#F7EDE2" }}>
                                                     Dashboard
                                                 </Link>
                                                 <button

@@ -212,7 +212,11 @@ export default function LoginModal({ onClose, initialTab = "login", redirectTo }
 
         setError(null);
         onClose();
-        if (destination) router.push(destination);
+        // Drop ?login=1&redirect=... from the address bar once signed in
+        if (!destination && /[?&](login|signup)=1/.test(window.location.search)) {
+            destination = window.location.pathname;
+        }
+        if (destination) router.replace(destination);
         router.refresh();
     };
 
