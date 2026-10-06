@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 
+const PENDING_VISIBLE_MS = 60 * 60 * 1000;
+
 export async function GET() {
     try {
         const supabase = await createSupabaseServerClient();
@@ -20,7 +22,14 @@ export async function GET() {
 
         if (error) throw error;
 
-        return NextResponse.json({ orders });
+        // An unpaid attempt is only worth showing while the payment may still
+        // be confirming; older ones were simply abandoned.
+        const cutoff = Date.now() - PENDING_VISIBLE_MS;
+        const visible = (orders || []).filter(
+            (order) => order.status !== "pending" || new Date(order.created_at).getTime() > cutoff
+        );
+
+        return NextResponse.json({ orders: visible });
     } catch (error: any) {
         console.error("User orders error:", error);
         return NextResponse.json({ error: "Could not load your orders" }, { status: 500 });

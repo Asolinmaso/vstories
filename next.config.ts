@@ -33,6 +33,11 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // Razorpay Checkout (api.razorpay.com) loads the logo from here
+        source: '/images/:path*',
+        headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }],
+      },
+      {
         source: '/:path*',
         headers: [
           {
