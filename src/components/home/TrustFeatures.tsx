@@ -17,13 +17,13 @@ export default function TrustFeatures() {
       ),
     },
     {
-      title: "Cash On Delivery",
-      desc: "Pay on delivery",
+      title: "Easy UPI Payments",
+      desc: "GPay, PhonePe, Paytm & more",
       icon: (
         <div className="relative w-10 h-10">
           <Image
             src="/images/icons/savings.png"
-            alt="Cash On Delivery"
+            alt="UPI Payments"
             fill
             className="object-contain"
           />

@@ -29,10 +29,7 @@ export function getOrderConfirmationHTML(order: any, user: any) {
         [[address.city, address.state].filter(Boolean).join(', '), address.pincode || address.postal_code].filter(Boolean).join(' '),
     ].filter(Boolean).map(escapeHtml).join('<br>');
 
-    const isCod = order.payment_method === 'cod';
-    const paymentLine = isCod
-        ? '<strong>Payment:</strong> Cash on Delivery'
-        : `<strong>Payment ID:</strong> ${escapeHtml(order.razorpay_payment_id || '-')}`;
+    const paymentLine = `<strong>Payment ID:</strong> ${escapeHtml(order.razorpay_payment_id || '-')}`;
 
     const customerName = user?.name || user?.user_metadata?.full_name || address.name || address.full_name || user?.email || 'there';
 
@@ -63,7 +60,7 @@ export function getOrderConfirmationHTML(order: any, user: any) {
                 <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
                     ${itemsHTML}
                     <tr>
-                        <td style="padding: 15px 12px; font-weight: bold; font-size: 18px;">Total${isCod ? ' (pay on delivery)' : ''}</td>
+                        <td style="padding: 15px 12px; font-weight: bold; font-size: 18px;">Total</td>
                         <td style="padding: 15px 12px; text-align: right; font-weight: bold; font-size: 18px; color: #1D3515;">
                             ₹${escapeHtml(order.amount)}
                         </td>

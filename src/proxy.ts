@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export default async function proxy(request: NextRequest) {
     let response = NextResponse.next({
@@ -82,31 +83,50 @@ export default async function proxy(request: NextRequest) {
         }
     );
 
-    // Define protected routes
-    const isUserRoute = pathname.startsWith('/checkout') || pathname.startsWith('/order-success');
-    const isAdminRoute = pathname.startsWith('/admin');
+    // Route groups. Customers own the shopping routes, admins own /admin.
+    const startsWithAny = (prefixes: string[]) =>
+        prefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+    const isAdminRoute = startsWithAny(['/admin']);
+    const isLoginRequiredRoute = startsWithAny(['/checkout', '/order-success']);
+    // Pages that only make sense for a shopper (their cart, wishlist, account)
+    const isCustomerRoute = isLoginRequiredRoute || startsWithAny(['/cart', '/wishlist', '/profile']);
 
-    // Only authenticate user if they are trying to access a protected route.
-    // This avoids a 1.5s network request delay on public pages!
-    if (isUserRoute || isAdminRoute) {
+    const hasSessionCookie = request.cookies.getAll().some((cookie) => cookie.name.startsWith('sb-'));
+
+    // Only hit Supabase when a route actually depends on who is signed in.
+    // This avoids a network round-trip on every public page.
+    if (isAdminRoute || isLoginRequiredRoute || (isCustomerRoute && hasSessionCookie)) {
         const { data: { user } } = await supabase.auth.getUser();
 
-        // Protect user routes
-        if (isUserRoute && !user) {
-            const redirectUrl = new URL('/', request.url);
-            redirectUrl.searchParams.set('login', '1');
-            redirectUrl.searchParams.set('redirect', pathname);
-            return NextResponse.redirect(redirectUrl);
+        if (!user) {
+            if (isAdminRoute || isLoginRequiredRoute) {
+                const redirectUrl = new URL('/', request.url);
+                redirectUrl.searchParams.set('login', '1');
+                redirectUrl.searchParams.set('redirect', pathname);
+                return NextResponse.redirect(redirectUrl);
+            }
+            return response;
         }
 
-        // Admin routes: only require a session here. The role check happens
-        // in app/admin/layout.tsx (server-side, service key) so an RLS or
-        // cookie hiccup in the proxy can never lock admins out.
-        if (isAdminRoute && !user) {
-            const redirectUrl = new URL('/', request.url);
-            redirectUrl.searchParams.set('login', '1');
-            redirectUrl.searchParams.set('redirect', pathname);
-            return NextResponse.redirect(redirectUrl);
+        // Role check (service key, so RLS can never lock a real admin out)
+        let isAdmin = false;
+        if (supabaseAdmin) {
+            const { data: profile } = await supabaseAdmin
+                .from('profiles')
+                .select('role')
+                .eq('id', user.id)
+                .maybeSingle();
+            isAdmin = profile?.role === 'admin';
+        }
+
+        // Customers can never open the admin area, even by typing the URL
+        if (isAdminRoute && !isAdmin) {
+            return NextResponse.redirect(new URL('/', request.url));
+        }
+
+        // Admins get their own dashboard instead of the shopper's cart/checkout/account
+        if (isAdmin && isCustomerRoute) {
+            return NextResponse.redirect(new URL('/admin', request.url));
         }
     }
 

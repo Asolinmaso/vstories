@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import { randomUUID } from 'crypto';
 import { createRazorpayOrder } from '@/lib/razorpay';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { calculateOrderTotal } from '@/lib/order-pricing';
-import { priceOrderItems, runOrderConfirmedSideEffects } from '@/lib/payment-orders';
+import { priceOrderItems } from '@/lib/payment-orders';
 
 const ADDRESS_FIELDS = ['label', 'name', 'phone', 'address_line1', 'address_line2', 'city', 'state', 'pincode', 'country'] as const;
 
@@ -47,8 +46,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
     }
 
-    const paymentMethod = body.paymentMethod === 'cod' ? 'cod' : 'razorpay';
-
     const shippingAddress = cleanShippingAddress(body.shippingAddress);
     if (!shippingAddress) {
       return NextResponse.json({ error: 'Please provide a complete shipping address' }, { status: 400 });
@@ -83,39 +80,6 @@ export async function POST(request: Request) {
       items: priced.items,
       shipping_address: { ...shippingAddress, shipping_fee: shippingFee },
     };
-
-    const customer = { email: user.email, name: user.user_metadata?.full_name || shippingAddress.name };
-
-    // Cash on Delivery — no gateway involved. The order is placed right away;
-    // it stays "pending" (payment due on delivery) until an admin marks it paid.
-    if (paymentMethod === 'cod') {
-      const { data: order, error: dbError } = await supabaseAdmin
-        .from('orders')
-        .insert({
-          ...orderPayload,
-          razorpay_order_id: `cod_${randomUUID()}`,
-          payment_method: 'cod',
-        })
-        .select()
-        .single();
-
-      if (dbError || !order) {
-        console.error('Database error creating COD order:', JSON.stringify(dbError));
-        const msg = process.env.NODE_ENV === 'development'
-          ? `DB error: ${dbError?.message} (code: ${dbError?.code})`
-          : 'Failed to save order — please try again';
-        return NextResponse.json({ error: msg }, { status: 500 });
-      }
-
-      await runOrderConfirmedSideEffects(supabaseAdmin, order, customer);
-
-      return NextResponse.json({
-        success: true,
-        orderId: order.id,
-        dbOrderId: order.id,
-        paymentMethod: 'cod',
-      });
-    }
 
     // Create Razorpay order for online payment
     const result = await createRazorpayOrder(total, 'INR', { user_id: user.id });

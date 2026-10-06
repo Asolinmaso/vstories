@@ -19,8 +19,6 @@ interface OrderSummary {
 // What the customer should be told for a given order record
 function resolveState(order: OrderSummary): OrderState {
     if (order.status === "paid") return "success";
-    // Cash on Delivery orders are placed as soon as they are created
-    if (order.payment_method === "cod" && order.status === "pending") return "success";
     if (order.status === "failed" || order.status === "cancelled") return "failed";
     if (order.status === "pending") return "processing";
     return "success"; // refunded etc. — the order itself exists
@@ -132,8 +130,6 @@ function OrderSuccessContent() {
         );
     }
 
-    const isCod = order?.payment_method === "cod";
-
     return (
         <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4 py-12">
             <div className="max-w-md w-full text-center">
@@ -149,9 +145,7 @@ function OrderSuccessContent() {
                             </h1>
 
                             <p className="text-gray-600 mb-6">
-                                {isCod
-                                    ? `Thank you for your order. Please keep ₹${order?.amount} ready to pay on delivery.`
-                                    : "Thank you for your purchase. Your payment was received and your order will be processed shortly."}
+                                Thank you for your purchase. Your payment was received and your order will be processed shortly.
                             </p>
                         </>
                     )}
