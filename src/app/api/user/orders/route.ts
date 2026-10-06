@@ -14,12 +14,15 @@ export async function GET() {
             .from("orders")
             .select("*")
             .eq("user_id", user.id)
+            // Abandoned / failed payment attempts are not orders
+            .not("status", "in", "(failed,cancelled)")
             .order("created_at", { ascending: false });
 
         if (error) throw error;
 
         return NextResponse.json({ orders });
     } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error("User orders error:", error);
+        return NextResponse.json({ error: "Could not load your orders" }, { status: 500 });
     }
 }
