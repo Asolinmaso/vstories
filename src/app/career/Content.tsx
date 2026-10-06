@@ -111,9 +111,85 @@ export default function CareerContent() {
     setFileName(f ? f.name : "No File Chosen");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Application submitted! We'll get back to you shortly.");
+
+    try {
+      const file = fileRef.current?.files?.[0];
+
+      let resumeBase64 = "";
+      let resumeName = "";
+      let resumeType = "";
+
+      if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+          alert("Resume file must be less than 5MB.");
+          return;
+        }
+
+        resumeName = file.name;
+        resumeType = file.type;
+
+        const buffer = await file.arrayBuffer();
+
+        // Convert file to Base64
+        let binary = "";
+        const bytes = new Uint8Array(buffer);
+
+        const chunkSize = 0x8000;
+
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+          const chunk = bytes.subarray(i, i + chunkSize);
+          binary += String.fromCharCode(...chunk);
+        }
+
+        resumeBase64 = btoa(binary);
+      }
+
+      const response = await fetch("/api/career", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          phone: `${form.countryCode} ${form.phone}`,
+          email: form.email,
+          jobPosition: form.jobPosition,
+          message: form.message,
+
+          resumeBase64,
+          resumeName,
+          resumeType,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || "Submission failed");
+      }
+
+      alert("Application submitted successfully!");
+
+      setForm({
+        name: "",
+        countryCode: "+91",
+        phone: "",
+        email: "",
+        jobPosition: "",
+        message: "",
+      });
+
+      setFileName("No File Chosen");
+
+      if (fileRef.current) {
+        fileRef.current.value = "";
+      }
+    } catch (error) {
+      console.error("Career submission error:", error);
+      alert("Failed to submit application.");
+    }
   };
 
   const countryCodes = [

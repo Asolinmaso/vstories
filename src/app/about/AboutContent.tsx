@@ -133,7 +133,7 @@ export default function AboutContent() {
       <div className="hidden lg:block" style={{ background: "#FCFAF4" }}>
         {/* ── 1. HERO ──────────────────────────────────────────── */}
         <section className="relative overflow-hidden bg-[#F5F5F5] h-[781px]">
-          <Image src="/images/about/hero-about.png" alt="About Hero" fill className="object-cover object-center" priority />
+          <Image src="/images/about/hero-about.jpeg" alt="About Hero" fill className="object-cover object-center" priority />
 
           {/* Desktop hero */}
           <div className="absolute inset-0 w-full max-w-[1440px] mx-auto" style={{ left: 107, top: 0 }}>
@@ -150,8 +150,18 @@ export default function AboutContent() {
               >
                 Born from Nature. Built for Indian Skin.
               </h1>
-              <p className="font-inter font-normal text-[#000000]" style={{ fontSize: 24, lineHeight: "29px", width: 848, color: "#000000" }}>
-                At Vstories, we blend time-tested herbs with modern formulation science to create skincare and haircare that actually works in Indian conditions from heat and humidity to pollution and stress.
+              <p
+                className="font-inter font-normal text-[#000000]"
+                style={{
+                  fontSize: 24,
+                  lineHeight: "29px",
+                  width: 600,
+                  color: "#000000",
+                }}
+              >
+                At Vstories, we blend time-tested herbs with modern formulation science to
+                create skincare and haircare that actually works in Indian conditions, from
+                heat and humidity to pollution and stress.
               </p>
               <Link
                 href="#our-story"
@@ -348,7 +358,7 @@ export default function AboutContent() {
                   }}
                 >
                   <Image
-                    src="/images/about/founder.png"
+                    src="/images/about/founder.jpeg"
                     alt="Founder"
                     fill
                     className="object-cover"

@@ -18,7 +18,7 @@ export default function CategoryBannersMobile() {
             style={{ background: "#F9F6F1" }}
           >
             <Image
-              src="/images/home/bestseller.png"
+              src="/images/home/bestseller.jpeg"
               alt="Hair Care Banner"
               fill
               className="object-cover"

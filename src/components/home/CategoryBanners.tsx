@@ -86,7 +86,7 @@ export default function CategoryBanners() {
             }}
           >
             <Image
-              src="/images/home/bestseller2.png"
+              src="/images/home/bestseller2.jpeg"
               alt="Skin Care Banner"
               fill
               className="object-cover"
