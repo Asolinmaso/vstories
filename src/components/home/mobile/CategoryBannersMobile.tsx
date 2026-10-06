@@ -18,7 +18,7 @@ export default function CategoryBannersMobile() {
             style={{ background: "#F9F6F1" }}
           >
             <Image
-              src="/images/home/bestseller.jpeg"
+              src="/images/home/bestseller.png"
               alt="Hair Care Banner"
               fill
               className="object-cover"
@@ -75,7 +75,7 @@ export default function CategoryBannersMobile() {
             style={{ background: "#778E6B" }}
           >
             <Image
-              src="/images/home/bestseller2.png"
+              src="/images/home/bestseller2.jpeg"
               alt="Skin Care Banner"
               fill
               className="object-cover"
