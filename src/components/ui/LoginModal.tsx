@@ -156,22 +156,21 @@ export default function LoginModal({ onClose, initialTab = "login", redirectTo }
 
         setLoading(true);
         setError(null);
+
+        // Step 1: authenticate. Only a failure HERE means "wrong credentials".
+        let signedInUserId: string;
         try {
             const { data, error: authError } = await supabase.auth.signInWithPassword({
                 email: email.trim(),
                 password,
             });
             if (authError) throw authError;
-            if (!data.session) {
+            if (!data.session || !data.user) {
                 setError("Could not sign in. Please confirm your email.");
+                setLoading(false);
                 return;
             }
-            onClose();
-            router.refresh();
-            const redirect = redirectTo || new URLSearchParams(window.location.search).get("redirect");
-            if (redirect && redirect.startsWith("/") && !redirect.startsWith("//")) {
-                router.push(redirect);
-            }
+            signedInUserId = data.user.id;
         } catch (err: any) {
             if (err.message?.toLowerCase().includes("email not confirmed")) {
                 setUnconfirmedEmail(email.trim());
@@ -181,9 +180,40 @@ export default function LoginModal({ onClose, initialTab = "login", redirectTo }
             } else {
                 setError(err.message || "Failed to login");
             }
-        } finally {
             setLoading(false);
+            return;
         }
+
+        // Step 2: the user IS signed in. Nothing below may show a login error;
+        // it only decides where to send them (admins -> dashboard, customers ->
+        // where they were headed).
+        let isAdmin = false;
+        try {
+            const { data: profile } = await supabase
+                .from("profiles")
+                .select("role")
+                .eq("id", signedInUserId)
+                .maybeSingle();
+            isAdmin = profile?.role === "admin";
+        } catch {
+            // role unknown: treat as a customer; /admin is still guarded server-side
+        }
+
+        const requested = redirectTo || new URLSearchParams(window.location.search).get("redirect");
+        const safeRequested =
+            requested && requested.startsWith("/") && !requested.startsWith("//") ? requested : null;
+
+        let destination: string | null = null;
+        if (isAdmin) {
+            destination = safeRequested?.startsWith("/admin") ? safeRequested : "/admin";
+        } else if (safeRequested && !safeRequested.startsWith("/admin")) {
+            destination = safeRequested;
+        }
+
+        setError(null);
+        onClose();
+        if (destination) router.push(destination);
+        router.refresh();
     };
 
     const handleSignup = async (e: React.FormEvent) => {

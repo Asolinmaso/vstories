@@ -207,7 +207,20 @@ export default function Navbar({ announcement }: NavbarProps) {
                                 </div>
                             </form>
 
-                            {user ? (
+                            {user && isAdmin ? (
+                                <>
+                                    <Link href="/admin" className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1D3B29] text-[#F7EDE2] hover:opacity-90">
+                                        Admin Dashboard
+                                    </Link>
+                                    <button
+                                        type="button"
+                                        onClick={() => signOut()}
+                                        className="px-4 py-2 rounded-lg text-sm font-semibold border border-[#1D3B29] text-[#1D3B29] hover:bg-[#1D3B29] hover:text-[#F7EDE2] transition-colors"
+                                    >
+                                        Sign Out
+                                    </button>
+                                </>
+                            ) : user ? (
                                 <>
                                     <Link
                                         href="/wishlist"
@@ -249,12 +262,6 @@ export default function Navbar({ announcement }: NavbarProps) {
                                             </motion.span>
                                         )}
                                     </Link>
-
-                                    {isAdmin && (
-                                        <Link href="/admin" className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-[#1D3B29] text-[#F7EDE2] hover:opacity-90">
-                                            Admin
-                                        </Link>
-                                    )}
                                     <Link href="/profile" className="p-2 text-black hover:scale-110 transition-transform">
                                         <User className="w-6 h-6" strokeWidth={2} />
                                     </Link>
@@ -321,7 +328,20 @@ export default function Navbar({ announcement }: NavbarProps) {
                                             <Search className="w-5 h-5" strokeWidth={1.5} />
                                         </button>
 
-                                        {user ? (
+                                        {user && isAdmin ? (
+                                            <>
+                                                <Link href="/admin" className="px-2.5 py-1.5 rounded-md text-xs font-semibold bg-[#1D3B29] text-[#F7EDE2] mr-1">
+                                                    Dashboard
+                                                </Link>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => signOut()}
+                                                    className="px-2.5 py-1.5 rounded-md text-xs font-semibold border border-[#1D3B29] text-[#1D3B29] mr-1"
+                                                >
+                                                    Sign Out
+                                                </button>
+                                            </>
+                                        ) : user ? (
                                             <>
                                                 {/* Wishlist */}
                                                 <Link
@@ -357,12 +377,6 @@ export default function Navbar({ announcement }: NavbarProps) {
                                                         </span>
                                                     )}
                                                 </Link>
-
-                                                {isAdmin && (
-                                                    <Link href="/admin" className="px-2 py-1 rounded-md text-xs font-semibold bg-[#1D3B29] text-[#F7EDE2]">
-                                                        Admin
-                                                    </Link>
-                                                )}
                                                 {/* Profile */}
                                                 <Link href="/profile" className="flex h-10 w-10 items-center justify-center text-black hover:scale-105 transition-transform" aria-label="Profile">
                                                     <User className="w-5 h-5" strokeWidth={1.5} />
