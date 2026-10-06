@@ -67,6 +67,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                         setUser(session?.user ?? null);
 
                         if (session?.user) {
+                            // Never keep the previous account's profile (and role) around
+                            setProfile((prev: any) => (prev && prev.id === session.user.id ? prev : null));
                             useCartStore.getState().setUserId(session.user.id);
                             useCartStore.getState().syncCart();
 
@@ -135,6 +137,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     }
                 } else {
                     console.error("Error fetching profile:", error);
+                    setProfile(null);
                 }
             } else {
                 setProfile(data);
@@ -168,7 +171,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.refresh();
     };
 
-    const isAdmin = profile?.role === "admin";
+    // The role only counts if the profile belongs to the signed-in user
+    const isAdmin = !!user && profile?.id === user.id && profile?.role === "admin";
 
     return (
         <AuthContext.Provider
