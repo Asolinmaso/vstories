@@ -176,7 +176,7 @@ export default function ClientOrders() {
                 /* Orders Table */
                 <div className="flex flex-col gap-6">
                   {/* Mobile View */}
-                  <div className="block md:hidden bg-white rounded-[16px] p-4 mx-auto max-w-[400px]">
+                  <div className="block md:hidden bg-white rounded-[16px] p-4 mx-auto w-full max-w-[400px] min-w-0">
                     <div className="flex flex-col divide-y divide-[#1D3B29]/20">
                       {visibleOrders.map((order) => {
                         const firstItem = order.items?.[0];
