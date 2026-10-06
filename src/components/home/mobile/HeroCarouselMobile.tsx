@@ -1,36 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 const slides = [
   {
-    id: "hero-4",
-    image: "/images/home/hero4.png",
+    id: "hero-hibiscus",
+    image: "/images/home/hero-hibiscus.png",
+    alt: "Vstories Hibiscus Shampoo",
+  },
+  {
+    id: "hero-hair-oil",
+    image: "/images/home/hero-hair-oil.png",
     alt: "Vstories Herbal Hair Oil",
   },
   {
-    id: "hero-3",
-    image: "/images/home/hero3.png",
-    alt: "Vstories skincare collection",
+    id: "hero-rosemary",
+    image: "/images/home/hero-rosemary.png",
+    alt: "Vstories Rosemary Hair Mask",
   },
   {
-    id: "hero-2",
-    image: "/images/home/hero2.png",
-    alt: "Vstories natural products",
+    id: "hero-serum",
+    image: "/images/home/hero-serum.png",
+    alt: "Vstories Prophetic Serum",
   },
   {
-    id: "hero-1",
-    image: "/images/home/hero1.png",
-    alt: "Vstories herbal care",
+    id: "hero-face-pack",
+    image: "/images/home/hero-face-pack.png",
+    alt: "Vstories Herbal Magic Face Pack",
   },
 ];
 
 export default function HeroCarouselMobile() {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeSlide = slides[activeIndex];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((current) => (current + 1) % slides.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section className="relative w-full overflow-hidden bg-[#F4EEE2]">
@@ -49,7 +62,7 @@ export default function HeroCarouselMobile() {
               src={activeSlide.image}
               alt={activeSlide.alt}
               fill
-              className="object-cover object-[-450px] lg:object-right"
+              className="object-cover object-[72%_center] lg:object-right"
               priority={activeIndex === 0}
               sizes="100vw"
             />

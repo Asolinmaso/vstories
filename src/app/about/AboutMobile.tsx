@@ -82,7 +82,14 @@ export default function AboutMobile() {
 
       {/* ── 1. HERO ──────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-[#F5F5F5] h-[100svh] max-h-[900px] min-h-[700px]">
-        <Image src="/images/about/hero-about.png" alt="About Hero" fill className="object-cover" style={{ objectPosition: "-600px 0px" }} priority />
+        <Image
+          src="/images/about/hero-about.jpeg"
+          alt="About Hero"
+          fill
+          className="object-cover"
+          style={{ objectPosition: "78% center" }}
+          priority
+        />
 
         <div className="relative z-10 px-[24px] sm:px-[32px] pt-[12vh] sm:pt-[15vh]">
           <motion.div
@@ -253,7 +260,7 @@ export default function AboutMobile() {
               className="w-full h-full relative overflow-hidden"
               style={{ borderRadius: "45% 55% 45% 55% / 55% 45% 55% 45%" }}
             >
-              <Image src="/images/about/founder.png" alt="Our Story" fill className="object-cover object-center" />
+              <Image src="/images/about/founder.jpeg" alt="Our Story" fill className="object-cover object-center" />
             </div>
 
             {/* Neo-brutalism Badge */}
