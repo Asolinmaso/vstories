@@ -83,7 +83,7 @@ export default function AboutMobile() {
       {/* ── 1. HERO ──────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-[#F5F5F5] h-[100svh] max-h-[900px] min-h-[700px]">
         <Image
-          src="/images/about/hero-about.jpeg"
+          src="/images/about/hero-about.png"
           alt="About Hero"
           fill
           className="object-cover"
@@ -101,7 +101,7 @@ export default function AboutMobile() {
             <h1 className="font-playfair font-semibold text-black text-[38px] sm:text-[44px] leading-[44px] sm:leading-[50px] tracking-tight">
               Born from Nature.<br />Built for Indian<br />Skin.
             </h1>
-            <p className="font-inter font-normal text-[#1A1A1A] text-[14px] sm:text-[15px] leading-[22px] sm:leading-[24px]">
+            <p className="font-inter font-normal text-[#1A1A1A] text-[14px] sm:text-[15px] leading-[22px] sm:leading-[24px] max-w-[300px]">
               At Vstories, we blend time-tested herbs with<br className="hidden sm:block" />
               <span className="sm:hidden"> </span>modern formulation science to create<br className="hidden sm:block" />
               <span className="sm:hidden"> </span>skincare and haircare that actually works in<br className="hidden sm:block" />

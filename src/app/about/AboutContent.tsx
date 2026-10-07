@@ -133,7 +133,7 @@ export default function AboutContent() {
       <div className="hidden lg:block" style={{ background: "#FCFAF4" }}>
         {/* ── 1. HERO ──────────────────────────────────────────── */}
         <section className="relative overflow-hidden bg-[#F5F5F5] h-[781px]">
-          <Image src="/images/about/hero-about.jpeg" alt="About Hero" fill className="object-cover object-center" priority />
+          <Image src="/images/about/hero-about.png" alt="About Hero" fill className="object-cover object-center" priority />
 
           {/* Desktop hero */}
           <div className="absolute inset-0 w-full max-w-[1440px] mx-auto" style={{ left: 107, top: 0 }}>

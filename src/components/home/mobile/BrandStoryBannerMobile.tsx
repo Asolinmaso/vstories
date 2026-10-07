@@ -14,7 +14,7 @@ export default function BrandStoryBannerMobile() {
         src="/images/home/homebg.png"
         alt="More Than Skincare. A Story of Care."
         fill
-        className="object-cover object-[15%_center]"
+        className="object-cover object-[75%_center]"
         priority
       />
 
