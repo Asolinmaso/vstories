@@ -743,7 +743,7 @@ export default function LoginModal({ onClose, initialTab = "login", redirectTo }
                                                                         I agree to the{" "}
                                                                         <button
                                                                             type="button"
-                                                                            onClick={() => window.open("/terms", "_blank")}
+                                                                            onClick={() => window.open("/terms-and-conditions", "_blank")}
                                                                             className="underline underline-offset-2 text-[#1D3B29] hover:text-[#2A4F38] transition-colors"
                                                                         >
                                                                             Terms &amp; Conditions
@@ -751,7 +751,7 @@ export default function LoginModal({ onClose, initialTab = "login", redirectTo }
                                                                         {" "}and{" "}
                                                                         <button
                                                                             type="button"
-                                                                            onClick={() => window.open("/privacy", "_blank")}
+                                                                            onClick={() => window.open("/privacy-policy", "_blank")}
                                                                             className="underline underline-offset-2 text-[#1D3B29] hover:text-[#2A4F38] transition-colors"
                                                                         >
                                                                             Privacy Policy

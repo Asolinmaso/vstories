@@ -20,10 +20,10 @@ const categories = [
 ];
 
 const policies = [
-    { href: "https://docs.google.com/document/d/1bDH1icRD7yNGTE2o9QGW-P_JRlcmf9Cml8hFaoMMAEw/edit?usp=sharing", label: "Privacy Policies" },
-    { href: "https://docs.google.com/document/d/1bDH1icRD7yNGTE2o9QGW-P_JRlcmf9Cml8hFaoMMAEw/edit?usp=sharing", label: "Terms & Conditions" },
-    { href: "https://docs.google.com/document/d/1bDH1icRD7yNGTE2o9QGW-P_JRlcmf9Cml8hFaoMMAEw/edit?usp=sharing", label: "Shipping & Cancellations" },
-    { href: "https://docs.google.com/document/d/1bDH1icRD7yNGTE2o9QGW-P_JRlcmf9Cml8hFaoMMAEw/edit?usp=sharing", label: "Returns & Refunds" },
+    { href: "/privacy-policy", label: "Privacy Policies" },
+    { href: "/terms-and-conditions", label: "Terms & Conditions" },
+    { href: "/shipping-cancellations", label: "Shipping & Cancellations" },
+    { href: "/returns-refunds", label: "Returns & Refunds" },
     { href: "/contact", label: "Collaboration & Partnership" },
 ];
 
