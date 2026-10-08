@@ -75,8 +75,8 @@ export default function MobileMenu({
                                                 <Link
                                                     href={link.href}
                                                     className={`block py-3 text-lg transition-colors ${(pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href)))
-                                                            ? "font-black text-[var(--primary)]"
-                                                            : "font-medium text-black hover:text-[var(--primary)]"
+                                                        ? "font-black text-[var(--primary)]"
+                                                        : "font-medium text-black hover:text-[var(--primary)]"
                                                         }`}
                                                     onClick={() => !link.dropdown && onClose()}
                                                 >
@@ -105,7 +105,7 @@ export default function MobileMenu({
 
                             {/* Contact Info */}
                             <div className="p-6 bg-[var(--primary)] text-[var(--background)] mt-auto flex-shrink-0">
-                                <p className="text-sm mb-2">Need help?</p>
+                                <p className="text-sm mb-2 text-white">Need help?</p>
                                 <a
                                     href="tel:+916383921957"
                                     className="text-lg font-medium hover:text-[var(--highlight)] transition-colors"
