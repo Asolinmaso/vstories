@@ -585,22 +585,38 @@ export default function ProductDetailClient({
                                         {mainDescription}
                                     </p>
 
+
+
                                     {product.ingredients && product.ingredients.length > 0 && (
-                                        <>
-                                            <h2 className="text-[16px] md:text-3xl font-bold text-[#1D3B29] mb-3 md:mb-6" style={{ fontFamily: "var(--font-playfair), serif" }}>Key Ingredients</h2>
-                                            <div className="space-y-3 md:space-y-4">
-                                                {product.ingredients.map(ingName => {
-                                                    const desc = ingredientDescriptions[ingName] || "Herbal active ingredient for natural care.";
-                                                    return (
-                                                        <div key={ingName} className="text-[11px] md:text-[15px]">
-                                                            <span className="font-bold text-[#1D3B29]">{ingName}</span>
-                                                            <span className="text-[#1D3B29] opacity-90"> : {desc}</span>
-                                                        </div>
-                                                    );
-                                                })}
+                                        <section className="mt-6 w-full">
+                                            <h2
+                                                className="text-[16px] md:text-3xl font-bold text-[#1D3B29] mb-3 md:mb-4"
+                                                style={{ fontFamily: "var(--font-playfair), serif" }}
+                                            >
+                                                Key Ingredients
+                                            </h2>
+
+                                            <div className="w-full">
+
+                                                <p className="text-[11px] leading-[1.8] text-[#234638] md:text-[15px] md:leading-[1.8]">
+                                                    {product.name.toLowerCase().includes("shampoo")
+                                                        ? "Infused with 11 natural botanicals, including Hibiscus, Salvia rosmarinus, Aloe Vera, Trigonella foenum-graecum, Senegalia rugata, Sapindus mukorossi, Moringa oleifera, Phyllanthus emblica, Azadirachta indica, Ziziphus spina-christi, and Melaleuca alternifolia, enriched with Vitamin E. This carefully selected blend brings together botanical ingredients to complement your everyday hair-care routine."
+                                                        : product.name.toLowerCase().includes("hair oil")
+                                                            ? "A botanical-rich formulation featuring Eclipta prostrata, Phyllanthus emblica, Hibiscus rosa-sinensis, Azadirachta indica, Trigonella foenum-graecum, Bergera koenigii, Rubia cordifolia, Nardostachys jatamansi, Senna auriculata, Lawsonia inermis, Indigofera tinctoria, Salvia rosmarinus, Ziziphus spina-christi, Nigella sativa, Aloe vera, Vitex negundo, Artemisia pallens, Eclipta prostrata, Alkanna tinctoria, Withania somnifera, Glycyrrhiza glabra, Psidium guajava, Centratherum punctatum, 20+ other organic herbs, and pure-pressed oils. A thoughtfully assembled blend inspired by traditional botanical hair care."
+                                                            : product.name.toLowerCase().includes("rosemary")
+                                                                ? "Crafted with a blend of botanical powders, including Rosmarinus Officinalis Leaf Powder, Trigonella Foenum-Graecum Seed Powder, Indigofera Tinctoria Leaf Powder, Linum Usitatissimum Seed Powder, Senna Auriculata Flower Powder, Vigna Radiata Seed Powder, Rosa Damascena Flower Powder, Eclipta Prostrata Leaf Powder, Lawsonia Inermis Leaf Powder, Murraya Koenigii Leaf Powder, Azadirachta Indica Leaf Powder, Moringa Oleifera Leaf Powder, and Ziziphus Spina-Christi Leaf Powder. This plant-based blend brings traditional herbal ingredients into your regular hair-care routine."
+                                                                : product.name.toLowerCase().includes("herbal magic")
+                                                                    ? "Formulated with Vigna Radiata Seed Powder, Oryza Sativa Powder, Fuller’s Earth, Rosa Damascena Flower Powder, Glycyrrhiza Glabra Root Powder, Senna Auriculata Flower Powder, Rubia Cordifolia Root Powder, Curcuma Zedoaria Rhizome Powder, Cicer Arietinum Seed Powder, Lens Culinaris Seed Powder, Vigna Mungo Seed Powder, Santalum Album Wood Powder, Mimusops Elengi Flower Powder, Terminalia Chebula Fruit Powder, Curcuma Aromatica Rhizome Powder, and Myristica Fragrans Seed Powder. This carefully selected combination of botanical and mineral powders complements your everyday skincare ritual."
+                                                                    : product.name.toLowerCase().includes("prophetic")
+                                                                        ? "A thoughtfully balanced formula featuring Aqua, Rosa Damascena Flower Water, Boswellia Carterii Water, Aloe Barbadensis Leaf Extract, Niacinamide, Nigella Sativa Seed Water, Glycyrrhiza Glabra Root Extract, Glycerin, Sodium Hyaluronate, Xanthan Gum, and Natural Preservative. Combining botanical waters, plant extracts, and hydrating skincare ingredients, this formula is designed to complement your daily skincare routine."
+                                                                        : product.ingredients.join(", ")}
+                                                </p>
+
                                             </div>
-                                        </>
+                                        </section>
                                     )}
+
+
                                 </FadeIn>
                             )}
                             {activeTab === "how-to-use" && (
