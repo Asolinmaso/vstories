@@ -156,7 +156,7 @@ export default function Navbar({ announcement }: NavbarProps) {
                                 >
                                     <Link
                                         href={link.href}
-                                        className={`flex items-center gap-1.5 text-[16px] leading-[19px] transition-all duration-300 font-inter ${(pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href)))
+                                        className={`flex items-center gap-1.5 whitespace-nowrap text-[16px] leading-[19px] transition-all duration-300 font-inter ${(pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href)))
                                             ? "font-semibold text-[var(--primary)]"
                                             : "font-normal text-black hover:text-[var(--primary)]"
                                             }`}

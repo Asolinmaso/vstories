@@ -11,6 +11,8 @@ import {
     Share2,
     Truck,
     ShieldCheck,
+    Plus,
+    Minus,
     Leaf,
     Star,
     Phone,
@@ -20,7 +22,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import FadeIn from "@/components/ui/FadeIn";
-import { useCartStore } from "@/lib/store";
+import { useCartStore, getCartItemKey } from "@/lib/store";
 import { useBuyNow } from "@/lib/useBuyNow";
 import ProductCard from "@/components/ui/ProductCard";
 import ProductReviews from "@/components/product/ProductReviews";
@@ -151,11 +153,23 @@ export default function ProductDetailClient({
     const benefitsToShow = parsedBenefits.length > 0 ? parsedBenefits : defaultBenefits;
 
     const addItem = useCartStore((state) => state.addItem);
+    const updateQuantity = useCartStore((state) => state.updateQuantity);
     const cartItems = useCartStore((state) => state.items);
 
-    const isInCart = cartItems.some(
-        (item) => item.id === product.id
+    const selectedSizeLabel =
+        product.sizes && product.sizes.length > 0
+            ? product.sizes[selectedSize]?.label
+            : undefined;
+
+    const cartItem = cartItems.find(
+        (item) =>
+            item.id === product.id &&
+            item.size === selectedSizeLabel
     );
+
+    const quantity = cartItem?.quantity ?? 0;
+
+    const isInCart = !!cartItem;
     const router = useRouter();
     const buyNow = useBuyNow();
 
@@ -218,6 +232,41 @@ export default function ProductDetailClient({
         }
 
         handleAddToCart();
+    };
+
+    const handleIncreaseQuantity = async () => {
+        if (!cartItem) {
+            await addItem({
+                id: product.id,
+                name: product.name,
+                price: currentPrice,
+                image: product.images[0],
+                size: selectedSizeLabel,
+            });
+            return;
+        }
+
+        const itemKey = getCartItemKey(cartItem);
+
+        await updateQuantity(
+            itemKey,
+            Math.min(99, cartItem.quantity + 1)
+        );
+    };
+
+    const handleDecreaseQuantity = async () => {
+        if (!cartItem) return;
+
+        const itemKey = getCartItemKey(cartItem);
+
+        if (cartItem.quantity <= 1) {
+            return;
+        }
+
+        await updateQuantity(
+            itemKey,
+            cartItem.quantity - 1
+        );
     };
 
     const handleBuyNow = () => {
@@ -526,6 +575,40 @@ export default function ProductDetailClient({
 
                             {/* Actions */}
                             <div className="flex gap-3 w-full max-w-[400px]">
+
+                                {/* Quantity */}
+                                <div
+                                    className="inline-flex items-center justify-between rounded-[4px] px-2 h-9 w-[80px] md:w-[110px] bg-transparent shrink-0"
+                                    style={{ border: "1px solid #1D3B29" }}
+                                >
+                                    <button
+                                        type="button"
+                                        onClick={handleDecreaseQuantity}
+                                        disabled={!cartItem || quantity <= 1}
+                                        className="hover:opacity-70 transition-opacity p-1 disabled:opacity-30"
+                                        style={{ color: "#1D3B29" }}
+                                        aria-label="Decrease quantity"
+                                    >
+                                        <Minus className="w-3.5 h-3.5" />
+                                    </button>
+
+                                    <span
+                                        className="font-semibold text-[13px]"
+                                        style={{ color: "#1D3B29" }}
+                                    >
+                                        {quantity || 1}
+                                    </span>
+
+                                    <button
+                                        type="button"
+                                        onClick={handleIncreaseQuantity}
+                                        className="hover:opacity-70 transition-opacity p-1"
+                                        style={{ color: "#1D3B29" }}
+                                        aria-label="Increase quantity"
+                                    >
+                                        <Plus className="w-3.5 h-3.5" />
+                                    </button>
+                                </div>
 
                                 {/* Add to Cart / Go to Cart */}
                                 <button

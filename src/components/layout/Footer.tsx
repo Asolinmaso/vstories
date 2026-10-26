@@ -26,7 +26,6 @@ const policies = [
     { href: "/returns-refunds", label: "Returns & Refunds" },
     { href: "/contact", label: "Collaboration & Partnership" },
 ];
-
 function SocialIcon({ src, href, label }: { src: string; href: string; label: string }) {
     return (
         <a
