@@ -38,6 +38,11 @@ function findCartItem(items: CartItem[], itemKey: string): CartItem | undefined 
     );
 }
 
+// Bumped whenever the cart is emptied. A cart sync that was already running
+// (e.g. on a fresh page load) checks it and stops, so it can never bring the
+// items of a completed order back.
+let cartEpoch = 0;
+
 function mapRemoteCartItem(ri: any): CartItem {
     return {
         id: ri.product_id,
@@ -63,6 +68,7 @@ export const useCartStore = create<CartStore>()(
             syncCart: async () => {
                 const { userId, items: localItems } = get();
                 if (!userId) return;
+                const epoch = cartEpoch;
 
                 const validLocalItems = localItems.filter((item) => isUuid(item.id));
                 if (validLocalItems.length !== localItems.length) {
@@ -71,6 +77,7 @@ export const useCartStore = create<CartStore>()(
 
                 // Push guest/local items to Supabase before fetching remote cart
                 for (const item of validLocalItems) {
+                    if (epoch !== cartEpoch) return;
                     const { data: existingRows } = await supabase
                         .from("cart_items")
                         .select("id")
@@ -122,6 +129,8 @@ export const useCartStore = create<CartStore>()(
                     .from("cart_items")
                     .select("id, product_id, quantity, size_label, product:products(name, price, images, sizes:product_sizes(label, price))")
                     .eq("user_id", userId);
+
+                if (epoch !== cartEpoch) return;
 
                 if (remoteItems && remoteItems.length > 0) {
                     // Self-healing: Merge duplicate rows that were created due to previous NULL constraint bug
@@ -266,6 +275,7 @@ export const useCartStore = create<CartStore>()(
 
             clearCart: async () => {
                 const { userId } = get();
+                cartEpoch++;
                 set({ items: [] });
 
                 if (userId) {

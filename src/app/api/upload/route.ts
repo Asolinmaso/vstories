@@ -1,8 +1,17 @@
 
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { getAdminUser } from '@/lib/admin-auth';
+
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
 
 export async function POST(req: Request) {
+    // Uploads use the service key, so only admins may call this
+    const { isAdmin } = await getAdminUser();
+    if (!isAdmin) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     try {
         // Check for admin client
         if (!supabaseAdmin) {
@@ -23,6 +32,16 @@ export async function POST(req: Request) {
         }
         if (!filePath) {
             return NextResponse.json({ error: 'No file path provided' }, { status: 400 });
+        }
+
+        if (!file.type?.startsWith('image/')) {
+            return NextResponse.json({ error: 'Only image files can be uploaded' }, { status: 400 });
+        }
+        if (file.size > MAX_UPLOAD_BYTES) {
+            return NextResponse.json({ error: 'Image is too large (max 8 MB)' }, { status: 413 });
+        }
+        if (filePath.includes('..') || filePath.startsWith('/')) {
+            return NextResponse.json({ error: 'Invalid file path' }, { status: 400 });
         }
 
         const arrayBuffer = await file.arrayBuffer();
@@ -52,6 +71,11 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+    const { isAdmin } = await getAdminUser();
+    if (!isAdmin) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     try {
         if (!supabaseAdmin) {
             return NextResponse.json(

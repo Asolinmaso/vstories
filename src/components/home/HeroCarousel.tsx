@@ -7,24 +7,29 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const slides = [
   {
-    id: "hero-4",
-    image: "/images/home/hero4.png",
+    id: "hero-hibiscus",
+    image: "/images/home/hero-hibiscus.png",
+    alt: "Vstories Hibiscus Shampoo",
+  },
+  {
+    id: "hero-hair-oil",
+    image: "/images/home/hero-hair-oil.png",
     alt: "Vstories Herbal Hair Oil",
   },
   {
-    id: "hero-3",
-    image: "/images/home/hero3.png",
-    alt: "Vstories skincare collection",
+    id: "hero-rosemary",
+    image: "/images/home/hero-rosemary.png",
+    alt: "Vstories Rosemary Hair Mask",
   },
   {
-    id: "hero-2",
-    image: "/images/home/hero2.png",
-    alt: "Vstories natural products",
+    id: "hero-serum",
+    image: "/images/home/hero-serum.png",
+    alt: "Vstories Prophetic Serum",
   },
   {
-    id: "hero-1",
-    image: "/images/home/hero1.png",
-    alt: "Vstories herbal care",
+    id: "hero-face-pack",
+    image: "/images/home/hero-face-pack.png",
+    alt: "Vstories Herbal Magic Face Pack",
   },
 ];
 

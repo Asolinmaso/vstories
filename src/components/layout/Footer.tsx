@@ -20,10 +20,10 @@ const categories = [
 ];
 
 const policies = [
-    { href: "/privacy", label: "Privacy Policy" },
-    { href: "/terms", label: "Terms & Conditions" },
-    { href: "/shipping", label: "Shipping & Cancellations" },
-    { href: "/returns", label: "Returns & Refunds" },
+    { href: "/privacy-policy", label: "Privacy Policies" },
+    { href: "/terms-and-conditions", label: "Terms & Conditions" },
+    { href: "/shipping-cancellations", label: "Shipping & Cancellations" },
+    { href: "/returns-refunds", label: "Returns & Refunds" },
     { href: "/contact", label: "Collaboration & Partnership" },
 ];
 function SocialIcon({ src, href, label }: { src: string; href: string; label: string }) {

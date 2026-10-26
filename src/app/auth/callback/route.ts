@@ -191,6 +191,18 @@ export async function GET(request: Request) {
         console.log(`[Auth Callback] Existing user signed in: ${user.email}`);
     }
 
-    // Redirect to the originally requested page (default: home)
+    // Admins land on their dashboard; customers on the page they asked for
+    const { data: roleRow } = await supabaseAdmin
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .maybeSingle();
+    if (roleRow?.role === 'admin' && !safeNext.startsWith('/admin')) {
+        return NextResponse.redirect(`${origin}/admin`);
+    }
+    if (roleRow?.role !== 'admin' && safeNext.startsWith('/admin')) {
+        return NextResponse.redirect(`${origin}/`);
+    }
+
     return NextResponse.redirect(`${origin}${safeNext}`);
 }

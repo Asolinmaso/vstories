@@ -2,8 +2,15 @@
 import { NextResponse } from "next/server";
 import { supabase, supabaseAdmin } from "@/lib/supabase";
 import { products, categories } from "@/lib/products";
+import { getAdminUser } from "@/lib/admin-auth";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
+    // Seeding deletes and rewrites catalogue data with the service key: admins only
+    const { isAdmin } = await getAdminUser();
+    if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
     try {
         const db = supabaseAdmin || supabase;
 

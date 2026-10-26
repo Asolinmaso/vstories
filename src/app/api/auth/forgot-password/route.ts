@@ -4,6 +4,8 @@ import crypto from "crypto";
 
 import { supabaseAdmin } from "@/lib/supabase";
 import { sendEmail } from "@/lib/email";
+import { isMailConfigured } from "@/lib/mailer";
+import { validatePasswordField } from "@/lib/auth-validation";
 
 const OTP_COOKIE = "vstories_password_reset";
 const OTP_EXPIRY_MINUTES = 10;
@@ -65,6 +67,22 @@ function hashOtp(otp: string) {
         .digest("hex");
 }
 
+const MAX_OTP_ATTEMPTS = 5;
+
+// The reset state lives in the user's app_metadata (not editable by the user):
+// a nonce that ties the signed cookie to the LATEST request, and a counter of
+// wrong guesses. Without this a 6-digit code could be brute-forced, because
+// the signed cookie alone cannot count attempts.
+async function readResetState(userId: string) {
+    const { data } = await supabaseAdmin!.auth.admin.getUserById(userId);
+    const meta = (data?.user?.app_metadata || {}) as Record<string, any>;
+    return { meta, nonce: meta.reset_nonce as string | undefined, attempts: Number(meta.reset_attempts || 0) };
+}
+
+async function writeResetState(userId: string, meta: Record<string, any>, patch: Record<string, any>) {
+    await supabaseAdmin!.auth.admin.updateUserById(userId, { app_metadata: { ...meta, ...patch } });
+}
+
 export async function POST(request: Request) {
     try {
         const body = await request.json();
@@ -92,25 +110,41 @@ export async function POST(request: Request) {
                 );
             }
 
-            // Find the Supabase Auth user
-            const { data: usersData, error: usersError } =
-                await supabaseAdmin.auth.admin.listUsers({
-                    page: 1,
-                    perPage: 1000,
-                });
-
-            if (usersError) {
-                console.error("Error finding user:", usersError);
+            if (!isMailConfigured()) {
+                console.error("Password reset requested but email is not configured (EMAIL_USER / EMAIL_PASSWORD).");
 
                 return NextResponse.json(
-                    { error: "Unable to process request." },
-                    { status: 500 }
+                    { error: "We can't send emails right now. Please contact support at hello@vstories.in." },
+                    { status: 503 }
                 );
             }
 
-            const user = usersData.users.find(
-                (item) => item.email?.toLowerCase() === email
-            );
+            // Find the Supabase Auth user (the admin API has no lookup by
+            // email, so walk the pages until we find them)
+            let user: { id: string; email?: string } | undefined;
+
+            for (let page = 1; page <= 50 && !user; page++) {
+                const { data: usersData, error: usersError } =
+                    await supabaseAdmin.auth.admin.listUsers({
+                        page,
+                        perPage: 1000,
+                    });
+
+                if (usersError) {
+                    console.error("Error finding user:", usersError);
+
+                    return NextResponse.json(
+                        { error: "Unable to process request." },
+                        { status: 500 }
+                    );
+                }
+
+                user = usersData.users.find(
+                    (item) => item.email?.toLowerCase() === email
+                );
+
+                if (usersData.users.length < 1000) break;
+            }
 
             if (!user) {
                 return NextResponse.json(
@@ -127,10 +161,15 @@ export async function POST(request: Request) {
             const expiresAt =
                 Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000;
 
+            const nonce = crypto.randomBytes(16).toString("hex");
+            const state = await readResetState(user.id);
+            await writeResetState(user.id, state.meta, { reset_nonce: nonce, reset_attempts: 0 });
+
             const token = createToken({
                 email,
                 userId: user.id,
                 otpHash: hashOtp(otp),
+                nonce,
                 exp: expiresAt,
                 verified: false,
             });
@@ -196,12 +235,19 @@ export async function POST(request: Request) {
             if (!emailResult.success) {
                 console.error(
                     "OTP email failed:",
+                    emailResult.reason,
                     emailResult.error
                 );
 
+                // "auth" / "not-configured" are our configuration problem, not the customer's
+                const message =
+                    emailResult.reason === "rejected"
+                        ? "We couldn't deliver the email to this address. Please check it and try again."
+                        : "We couldn't send the verification email right now. Please try again in a few minutes.";
+
                 return NextResponse.json(
-                    { error: "Failed to send OTP email." },
-                    { status: 500 }
+                    { error: message },
+                    { status: emailResult.reason === "rejected" ? 400 : 503 }
                 );
             }
 
@@ -253,6 +299,21 @@ export async function POST(request: Request) {
                 );
             }
 
+            if (!supabaseAdmin) {
+                return NextResponse.json(
+                    { error: "Server authentication is not configured." },
+                    { status: 500 }
+                );
+            }
+
+            const state = await readResetState(data.userId);
+            if (!state.nonce || state.nonce !== data.nonce) {
+                return NextResponse.json(
+                    { error: "This code is no longer valid. Please request a new one." },
+                    { status: 400 }
+                );
+            }
+
             if (data.verified) {
                 return NextResponse.json({
                     success: true,
@@ -260,7 +321,15 @@ export async function POST(request: Request) {
                 });
             }
 
+            if (state.attempts >= MAX_OTP_ATTEMPTS) {
+                return NextResponse.json(
+                    { error: "Too many incorrect attempts. Please request a new code." },
+                    { status: 429 }
+                );
+            }
+
             if (hashOtp(otp) !== data.otpHash) {
+                await writeResetState(data.userId, state.meta, { reset_attempts: state.attempts + 1 });
                 return NextResponse.json(
                     { error: "Invalid OTP. Please check the code and try again." },
                     { status: 400 }
@@ -325,11 +394,26 @@ export async function POST(request: Request) {
                 );
             }
 
+            const passwordError = validatePasswordField(password, "Password");
+            if (passwordError) {
+                return NextResponse.json({ error: passwordError }, { status: 400 });
+            }
+
+            const state = await readResetState(data.userId);
+            if (!state.nonce || state.nonce !== data.nonce) {
+                return NextResponse.json(
+                    { error: "This reset session is no longer valid. Please start again." },
+                    { status: 400 }
+                );
+            }
+
             const { error: updateError } =
                 await supabaseAdmin.auth.admin.updateUserById(
                     data.userId,
                     {
                         password,
+                        // single use: the same cookie can never reset the password twice
+                        app_metadata: { ...state.meta, reset_nonce: null, reset_attempts: 0 },
                     }
                 );
 

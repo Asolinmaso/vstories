@@ -70,7 +70,6 @@ export default function CheckoutPage() {
     const [mounted, setMounted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState<any>(null);
-    const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">("razorpay");
     const [couponCode, setCouponCode] = useState("");
     // Set once an order is placed so emptying the cart doesn't flash the empty state
     const orderPlacedRef = useRef(false);
@@ -122,7 +121,6 @@ export default function CheckoutPage() {
                         size: item.size,
                     })),
                     shippingAddress: selectedAddress,
-                    paymentMethod,
                 }),
             });
 
@@ -144,11 +142,6 @@ export default function CheckoutPage() {
                 throw new Error(data.error || "Failed to create order");
             }
 
-            if (paymentMethod === "cod") {
-                await finishOrder(data.dbOrderId || data.orderId);
-                return;
-            }
-
             // Step 2: Open Razorpay checkout
             const razorpayReady = await loadRazorpay();
             if (!razorpayReady) {
@@ -158,7 +151,14 @@ export default function CheckoutPage() {
 
             let paymentCompleted = false;
 
-            const options = {
+            // On phones, let Razorpay redirect back to us after paying. Switching to
+            // a UPI app or an in-app browser can lose the popup's JavaScript callback.
+            const useRedirect = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+            const options: Record<string, any> = {
+                ...(useRedirect
+                    ? { redirect: true, callback_url: `${window.location.origin}/api/payment/callback` }
+                    : {}),
                 key: data.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: data.amount,
                 currency: data.currency,
@@ -206,6 +206,21 @@ export default function CheckoutPage() {
                     // Razorpay expects the country code; without a usable contact
                     // it asks the customer to type the number again
                     contact: /^\d{10}$/.test(selectedAddress.phone || "") ? `+91${selectedAddress.phone}` : selectedAddress.phone,
+                },
+                // UPI first: on phones Razorpay lists the installed UPI apps (Google Pay,
+                // PhonePe, Paytm...) here; on desktop it offers UPI ID / QR code.
+                config: {
+                    display: {
+                        blocks: {
+                            upi: { name: "Pay via UPI", instruments: [{ method: "upi" }] },
+                            other: {
+                                name: "Cards, Netbanking & Wallets",
+                                instruments: [{ method: "card" }, { method: "netbanking" }, { method: "wallet" }],
+                            },
+                        },
+                        sequence: ["block.upi", "block.other"],
+                        preferences: { show_default_blocks: false },
+                    },
                 },
                 theme: {
                     color: "#1A3026",
@@ -320,40 +335,14 @@ export default function CheckoutPage() {
                                 <h2 className="text-2xl font-bold text-[var(--primary)]" style={{ fontFamily: "var(--font-peachi)" }}>Payment Method</h2>
                             </div>
                             
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <button
-                                    onClick={() => setPaymentMethod("razorpay")}
-                                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all text-left ${
-                                        paymentMethod === "razorpay"
-                                            ? "border-[var(--primary)] bg-[var(--primary)]/5 shadow-sm"
-                                            : "border-gray-100 bg-white hover:border-gray-200"
-                                    }`}
-                                >
-                                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === "razorpay" ? "border-[var(--primary)]" : "border-gray-300"}`}>
-                                        {paymentMethod === "razorpay" && <div className="w-3 h-3 rounded-full bg-[var(--primary)]" />}
-                                    </div>
-                                    <div>
-                                        <p className="font-bold text-[var(--primary)]">Online Payment</p>
-                                        <p className="text-xs text-gray-500">Cards, UPI, NetBanking</p>
-                                    </div>
-                                </button>
-
-                                <button
-                                    onClick={() => setPaymentMethod("cod")}
-                                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all text-left ${
-                                        paymentMethod === "cod"
-                                            ? "border-[var(--primary)] bg-[var(--primary)]/5 shadow-sm"
-                                            : "border-gray-100 bg-white hover:border-gray-200"
-                                    }`}
-                                >
-                                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === "cod" ? "border-[var(--primary)]" : "border-gray-300"}`}>
-                                        {paymentMethod === "cod" && <div className="w-3 h-3 rounded-full bg-[var(--primary)]" />}
-                                    </div>
-                                    <div>
-                                        <p className="font-bold text-[var(--primary)]">Cash on Delivery</p>
-                                        <p className="text-xs text-gray-500">Pay when you receive</p>
-                                    </div>
-                                </button>
+                            <div className="flex items-center gap-4 p-5 rounded-2xl border-2 border-[var(--primary)] bg-[var(--primary)]/5 shadow-sm">
+                                <div className="w-6 h-6 rounded-full border-2 border-[var(--primary)] flex items-center justify-center shrink-0">
+                                    <div className="w-3 h-3 rounded-full bg-[var(--primary)]" />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-[var(--primary)]">Pay Online</p>
+                                    <p className="text-xs text-gray-500">UPI (Google Pay, PhonePe, Paytm &amp; more), Cards, NetBanking, Wallets</p>
+                                </div>
                             </div>
                         </section>
                     </div>
@@ -457,7 +446,7 @@ export default function CheckoutPage() {
                                 ) : (
                                     <>
                                         <CreditCard className="w-5 h-5" />
-                                        {paymentMethod === "cod" ? "Place Order" : `Pay ₹${total}`}
+                                        Pay ₹{total}
                                     </>
                                 )}
                             </button>

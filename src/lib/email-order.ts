@@ -1,12 +1,4 @@
-import nodemailer from 'nodemailer';
-
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD?.replace(/\s/g, ''),
-    },
-});
+import { sendMail, type MailResult } from '@/lib/mailer';
 
 function escapeHtml(value: unknown): string {
     return String(value ?? '')
@@ -37,10 +29,7 @@ export function getOrderConfirmationHTML(order: any, user: any) {
         [[address.city, address.state].filter(Boolean).join(', '), address.pincode || address.postal_code].filter(Boolean).join(' '),
     ].filter(Boolean).map(escapeHtml).join('<br>');
 
-    const isCod = order.payment_method === 'cod';
-    const paymentLine = isCod
-        ? '<strong>Payment:</strong> Cash on Delivery'
-        : `<strong>Payment ID:</strong> ${escapeHtml(order.razorpay_payment_id || '-')}`;
+    const paymentLine = `<strong>Payment ID:</strong> ${escapeHtml(order.razorpay_payment_id || '-')}`;
 
     const customerName = user?.name || user?.user_metadata?.full_name || address.name || address.full_name || user?.email || 'there';
 
@@ -71,7 +60,7 @@ export function getOrderConfirmationHTML(order: any, user: any) {
                 <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
                     ${itemsHTML}
                     <tr>
-                        <td style="padding: 15px 12px; font-weight: bold; font-size: 18px;">Total${isCod ? ' (pay on delivery)' : ''}</td>
+                        <td style="padding: 15px 12px; font-weight: bold; font-size: 18px;">Total</td>
                         <td style="padding: 15px 12px; text-align: right; font-weight: bold; font-size: 18px; color: #1D3515;">
                             ₹${escapeHtml(order.amount)}
                         </td>
@@ -118,22 +107,6 @@ interface SendEmailParams {
     html: string;
 }
 
-export async function sendEmail({ to, subject, html }: SendEmailParams) {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
-        console.warn('Email not configured (EMAIL_USER / EMAIL_PASSWORD) - skipping send');
-        return { success: false, error: 'Email not configured' };
-    }
-    try {
-        const info = await transporter.sendMail({
-            from: `"V Stories" <${process.env.EMAIL_USER}>`,
-            to,
-            subject,
-            html,
-        });
-        console.log('Email sent:', info.messageId);
-        return { success: true, messageId: info.messageId };
-    } catch (error: any) {
-        console.error('Error sending email:', error);
-        return { success: false, error: error.message };
-    }
+export async function sendEmail({ to, subject, html }: SendEmailParams): Promise<MailResult> {
+    return sendMail({ to, subject, html, fromName: 'V Stories' });
 }

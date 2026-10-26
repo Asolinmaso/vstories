@@ -14,7 +14,7 @@ export default function BrandStoryBanner() {
         src="/images/home/homebg.png"
         alt="More Than Skincare. A Story of Care."
         fill
-        className="object-cover object-center lg:object-[center_-280px]"
+        className="object-cover object-center"
         priority
       />
 

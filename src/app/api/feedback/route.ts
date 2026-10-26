@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getAdminMailbox } from '@/lib/mailer';
 import { sendEmail, getFeedbackAdminHTML, getFeedbackUserHTML } from '@/lib/email';
 import { supabaseAdmin } from '@/lib/supabase';
 
@@ -44,7 +45,7 @@ export async function POST(request: Request) {
 
         // Send notification email to admin
         const adminEmail = await sendEmail({
-            to: process.env.EMAIL_USER as string,
+            to: getAdminMailbox(),
             subject: `New Feedback from ${formData.name}`,
             html: getFeedbackAdminHTML({
                 ...formData,

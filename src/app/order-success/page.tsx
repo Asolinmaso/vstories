@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle, XCircle, Clock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import confetti from "canvas-confetti";
+import { useCartStore } from "@/lib/store";
 
 type OrderState = "loading" | "success" | "processing" | "failed" | "not-found";
 
@@ -18,8 +19,6 @@ interface OrderSummary {
 // What the customer should be told for a given order record
 function resolveState(order: OrderSummary): OrderState {
     if (order.status === "paid") return "success";
-    // Cash on Delivery orders are placed as soon as they are created
-    if (order.payment_method === "cod" && order.status === "pending") return "success";
     if (order.status === "failed" || order.status === "cancelled") return "failed";
     if (order.status === "pending") return "processing";
     return "success"; // refunded etc. — the order itself exists
@@ -99,6 +98,10 @@ function OrderSuccessContent() {
     useEffect(() => {
         if (state !== "success") return;
 
+        // The customer may have come back from the payment page without passing
+        // through checkout, so make sure the cart is emptied here too
+        void useCartStore.getState().clearCart();
+
         confetti({
             particleCount: 100,
             spread: 70,
@@ -127,8 +130,6 @@ function OrderSuccessContent() {
         );
     }
 
-    const isCod = order?.payment_method === "cod";
-
     return (
         <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4 py-12">
             <div className="max-w-md w-full text-center">
@@ -144,9 +145,7 @@ function OrderSuccessContent() {
                             </h1>
 
                             <p className="text-gray-600 mb-6">
-                                {isCod
-                                    ? `Thank you for your order. Please keep ₹${order?.amount} ready to pay on delivery.`
-                                    : "Thank you for your purchase. Your payment was received and your order will be processed shortly."}
+                                Thank you for your purchase. Your payment was received and your order will be processed shortly.
                             </p>
                         </>
                     )}
