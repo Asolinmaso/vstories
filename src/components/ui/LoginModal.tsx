@@ -242,6 +242,12 @@ export default function LoginModal({ onClose, initialTab = "login", redirectTo }
                 options: { data: { full_name: fullName.trim() } },
             });
             if (authError) throw authError;
+            // Supabase hides "email already registered" by returning a fake user
+            // with no identities. Detect it instead of claiming success.
+            if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+                setError("An account with this email already exists. Please sign in, or use Forgot Password if you don't remember it.");
+                return;
+            }
             if (data.user) {
                 await supabase.from("profiles").insert({
                     id: data.user.id,
